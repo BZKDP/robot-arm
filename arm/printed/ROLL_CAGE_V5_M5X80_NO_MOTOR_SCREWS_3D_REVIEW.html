@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Roll V5 M5×80 — клетка NEMA17 без заводских винтов</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#101722;color:#edf4ff;font:14px Segoe UI,Arial,sans-serif}canvas{display:block;touch-action:none}.panel{position:fixed;z-index:5;background:#162133ed;border:1px solid #3c506c;border-radius:12px;box-shadow:0 10px 30px #0008}.left{left:14px;top:14px;width:320px;padding:15px}.right{right:14px;top:14px;width:370px;max-height:calc(100vh - 58px);overflow:auto;padding:15px}h1{font-size:18px;margin:0 0 7px}.sub,.small{font-size:12px;color:#aebdd0;line-height:1.45}.row{margin-top:13px}.row label{display:flex;justify-content:space-between;font-weight:650}.row input[type=range]{width:100%}.buttons{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}button,a.file{border:0;border-radius:8px;padding:8px 11px;background:#30486b;color:white;text-decoration:none;cursor:pointer}button:hover,a.file:hover{background:#42638f}.card{border-left:4px solid #71839b;background:#1c2940;padding:9px 10px;border-radius:7px;margin:8px 0;line-height:1.46}.orange{border-color:#ed9633}.green{border-color:#65c779}.cyan{border-color:#4ac3e7}.yellow{border-color:#e7bd40}.red{border-color:#e55b52}.ok{color:#71e7a0}.warn{color:#ffd187}#flow{position:fixed;z-index:5;left:50%;bottom:14px;transform:translateX(-50%);background:#18263bdd;border:1px solid #3b5373;border-radius:999px;padding:9px 14px;white-space:nowrap;font-size:13px}
+</style>
+</head>
+<body>
+<section class="panel left">
+ <h1>Roll V5 M5×80 — NEMA17 без разборки</h1>
+ <div class="sub">Модель специально для случая, когда четыре винта задней крышки не откручиваются. ЛКМ — вращать, колесо — масштаб, ПКМ — двигать камеру.</div>
+ <div class="row"><label>Разнести детали <b id="ev">0%</b></label><input id="explode" type="range" min="0" max="100" value="0"></div>
+ <div class="buttons"><button onclick="setExplode(0)">Собрано</button><button onclick="setExplode(100)">Разобрано</button></div>
+ <div class="row"><label><span>Скрыть редуктор</span><input id="hideGear" type="checkbox"></label></div>
+ <div class="buttons"><a class="file" href="PLATE_ROLL_CAGE_V5_M5X80_NO_MOTOR_SCREWS_FINAL.stl">Открыть общую STL</a><a class="file" href="roll_cage_v5_M5X80_rear_square_key_PETG.stl">Тест 43 мм</a></div>
+ <div class="small" style="margin-top:11px"><span class="warn">Сначала</span> можно напечатать только голубой квадрат и проверить посадку на корпус 42,3 мм. Полную пластину пока печатать необязательно.</div>
+</section>
+<section class="panel right">
+ <div class="card red"><b>Красные — четыре заводских винта</b><br>Они остаются закрученными. В оранжевой плите под их головки сделаны свободные карманы Ø8,2.</div>
+ <div class="card orange"><b>Оранжевый — новый задний стакан</b><br>Он принимает профиль 20×20 и упирается плоской стороной в заднюю крышку мотора.</div>
+ <div class="card cyan"><b>Голубой — квадрат 43,0 мм</b><br>Охватывает первые 3,5 мм корпуса NEMA17 и не позволяет мотору провернуться. Для провода сделана открытая прорезь.</div>
+ <div class="card green"><b>Зелёные — две передние половины</b><br>Ставятся сбоку вокруг уже собранного CM36. Проход Ø38,8 рассчитан на корпус редуктора Ø36.</div>
+ <div class="card yellow"><b>Жёлтые — четыре внешние M5×80</b><br>Отверстия Ø5,6 расположены на сетке 62×62 мм снаружи корпуса мотора и приблизительно 56-мм металлической пластины. Опорные рамки расширены до 78 мм под шайбы M5 Ø15.</div>
+ <div class="card"><b>Сборка</b><br>1) Труба в оранжевый стакан. 2) Голубой квадрат на задний торец мотора. 3) Стакан к задней крышке. 4) Зелёные половины вокруг редуктора. 5) Четыре внешние M5×80, шайбы и nyloc затянуть крест-накрест.</div>
+ <div class="small"><span class="ok">✓</span> Заводские винты не выкручиваются. <span class="ok">✓</span> Редуктор снимать не требуется. <span class="ok">✓</span> На общую пластину добавлены две распорные втулки трубы.</div>
+</section>
+<div id="flow">ТРУБА → ЗАДНИЙ СТАКАН → МОТОР → 4 ВНЕШНИЕ СТЯЖКИ → ПЕРЕДНЯЯ РАМКА</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x101722);const camera=new THREE.PerspectiveCamera(46,innerWidth/innerHeight,1,2400);const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;document.body.appendChild(renderer.domElement);scene.add(new THREE.HemisphereLight(0xeaf2ff,0x25303e,1.15));const sun=new THREE.DirectionalLight(0xffffff,1.35);sun.position.set(200,300,240);sun.castShadow=true;scene.add(sun);scene.add(new THREE.GridHelper(600,30,0x42536e,0x243045));
+const M={motor:new THREE.MeshStandardMaterial({color:0x292e35,metalness:.35,roughness:.58}),metal:new THREE.MeshStandardMaterial({color:0xaeb7c0,metalness:.72,roughness:.34,transparent:true,opacity:.78}),gear:new THREE.MeshStandardMaterial({color:0x315fab,metalness:.48,roughness:.4}),cup:new THREE.MeshStandardMaterial({color:0xee9430,roughness:.57}),key:new THREE.MeshStandardMaterial({color:0x49bde1,roughness:.52}),front:new THREE.MeshStandardMaterial({color:0x63c376,roughness:.52}),rod:new THREE.MeshStandardMaterial({color:0xe5bc3e,metalness:.72,roughness:.27}),factory:new THREE.MeshStandardMaterial({color:0xe15750,metalness:.55,roughness:.33}),tube:new THREE.MeshStandardMaterial({color:0x66717c,metalness:.68,roughness:.37})};
+function box(g,w,h,d,m,x=0,y=0,z=0){const q=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);q.position.set(x,y,z);q.castShadow=q.receiveShadow=true;g.add(q);return q}function cyl(g,d,h,m,x=0,y=0,z=0,axis='y'){const q=new THREE.Mesh(new THREE.CylinderGeometry(d/2,d/2,h,40),m);if(axis==='x')q.rotation.z=Math.PI/2;if(axis==='z')q.rotation.x=Math.PI/2;q.position.set(x,y,z);q.castShadow=q.receiveShadow=true;g.add(q);return q}function label(g,text,color,x,y,z,s=22){const c=document.createElement('canvas');c.width=560;c.height=82;const p=c.getContext('2d');p.fillStyle='rgba(7,12,20,.83)';p.fillRect(0,7,560,64);p.font='700 30px Segoe UI';p.textAlign='center';p.fillStyle=color;p.fillText(text,280,50);const q=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthTest:false}));q.position.set(x,y,z);q.scale.set(s*5.6,s*.82,1);g.add(q)}
+const tube=new THREE.Group(),rear=new THREE.Group(),key=new THREE.Group(),motor=new THREE.Group(),gear=new THREE.Group(),frontTop=new THREE.Group(),frontBottom=new THREE.Group(),rods=[];scene.add(tube,rear,key,motor,gear,frontTop,frontBottom);
+// Existing/new 20x20 tube, axis Y, behind the motor.
+box(tube,20,110,1.5,M.tube,0,-97,-9.25);box(tube,20,110,1.5,M.tube,0,-97,9.25);box(tube,1.5,110,17,M.tube,-9.25,-97,0);box(tube,1.5,110,17,M.tube,9.25,-97,0);label(tube,'ТРУБА 20×20','#d7e0ea',0,-142,30,18);
+// Rear reaction plate and the same deep tube sleeve as the printable part.
+box(rear,78,8,78,M.cup,0,-4,0);box(rear,5,34,30.4,M.cup,-12.7,-25,0);box(rear,5,34,30.4,M.cup,12.7,-25,0);box(rear,20.4,34,5,M.cup,0,-25,-12.7);box(rear,20.4,34,5,M.cup,0,-25,12.7);for(const [x,z] of [[-15.5,-15.5],[-15.5,15.5],[15.5,-15.5],[15.5,15.5]])cyl(rear,8.2,4.5,M.motor,x,-1.8,z);for(const y of[-17,-25])cyl(rear,4,39,M.factory,0,y,0,'x');label(rear,'ЗАДНИЙ СТАКАН','#ffb15c',0,-35,50,20);
+// Square key, shown as four bars around 43 mm opening. +Z side has wire notch.
+box(key,54,3.5,5.5,M.key,0,1.75,-24.25);box(key,54,3.5,5.5,M.key,0,1.75,24.25);box(key,5.5,3.5,43,M.key,-24.25,1.75,0);box(key,5.5,3.5,30,M.key,24.25,1.75,-6.5);label(key,'КВАДРАТ 43,0','#64dcff',52,2,-33,17);
+// Motor and factory screws remain untouched.
+box(motor,42.3,47,42.3,M.motor,0,23.5,0);for(const [x,z] of [[-15.5,-15.5],[-15.5,15.5],[15.5,-15.5],[15.5,15.5]])cyl(motor,7,2.5,M.factory,x,-.7,z);label(motor,'КОРОТКИЙ NEMA17 · 42,3×47','#ff7068',0,20,-48,18);
+// Existing sandwich plate + CM36.
+box(gear,56,3,56,M.metal,0,48.5,0);cyl(gear,36,35,M.gear,0,67.5,0);cyl(gear,8,17,M.metal,0,93.5,0);label(gear,'CM36 Ø36 × 35','#7aa5ff',0,77,35,17);
+// Split front frame around the gearbox. Approximation of the true curved STL.
+box(frontTop,78,8,19.6,M.front,0,54,29.2);box(frontTop,19.6,8,19.4,M.front,-29.2,54,9.7);box(frontTop,19.6,8,19.4,M.front,29.2,54,9.7);
+box(frontBottom,78,8,19.6,M.front,0,54,-29.2);box(frontBottom,19.6,8,19.4,M.front,-29.2,54,-9.7);box(frontBottom,19.6,8,19.4,M.front,29.2,54,-9.7);label(frontTop,'ПЕРЕДНЯЯ РАМКА','#85e596',0,61,54,18);
+for(const x of[-31,31])for(const z of[-31,31]){const g=new THREE.Group();scene.add(g);cyl(g,5,80,M.rod,x,32,z);rods.push({g,x,z})}
+function setExplode(v){const e=document.getElementById('explode');e.value=v;e.oninput()}document.getElementById('explode').oninput=function(){const t=this.value/100;document.getElementById('ev').textContent=this.value+'%';tube.position.y=-45*t;rear.position.y=-40*t;key.position.y=-17*t;frontTop.position.set(0,45*t,28*t);frontBottom.position.set(0,45*t,-28*t);for(const r of rods)r.g.position.set(Math.sign(r.x)*15*t,10*t,Math.sign(r.z)*15*t)};document.getElementById('explode').oninput();document.getElementById('hideGear').onchange=function(){gear.visible=!this.checked};
+let target=new THREE.Vector3(0,2,0),theta=-.82,phi=1.12,dist=340,drag=null;function cam(){camera.position.set(target.x+dist*Math.sin(phi)*Math.cos(theta),target.y+dist*Math.cos(phi),target.z+dist*Math.sin(phi)*Math.sin(theta));camera.lookAt(target)}cam();renderer.domElement.addEventListener('pointerdown',e=>drag={x:e.clientX,y:e.clientY,b:e.button});addEventListener('pointerup',()=>drag=null);addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.x=e.clientX;drag.y=e.clientY;if(drag.b===2){const s=dist/700;const r=new THREE.Vector3().subVectors(camera.position,target).cross(camera.up).normalize();target.addScaledVector(r,-dx*s);target.y+=dy*s}else{theta+=dx*.007;phi=Math.max(.2,Math.min(2.9,phi-dy*.007))}cam()});renderer.domElement.addEventListener('wheel',e=>{dist=Math.max(120,Math.min(900,dist*(e.deltaY>0?1.1:.9)));cam()});renderer.domElement.addEventListener('contextmenu',e=>e.preventDefault());addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});(function loop(){requestAnimationFrame(loop);renderer.render(scene,camera)})();
+</script>
+</body>
+</html>

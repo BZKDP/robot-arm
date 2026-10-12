@@ -1,0 +1,211 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1060" viewBox="0 0 1500 1060" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="1500" height="1060" fill="#f8fafc"/>
+  <text x="750" y="36" text-anchor="middle" font-size="25" font-weight="700" fill="#0f172a">Кластер ESP32 (2 сустава) — подключение ПО ПИНАМ. Все 3 платы собираются ОДИНАКОВО</text>
+  <text x="750" y="60" text-anchor="middle" font-size="13.5" fill="#475569">ESP-A: моторы J1+J2 · ESP-B: J3+J4roll · ESP-C: J5+J6(NEMA14). Плата ESP32 DevKit 30 pin (надписи на самой плате совпадают)</text>
+
+  <!-- ================= ESP32 BOARD ================= -->
+  <rect x="565" y="120" width="240" height="530" rx="14" fill="#1a2332" stroke="#0f172a" stroke-width="2"/>
+  <rect x="637" y="134" width="96" height="50" rx="6" fill="#2e3a4f"/>
+  <text x="685" y="164" text-anchor="middle" font-size="13" font-weight="700" fill="#9fb3d1">ESP32</text>
+  <rect x="655" y="612" width="60" height="30" fill="#8a93a3"/>
+  <text x="685" y="668" text-anchor="middle" font-size="12" font-weight="700" fill="#334155">USB → в хаб мини-ПК (питает плату)</text>
+
+  <!-- left pin header -->
+  <g font-size="11.5" fill="#dbe4f0">
+    <!-- pins as circles + labels inside -->
+    <!-- y start 205 step 28 -->
+    <circle cx="565" cy="205" r="5" fill="#f2c14e"/><text x="580" y="209">3V3</text>
+    <circle cx="565" cy="233" r="5" fill="#3b4252"/><text x="580" y="237">GND</text>
+    <circle cx="565" cy="261" r="5" fill="#3b4252"/><text x="580" y="265">D15</text>
+    <circle cx="565" cy="289" r="5" fill="#3b4252"/><text x="580" y="293">D2</text>
+    <circle cx="565" cy="317" r="5" fill="#3b4252"/><text x="580" y="321">D4</text>
+    <circle cx="565" cy="345" r="5" fill="#3b4252"/><text x="580" y="349">RX2 (16)</text>
+    <circle cx="565" cy="373" r="5" fill="#7da2e0"/><text x="580" y="377">TX2 (17)</text>
+    <circle cx="565" cy="401" r="5" fill="#3b4252"/><text x="580" y="405">D5</text>
+    <circle cx="565" cy="429" r="5" fill="#3b4252"/><text x="580" y="433">D18</text>
+    <circle cx="565" cy="457" r="5" fill="#3b4252"/><text x="580" y="461">D19</text>
+    <circle cx="565" cy="485" r="5" fill="#37b3c8"/><text x="580" y="489">D21</text>
+    <circle cx="565" cy="513" r="5" fill="#3b4252"/><text x="580" y="517">RX0</text>
+    <circle cx="565" cy="541" r="5" fill="#3b4252"/><text x="580" y="545">TX0</text>
+    <circle cx="565" cy="569" r="5" fill="#37b3c8"/><text x="580" y="573">D22</text>
+    <circle cx="565" cy="597" r="5" fill="#3b4252"/><text x="580" y="601">D23</text>
+  </g>
+  <!-- right pin header -->
+  <g font-size="11.5" fill="#dbe4f0" text-anchor="end">
+    <circle cx="805" cy="205" r="5" fill="#e05555"/><text x="790" y="209">VIN 5V</text>
+    <circle cx="805" cy="233" r="5" fill="#3b4252"/><text x="790" y="237">GND</text>
+    <circle cx="805" cy="261" r="5" fill="#3b4252"/><text x="790" y="265">D13</text>
+    <circle cx="805" cy="289" r="5" fill="#3b4252"/><text x="790" y="293">D12</text>
+    <circle cx="805" cy="317" r="5" fill="#3b4252"/><text x="790" y="321">D14</text>
+    <circle cx="805" cy="345" r="5" fill="#f0913b"/><text x="790" y="349">D27</text>
+    <circle cx="805" cy="373" r="5" fill="#a06de0"/><text x="790" y="377">D26</text>
+    <circle cx="805" cy="401" r="5" fill="#a06de0"/><text x="790" y="405">D25</text>
+    <circle cx="805" cy="429" r="5" fill="#5dbb63"/><text x="790" y="433">D33</text>
+    <circle cx="805" cy="457" r="5" fill="#5dbb63"/><text x="790" y="461">D32</text>
+    <circle cx="805" cy="485" r="5" fill="#3b4252"/><text x="790" y="489">D35</text>
+    <circle cx="805" cy="513" r="5" fill="#d0396a"/><text x="790" y="517">D34</text>
+    <circle cx="805" cy="541" r="5" fill="#3b4252"/><text x="790" y="545">VN</text>
+    <circle cx="805" cy="569" r="5" fill="#3b4252"/><text x="790" y="573">VP</text>
+    <circle cx="805" cy="597" r="5" fill="#3b4252"/><text x="790" y="601">EN</text>
+  </g>
+
+  <!-- ================= TMC #1 ================= -->
+  <rect x="1000" y="130" width="180" height="220" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+  <rect x="1000" y="130" width="180" height="30" rx="10" fill="#2563eb"/>
+  <text x="1090" y="151" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff">TMC2209 — МОТОР №1</text>
+  <g font-size="11" fill="#1e3a8a">
+    <circle cx="1000" cy="180" r="4.5" fill="#a06de0"/><text x="1012" y="184">STEP</text>
+    <circle cx="1000" cy="205" r="4.5" fill="#a06de0"/><text x="1012" y="209">DIR</text>
+    <circle cx="1000" cy="230" r="4.5" fill="#f0913b"/><text x="1012" y="234">EN</text>
+    <circle cx="1000" cy="255" r="4.5" fill="#7da2e0"/><text x="1012" y="259">PDN/UART</text>
+    <circle cx="1000" cy="280" r="4.5" fill="#f2c14e"/><text x="1012" y="284">VIO (3.3В)</text>
+    <circle cx="1000" cy="305" r="4.5" fill="#111827"/><text x="1012" y="309">GND</text>
+  </g>
+  <g font-size="11" fill="#1e3a8a" text-anchor="end">
+    <circle cx="1180" cy="180" r="4.5" fill="#e05555"/><text x="1168" y="184">VM +24В</text>
+    <circle cx="1180" cy="205" r="4.5" fill="#111827"/><text x="1168" y="209">GND</text>
+    <circle cx="1180" cy="235" r="4.5" fill="#333"/><text x="1168" y="239">M1A</text>
+    <circle cx="1180" cy="260" r="4.5" fill="#2e7d32"/><text x="1168" y="264">M1B</text>
+    <circle cx="1180" cy="285" r="4.5" fill="#c62828"/><text x="1168" y="289">M2A</text>
+    <circle cx="1180" cy="310" r="4.5" fill="#1565c0"/><text x="1168" y="314">M2B</text>
+  </g>
+  <!-- MOTOR 1 -->
+  <rect x="1300" y="185" width="150" height="130" rx="10" fill="#2f2f2f"/>
+  <text x="1375" y="240" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">МОТОР №1</text>
+  <text x="1375" y="260" text-anchor="middle" font-size="10.5" fill="#cbd5e1">A: чёрный + зелёный</text>
+  <text x="1375" y="276" text-anchor="middle" font-size="10.5" fill="#cbd5e1">B: красный + синий</text>
+  <line x1="1180" y1="235" x2="1300" y2="235" stroke="#333" stroke-width="3"/>
+  <line x1="1180" y1="260" x2="1300" y2="255" stroke="#2e7d32" stroke-width="3"/>
+  <line x1="1180" y1="285" x2="1300" y2="275" stroke="#c62828" stroke-width="3"/>
+  <line x1="1180" y1="310" x2="1300" y2="295" stroke="#1565c0" stroke-width="3"/>
+
+  <!-- ================= TMC #2 ================= -->
+  <rect x="1000" y="400" width="180" height="220" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+  <rect x="1000" y="400" width="180" height="30" rx="10" fill="#2563eb"/>
+  <text x="1090" y="421" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff">TMC2209 — МОТОР №2</text>
+  <g font-size="11" fill="#1e3a8a">
+    <circle cx="1000" cy="450" r="4.5" fill="#5dbb63"/><text x="1012" y="454">STEP</text>
+    <circle cx="1000" cy="475" r="4.5" fill="#5dbb63"/><text x="1012" y="479">DIR</text>
+    <circle cx="1000" cy="500" r="4.5" fill="#f0913b"/><text x="1012" y="504">EN</text>
+    <circle cx="1000" cy="525" r="4.5" fill="#7da2e0"/><text x="1012" y="529">PDN/UART</text>
+    <circle cx="1000" cy="550" r="4.5" fill="#f2c14e"/><text x="1012" y="554">VIO (3.3В)</text>
+    <circle cx="1000" cy="575" r="4.5" fill="#111827"/><text x="1012" y="579">GND</text>
+  </g>
+  <g font-size="11" fill="#1e3a8a" text-anchor="end">
+    <circle cx="1180" cy="450" r="4.5" fill="#e05555"/><text x="1168" y="454">VM +24В</text>
+    <circle cx="1180" cy="475" r="4.5" fill="#111827"/><text x="1168" y="479">GND</text>
+    <circle cx="1180" cy="505" r="4.5" fill="#333"/><text x="1168" y="509">M1A</text>
+    <circle cx="1180" cy="530" r="4.5" fill="#2e7d32"/><text x="1168" y="534">M1B</text>
+    <circle cx="1180" cy="555" r="4.5" fill="#c62828"/><text x="1168" y="559">M2A</text>
+    <circle cx="1180" cy="580" r="4.5" fill="#1565c0"/><text x="1168" y="584">M2B</text>
+  </g>
+  <!-- MOTOR 2 -->
+  <rect x="1300" y="455" width="150" height="130" rx="10" fill="#2f2f2f"/>
+  <text x="1375" y="510" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">МОТОР №2</text>
+  <text x="1375" y="530" text-anchor="middle" font-size="10.5" fill="#cbd5e1">A: чёрный + зелёный</text>
+  <text x="1375" y="546" text-anchor="middle" font-size="10.5" fill="#cbd5e1">B: красный + синий</text>
+  <line x1="1180" y1="505" x2="1300" y2="505" stroke="#333" stroke-width="3"/>
+  <line x1="1180" y1="530" x2="1300" y2="525" stroke="#2e7d32" stroke-width="3"/>
+  <line x1="1180" y1="555" x2="1300" y2="545" stroke="#c62828" stroke-width="3"/>
+  <line x1="1180" y1="580" x2="1300" y2="565" stroke="#1565c0" stroke-width="3"/>
+
+  <!-- ============ ESP -> TMC WIRES ============ -->
+  <!-- STEP1: D25 -->
+  <polyline points="805,401 900,401 900,180 1000,180" fill="none" stroke="#a06de0" stroke-width="3"/>
+  <text x="905" y="174" font-size="11" font-weight="700" fill="#a06de0">D25 → STEP №1</text>
+  <!-- DIR1: D26 -->
+  <polyline points="805,373 885,373 885,205 985,205 1000,205" fill="none" stroke="#a06de0" stroke-width="2.4" stroke-dasharray="7 3"/>
+  <text x="888" y="222" font-size="11" font-weight="700" fill="#a06de0">D26 → DIR №1</text>
+  <!-- STEP2: D32 -->
+  <polyline points="805,457 915,457 915,450 1000,450" fill="none" stroke="#5dbb63" stroke-width="3"/>
+  <text x="918" y="444" font-size="11" font-weight="700" fill="#2e7d32">D32 → STEP №2</text>
+  <!-- DIR2: D33 -->
+  <polyline points="805,429 900,429 900,475 1000,475" fill="none" stroke="#5dbb63" stroke-width="2.4" stroke-dasharray="7 3"/>
+  <text x="903" y="492" font-size="11" font-weight="700" fill="#2e7d32">D33 → DIR №2</text>
+  <!-- EN: D27 to both -->
+  <polyline points="805,345 940,345 940,230 1000,230" fill="none" stroke="#f0913b" stroke-width="3"/>
+  <polyline points="940,345 940,500 1000,500" fill="none" stroke="#f0913b" stroke-width="3"/>
+  <text x="930" y="338" font-size="11" font-weight="700" fill="#c2620a">D27 → EN обоих</text>
+  <!-- UART: 17 over the top -->
+  <polyline points="565,373 520,373 520,100 960,100 960,255 1000,255" fill="none" stroke="#7da2e0" stroke-width="2.6"/>
+  <polyline points="960,255 960,525 1000,525" fill="none" stroke="#7da2e0" stroke-width="2.6"/>
+  <text x="700" y="94" font-size="11" font-weight="700" fill="#4a7dd0">TX2 (17) → PDN/UART обоих драйверов (настройка тока из кода)</text>
+  <!-- VIO 3.3 -->
+  <polyline points="565,205 470,205 470,80 975,80 975,280 1000,280" fill="none" stroke="#f2c14e" stroke-width="2.6"/>
+  <polyline points="975,280 975,550 1000,550" fill="none" stroke="#f2c14e" stroke-width="2.6"/>
+  <text x="700" y="74" font-size="11" font-weight="700" fill="#b8860b">3V3 → VIO обоих + VCC датчиков</text>
+
+  <!-- ================= AS5600 ================= -->
+  <rect x="120" y="180" width="240" height="170" rx="10" fill="#ffffff" stroke="#d97706" stroke-width="2"/>
+  <rect x="120" y="180" width="240" height="30" rx="10" fill="#d97706"/>
+  <text x="240" y="201" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff">AS5600 (энкодер сустава)</text>
+  <g font-size="11.5" fill="#92400e" text-anchor="end">
+    <circle cx="360" cy="230" r="4.5" fill="#f2c14e"/><text x="348" y="234">VCC</text>
+    <circle cx="360" cy="255" r="4.5" fill="#111827"/><text x="348" y="259">GND</text>
+    <circle cx="360" cy="280" r="4.5" fill="#37b3c8"/><text x="348" y="284">SDA</text>
+    <circle cx="360" cy="305" r="4.5" fill="#37b3c8"/><text x="348" y="309">SCL</text>
+    <circle cx="360" cy="330" r="4.5" fill="#111827"/><text x="348" y="334">DIR→GND</text>
+  </g>
+  <polyline points="360,230 470,230 470,205 565,205" fill="none" stroke="#f2c14e" stroke-width="2.6"/>
+  <polyline points="360,255 455,255 455,233 565,233" fill="none" stroke="#111827" stroke-width="2.6"/>
+  <polyline points="360,280 440,280 440,485 565,485" fill="none" stroke="#37b3c8" stroke-width="2.6"/>
+  <text x="430" y="452" font-size="11" font-weight="700" fill="#1287a0" transform="rotate(-90 430 452)">SDA → D21</text>
+  <polyline points="360,305 425,305 425,569 565,569" fill="none" stroke="#37b3c8" stroke-width="2.6" stroke-dasharray="7 3"/>
+  <text x="415" y="452" font-size="11" font-weight="700" fill="#1287a0" transform="rotate(-90 415 452)">SCL → D22</text>
+  <polyline points="360,330 405,330 405,255 360,255" fill="none" stroke="#111827" stroke-width="1.8" stroke-dasharray="4 3"/>
+
+  <!-- ================= SS49E ================= -->
+  <rect x="120" y="420" width="240" height="140" rx="10" fill="#ffffff" stroke="#dc2626" stroke-width="2"/>
+  <rect x="120" y="420" width="240" height="30" rx="10" fill="#dc2626"/>
+  <text x="240" y="441" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff">SS49E холл (индекс J1/J4)</text>
+  <text x="135" y="470" font-size="10.5" fill="#7f1d1d">плоской стороной к магниту · ножки слева-направо: 1-2-3</text>
+  <g font-size="11.5" fill="#7f1d1d" text-anchor="end">
+    <circle cx="360" cy="490" r="4.5" fill="#f2c14e"/><text x="348" y="494">1 = VCC</text>
+    <circle cx="360" cy="515" r="4.5" fill="#111827"/><text x="348" y="519">2 = GND</text>
+    <circle cx="360" cy="540" r="4.5" fill="#d0396a"/><text x="348" y="544">3 = OUT</text>
+  </g>
+  <polyline points="360,490 400,490 400,370 470,370 470,205 565,205" fill="none" stroke="#f2c14e" stroke-width="2"/>
+  <polyline points="360,515 415,515 415,640 545,640 545,233 565,233" fill="none" stroke="#111827" stroke-width="2"/>
+  <polyline points="360,540 385,540 385,700 830,700 830,513 805,513" fill="none" stroke="#d0396a" stroke-width="2.6"/>
+  <text x="600" y="694" font-size="11" font-weight="700" fill="#b02755">OUT холла → D34 (вокруг платы снизу)</text>
+
+  <!-- ================= POWER BUS ================= -->
+  <rect x="120" y="770" width="1330" height="160" rx="12" fill="#ffffff" stroke="#dc2626" stroke-width="2"/>
+  <rect x="120" y="770" width="1330" height="34" rx="12" fill="#dc2626"/>
+  <text x="785" y="793" text-anchor="middle" font-size="14.5" font-weight="700" fill="#fff">СИЛОВАЯ ШИНА (общая на все 3 кластера)</text>
+  <rect x="150" y="825" width="150" height="70" rx="8" fill="#fee2e2" stroke="#dc2626"/>
+  <text x="225" y="852" text-anchor="middle" font-size="12.5" font-weight="700" fill="#7f1d1d">БП 24В 10А</text>
+  <text x="225" y="872" text-anchor="middle" font-size="10.5" fill="#7f1d1d">+V и −V клеммы</text>
+  <rect x="340" y="835" width="110" height="50" rx="8" fill="#fef9c3" stroke="#ca8a04"/>
+  <text x="395" y="857" text-anchor="middle" font-size="11.5" font-weight="700" fill="#713f12">Предохр. 10А</text>
+  <text x="395" y="874" text-anchor="middle" font-size="10.5" fill="#713f12">в разрыв «+»</text>
+  <rect x="490" y="835" width="110" height="50" rx="8" fill="#fecaca" stroke="#b91c1c"/>
+  <text x="545" y="857" text-anchor="middle" font-size="11.5" font-weight="700" fill="#7f1d1d">E-STOP 🔴</text>
+  <text x="545" y="874" text-anchor="middle" font-size="10.5" fill="#7f1d1d">грибок, разрыв «+»</text>
+  <rect x="640" y="825" width="180" height="70" rx="8" fill="#f1f5f9" stroke="#64748b"/>
+  <text x="730" y="850" text-anchor="middle" font-size="12" font-weight="700" fill="#334155">WAGO «+24В»</text>
+  <text x="730" y="870" text-anchor="middle" font-size="10.5" fill="#475569">6 отводов → VM драйверов</text>
+  <rect x="850" y="825" width="180" height="70" rx="8" fill="#e2e8f0" stroke="#334155"/>
+  <text x="940" y="850" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">WAGO «GND»</text>
+  <text x="940" y="870" text-anchor="middle" font-size="10.5" fill="#334155">−БП + GND драйверов + GND всех ESP</text>
+  <rect x="1060" y="825" width="180" height="70" rx="8" fill="#fff7ed" stroke="#fb923c"/>
+  <text x="1150" y="845" text-anchor="middle" font-size="11.5" font-weight="700" fill="#9a3412">Кондёр 470мкФ 50В</text>
+  <text x="1150" y="863" text-anchor="middle" font-size="10" fill="#7c2d12">у КАЖДОГО драйвера на VM/GND</text>
+  <text x="1150" y="880" text-anchor="middle" font-size="10" fill="#7c2d12">полоса на корпусе = минус!</text>
+  <line x1="300" y1="850" x2="340" y2="850" stroke="#dc2626" stroke-width="5"/>
+  <line x1="450" y1="850" x2="490" y2="850" stroke="#dc2626" stroke-width="5"/>
+  <line x1="600" y1="850" x2="640" y2="850" stroke="#dc2626" stroke-width="5"/>
+  <line x1="300" y1="880" x2="850" y2="880" stroke="#111827" stroke-width="5"/>
+  <!-- feeds up to TMC VM/GND -->
+  <polyline points="820,850 1250,850 1250,180 1180,180" fill="none" stroke="#e05555" stroke-width="4"/>
+  <polyline points="1250,450 1180,450" fill="none" stroke="#e05555" stroke-width="4"/>
+  <polyline points="1030,880 1270,880 1270,205 1180,205" fill="none" stroke="#111827" stroke-width="4"/>
+  <polyline points="1270,475 1180,475" fill="none" stroke="#111827" stroke-width="4"/>
+  <text x="1285" y="330" font-size="11.5" font-weight="700" fill="#b91c1c" transform="rotate(90 1285 330)">+24В на VM обоих</text>
+
+  <!-- ================= TABLE + LEGEND ================= -->
+  <rect x="120" y="950" width="1330" height="90" rx="10" fill="#f0f9ff" stroke="#0284c7"/>
+  <text x="140" y="975" font-size="12.5" font-weight="700" fill="#0c4a6e">Кто есть кто на платах:  ESP-A: №1=J1 база, №2=J2 плечо (длинный мотор!), холл=J1  ·  ESP-B: №1=J3 локоть (длинный!), №2=J4 РОЛЛ, холл=J4  ·  ESP-C: №1=J5 запястье, №2=J6 NEMA14 (ток 0.5А!), AS5600=J5</text>
+  <text x="140" y="998" font-size="12" fill="#0c4a6e">Цвета проводов моторов: катушка A = чёрный+зелёный → M1A/M1B · катушка B = красный+синий → M2A/M2B (если мотор дёргается — поменяй местами провода ОДНОЙ катушки)</text>
+  <text x="140" y="1020" font-size="12" fill="#0c4a6e">GND: чёрные линии — ВСЕ на общую шину · Датчики питаются ТОЛЬКО от 3V3 · ESP питается от USB · Моторы НИКОГДА напрямую к БП</text>
+</svg>

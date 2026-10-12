@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <style>
+    .bg{fill:#fff}.zone{fill:#f6f8fb;stroke:#9aa9bd;stroke-width:3}.wago{fill:#f2a020;stroke:#343434;stroke-width:4}.hole{fill:#e6ebf0;stroke:#253247;stroke-width:3}.end{fill:#171717;stroke:#000;stroke-width:4}
+    .h1{font:800 32px 'Segoe UI',Arial}.h2{font:800 24px 'Segoe UI',Arial}.t{font:20px 'Segoe UI',Arial}.s{font:17px 'Segoe UI',Arial}.pin{font:800 20px Consolas,monospace}.white{font:800 20px 'Segoe UI',Arial;fill:#fff}
+    .red{fill:none;stroke:#df1d25;stroke-width:10}.black{fill:none;stroke:#111;stroke-width:10}.note{fill:#fff8d9;stroke:#d09a00;stroke-width:3}
+  </style>
+  <rect width="1600" height="900" class="bg"/>
+  <text x="800" y="48" text-anchor="middle" class="h1">ЛИСТ 2 — РАЗВЕТВЛЕНИЕ ПИТАНИЯ НА ДВА ДРАЙВЕРА</text>
+
+  <rect x="35" y="80" width="1530" height="350" rx="20" class="zone"/>
+  <text x="65" y="120" class="h2" fill="#df1d25">КРАСНАЯ ЛИНИЯ +12 V</text>
+  <rect x="70" y="175" width="300" height="70" rx="12" fill="#fff" stroke="#df1d25" stroke-width="4"/>
+  <text x="220" y="219" text-anchor="middle" class="h2" fill="#df1d25">КРАСНЫЙ С ЛИСТА 1</text>
+  <path d="M370 210 H520" class="red"/>
+
+  <rect x="520" y="135" width="350" height="240" rx="22" class="wago"/>
+  <text x="695" y="172" text-anchor="middle" class="h2">НОВАЯ WAGO НА 3</text>
+  <circle cx="600" cy="220" r="34" class="hole"/><circle cx="600" cy="285" r="34" class="hole"/><circle cx="600" cy="350" r="34" class="hole"/>
+  <text x="600" y="228" text-anchor="middle" class="pin">1</text><text x="600" y="293" text-anchor="middle" class="pin">2</text><text x="600" y="358" text-anchor="middle" class="pin">3</text>
+  <text x="660" y="228" class="t">вход +12 V</text><text x="660" y="293" class="t">выход на VM №1</text><text x="660" y="358" class="t">выход на VM №2</text>
+  <path d="M634 285 H1110" class="red"/><path d="M634 350 H1110" class="red"/>
+  <rect x="1110" y="250" width="390" height="70" rx="12" class="end"/><text x="1305" y="294" text-anchor="middle" class="white">ДРАЙВЕР №1 → VM</text>
+  <rect x="1110" y="325" width="390" height="70" rx="12" class="end"/><text x="1305" y="369" text-anchor="middle" class="white">ДРАЙВЕР №2 → VM</text>
+
+  <rect x="35" y="460" width="1530" height="390" rx="20" class="zone"/>
+  <text x="65" y="500" class="h2">ЧЁРНАЯ ЛИНИЯ — ОБЩАЯ GND</text>
+  <rect x="70" y="565" width="300" height="70" rx="12" fill="#fff" stroke="#111" stroke-width="4"/>
+  <text x="220" y="609" text-anchor="middle" class="h2">ЧЁРНЫЙ С ЛИСТА 1</text>
+  <path d="M370 600 H520" class="black"/>
+
+  <rect x="520" y="515" width="390" height="300" rx="22" class="wago"/>
+  <text x="715" y="552" text-anchor="middle" class="h2">НОВАЯ WAGO НА 4</text>
+  <circle cx="600" cy="600" r="32" class="hole"/><circle cx="600" cy="665" r="32" class="hole"/><circle cx="600" cy="730" r="32" class="hole"/><circle cx="600" cy="795" r="32" class="hole"/>
+  <text x="600" y="608" text-anchor="middle" class="pin">1</text><text x="600" y="673" text-anchor="middle" class="pin">2</text><text x="600" y="738" text-anchor="middle" class="pin">3</text><text x="600" y="803" text-anchor="middle" class="pin">4</text>
+  <text x="660" y="608" class="t">вход общей GND</text><text x="660" y="673" class="t">GND драйвера №1</text><text x="660" y="738" class="t">GND драйвера №2</text><text x="660" y="803" class="t">GND ESP32</text>
+  <path d="M632 665 H1110" class="black"/><path d="M632 730 H1110" class="black"/><path d="M632 795 H1110" class="black"/>
+  <rect x="1110" y="630" width="390" height="70" rx="12" class="end"/><text x="1305" y="674" text-anchor="middle" class="white">ДРАЙВЕР №1 → GND У VM</text>
+  <rect x="1110" y="705" width="390" height="70" rx="12" class="end"/><text x="1305" y="749" text-anchor="middle" class="white">ДРАЙВЕР №2 → GND У VM</text>
+  <rect x="1110" y="780" width="390" height="70" rx="12" fill="#eaf4ff" stroke="#1565c0" stroke-width="4"/><text x="1305" y="824" text-anchor="middle" class="h2">ESP32 → GND</text>
+  <rect x="950" y="515" width="550" height="82" rx="12" class="note"/>
+  <text x="1225" y="548" text-anchor="middle" class="h2">ТОЛЬКО ОДИН GND НА КАЖДЫЙ ДРАЙВЕР</text>
+  <text x="1225" y="580" text-anchor="middle" class="s">нижний GND рядом с VIO оставляем пустым</text>
+</svg>

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="2500" height="3150" viewBox="0 0 2500 3150">
+  <defs>
+    <style>
+      .bg{fill:#fff}.section{fill:#f7f9fc;stroke:#9aa9bd;stroke-width:3}.box{fill:#fff;stroke:#253247;stroke-width:4}
+      .warn{fill:#fff0f1;stroke:#c9182b;stroke-width:4}.note{fill:#fff8d9;stroke:#d09a00;stroke-width:4}
+      .esp{fill:#eaf4ff;stroke:#1565c0;stroke-width:4}.drv{fill:#171717;stroke:#000;stroke-width:4}.wago{fill:#ef9b20;stroke:#343434;stroke-width:4}
+      .hole{fill:#dfe5ea;stroke:#202b3a;stroke-width:3}.cap{fill:#294b59;stroke:#172033;stroke-width:4}
+      .h1{font:800 42px 'Segoe UI',Arial,sans-serif;fill:#142035}.h2{font:800 31px 'Segoe UI',Arial,sans-serif;fill:#142035}
+      .h3{font:750 24px 'Segoe UI',Arial,sans-serif;fill:#142035}.t{font:22px 'Segoe UI',Arial,sans-serif;fill:#172033}
+      .s{font:18px 'Segoe UI',Arial,sans-serif;fill:#344157}.tiny{font:16px 'Segoe UI',Arial,sans-serif;fill:#344157}
+      .pin{font:800 21px Consolas,'Courier New',monospace;fill:#111}.white{font:700 20px 'Segoe UI',Arial,sans-serif;fill:#fff}
+      .red{fill:none;stroke:#df1d25;stroke-width:10}.black{fill:none;stroke:#111;stroke-width:10}
+      .blue{fill:none;stroke:#1565c0;stroke-width:8}.purple{fill:none;stroke:#7c3db5;stroke-width:8}
+      .orange{fill:none;stroke:#ef7918;stroke-width:8}.green{fill:none;stroke:#13934a;stroke-width:8}
+      .cyan{fill:none;stroke:#0093a6;stroke-width:8}.yellow{fill:none;stroke:#c99b00;stroke-width:8}
+      .mblack{fill:none;stroke:#111;stroke-width:9}.mgreen{fill:none;stroke:#159447;stroke-width:9}.mblue{fill:none;stroke:#1769d2;stroke-width:9}.mred{fill:none;stroke:#dc2020;stroke-width:9}
+      .dotr{fill:#df1d25}.dotb{fill:#111}.dotblue{fill:#1565c0}.doty{fill:#c99b00}
+    </style>
+  </defs>
+  <rect width="2500" height="3150" class="bg"/>
+
+  <text x="1250" y="58" text-anchor="middle" class="h1">ДВЕ NEMA + ДВА TMC2209 + ESP32 — ПРОСТАЯ СХЕМА «ПИН В ПИН»</text>
+  <text x="1250" y="98" text-anchor="middle" class="h3">С учётом твоих двух WAGO на 3 отверстия и уже вставленного конденсатора</text>
+  <rect x="45" y="125" width="2410" height="105" rx="16" class="warn"/>
+  <text x="75" y="165" class="h3">ГЛАВНОЕ:</text>
+  <text x="235" y="165" class="t">красный +12 V идёт ТОЛЬКО в пины VM драйверов. К ESP32 красный +12 V не припаивать.</text>
+  <text x="75" y="204" class="t">ESP32 питается по USB. От силовой части к ESP32 приходит только чёрный провод в пин GND.</text>
+
+  <!-- SECTION 1 POWER -->
+  <rect x="45" y="260" width="2410" height="905" rx="22" class="section"/>
+  <text x="75" y="310" class="h2">ШАГ 1. ПИТАНИЕ: ОСТАВЛЯЕМ ТВОЮ СБОРКУ И ДОБАВЛЯЕМ РАЗВЕТВЛЕНИЕ</text>
+
+  <!-- PSU -->
+  <rect x="75" y="440" width="280" height="260" rx="18" class="box"/>
+  <text x="215" y="490" text-anchor="middle" class="h2">БП 12 V</text>
+  <text x="215" y="535" text-anchor="middle" class="t">штекер питания</text>
+  <circle cx="215" cy="620" r="48" fill="#333"/>
+  <circle cx="215" cy="620" r="22" fill="#ddd"/>
+
+  <!-- adapter -->
+  <rect x="435" y="420" width="330" height="310" rx="20" fill="#252525" stroke="#111" stroke-width="4"/>
+  <text x="600" y="462" text-anchor="middle" class="white">ПЕРЕХОДНИК БП</text>
+  <rect x="475" y="500" width="250" height="130" rx="12" fill="#26b86a" stroke="#111" stroke-width="4"/>
+  <circle cx="535" cy="565" r="29" class="hole"/><circle cx="665" cy="565" r="29" class="hole"/>
+  <text x="535" y="574" text-anchor="middle" class="h2" fill="#111">−</text>
+  <text x="665" y="574" text-anchor="middle" class="h2" fill="#d71920">+</text>
+  <text x="600" y="682" text-anchor="middle" class="s">винтовые клеммы</text>
+
+  <!-- Existing WAGO PLUS -->
+  <rect x="880" y="335" width="450" height="180" rx="25" class="wago"/>
+  <text x="1105" y="375" text-anchor="middle" class="h3">ТВОЯ WAGO «ПЛЮС» — 3 ОТВЕРСТИЯ</text>
+  <circle cx="965" cy="445" r="34" class="hole"/><circle cx="1105" cy="445" r="34" class="hole"/><circle cx="1245" cy="445" r="34" class="hole"/>
+  <text x="965" y="453" text-anchor="middle" class="pin">1</text><text x="1105" y="453" text-anchor="middle" class="pin">2</text><text x="1245" y="453" text-anchor="middle" class="pin">3</text>
+  <text x="965" y="500" text-anchor="middle" class="s">от БП +</text><text x="1105" y="500" text-anchor="middle" class="s">конденсатор +</text><text x="1245" y="500" text-anchor="middle" class="s">дальше +</text>
+
+  <!-- Existing WAGO MINUS -->
+  <rect x="880" y="725" width="450" height="180" rx="25" class="wago"/>
+  <text x="1105" y="765" text-anchor="middle" class="h3">ТВОЯ WAGO «МИНУС» — 3 ОТВЕРСТИЯ</text>
+  <circle cx="965" cy="835" r="34" class="hole"/><circle cx="1105" cy="835" r="34" class="hole"/><circle cx="1245" cy="835" r="34" class="hole"/>
+  <text x="965" y="843" text-anchor="middle" class="pin">1</text><text x="1105" y="843" text-anchor="middle" class="pin">2</text><text x="1245" y="843" text-anchor="middle" class="pin">3</text>
+  <text x="965" y="890" text-anchor="middle" class="s">от БП −</text><text x="1105" y="890" text-anchor="middle" class="s">конденсатор −</text><text x="1245" y="890" text-anchor="middle" class="s">дальше GND</text>
+
+  <!-- PSU wires -->
+  <path d="M665 565 H805 V445 H931" class="red"/>
+  <text x="755" y="415" class="h3" fill="#df1d25">КРАСНЫЙ ≈10 см</text>
+  <text x="755" y="446" class="s">клемма «+» → WAGO+ отверстие 1</text>
+  <path d="M535 565 H790 V835 H931" class="black"/>
+  <text x="620" y="785" class="h3">ЧЁРНЫЙ ≈10 см</text>
+  <text x="620" y="816" class="s">клемма «−» → WAGO− отверстие 1</text>
+
+  <!-- capacitor -->
+  <rect x="1025" y="535" width="160" height="145" rx="14" class="cap"/>
+  <rect x="1135" y="535" width="50" height="145" fill="#e5e7eb"/>
+  <text x="1105" y="580" text-anchor="middle" class="white">470 µF</text>
+  <text x="1105" y="615" text-anchor="middle" class="white">50 V</text>
+  <text x="1055" y="660" text-anchor="middle" class="white">+</text><text x="1158" y="660" text-anchor="middle" class="pin">−</text>
+  <path d="M1055 535 V505 H1105 V479" class="red"/><path d="M1158 680 V705 H1105 V801" class="black"/>
+  <text x="845" y="620" class="s">Ножка «+» → отверстие 2 WAGO+</text>
+  <text x="845" y="650" class="s">Ножка с полосой «−» → отверстие 2 WAGO−</text>
+
+  <!-- New WAGO plus -->
+  <rect x="1500" y="335" width="460" height="180" rx="25" class="wago"/>
+  <text x="1730" y="375" text-anchor="middle" class="h3">ДОБАВЬ WAGO «+» — 3 ОТВЕРСТИЯ</text>
+  <circle cx="1590" cy="445" r="34" class="hole"/><circle cx="1730" cy="445" r="34" class="hole"/><circle cx="1870" cy="445" r="34" class="hole"/>
+  <text x="1590" y="453" text-anchor="middle" class="pin">1</text><text x="1730" y="453" text-anchor="middle" class="pin">2</text><text x="1870" y="453" text-anchor="middle" class="pin">3</text>
+  <text x="1590" y="500" text-anchor="middle" class="s">вход +</text><text x="1730" y="500" text-anchor="middle" class="s">к VM №1</text><text x="1870" y="500" text-anchor="middle" class="s">к VM №2</text>
+  <path d="M1279 445 H1556" class="red"/>
+  <text x="1345" y="420" class="s">красный: отверстие 3 → отверстие 1</text>
+
+  <!-- New WAGO ground 8 -->
+  <rect x="1400" y="715" width="650" height="220" rx="25" class="wago"/>
+  <text x="1725" y="755" text-anchor="middle" class="h3">ДОБАВЬ WAGO «ОБЩАЯ GND» — 8 ОТВЕРСТИЙ</text>
+  <g>
+    <circle cx="1445" cy="825" r="27" class="hole"/><circle cx="1520" cy="825" r="27" class="hole"/><circle cx="1595" cy="825" r="27" class="hole"/><circle cx="1670" cy="825" r="27" class="hole"/>
+    <circle cx="1745" cy="825" r="27" class="hole"/><circle cx="1820" cy="825" r="27" class="hole"/><circle cx="1895" cy="825" r="27" class="hole"/><circle cx="1970" cy="825" r="27" class="hole"/>
+    <text x="1445" y="833" text-anchor="middle" class="pin">1</text><text x="1520" y="833" text-anchor="middle" class="pin">2</text><text x="1595" y="833" text-anchor="middle" class="pin">3</text><text x="1670" y="833" text-anchor="middle" class="pin">4</text>
+    <text x="1745" y="833" text-anchor="middle" class="pin">5</text><text x="1820" y="833" text-anchor="middle" class="pin">6</text><text x="1895" y="833" text-anchor="middle" class="pin">7</text><text x="1970" y="833" text-anchor="middle" class="pin">8</text>
+  </g>
+  <text x="1445" y="885" text-anchor="middle" class="tiny">вход</text><text x="1520" y="885" text-anchor="middle" class="tiny">GND1-P</text><text x="1595" y="885" text-anchor="middle" class="tiny">GND1-L</text>
+  <text x="1670" y="885" text-anchor="middle" class="tiny">GND2-P</text><text x="1745" y="885" text-anchor="middle" class="tiny">GND2-L</text><text x="1820" y="885" text-anchor="middle" class="tiny">ESP GND</text>
+  <text x="1895" y="885" text-anchor="middle" class="tiny">запас</text><text x="1970" y="885" text-anchor="middle" class="tiny">запас</text>
+  <path d="M1279 835 H1418" class="black"/>
+  <text x="1325" y="805" class="s">чёрный: отверстие 3 → отверстие 1</text>
+
+  <!-- destination cards -->
+  <rect x="2050" y="270" width="350" height="320" rx="16" class="drv"/>
+  <text x="2225" y="310" text-anchor="middle" class="white">ДРАЙВЕР №1 — ПИТАНИЕ</text>
+  <rect x="2140" y="345" width="170" height="48" rx="7" class="hole"/><text x="2225" y="377" text-anchor="middle" class="pin">VM</text>
+  <rect x="2140" y="420" width="170" height="48" rx="7" class="hole"/><text x="2225" y="452" text-anchor="middle" class="pin">GND у VM</text>
+  <rect x="2140" y="495" width="170" height="48" rx="7" class="hole"/><text x="2225" y="527" text-anchor="middle" class="pin">GND у VIO</text>
+  <rect x="2050" y="600" width="350" height="320" rx="16" class="drv"/>
+  <text x="2225" y="640" text-anchor="middle" class="white">ДРАЙВЕР №2 — ПИТАНИЕ</text>
+  <rect x="2140" y="675" width="170" height="48" rx="7" class="hole"/><text x="2225" y="707" text-anchor="middle" class="pin">VM</text>
+  <rect x="2140" y="750" width="170" height="48" rx="7" class="hole"/><text x="2225" y="782" text-anchor="middle" class="pin">GND у VM</text>
+  <rect x="2140" y="825" width="170" height="48" rx="7" class="hole"/><text x="2225" y="857" text-anchor="middle" class="pin">GND у VIO</text>
+  <rect x="2050" y="960" width="350" height="110" rx="16" class="esp"/>
+  <text x="2225" y="1002" text-anchor="middle" class="h3">ESP32</text><text x="2225" y="1040" text-anchor="middle" class="pin">GND</text>
+
+  <!-- branches power to driver cards -->
+  <path d="M1730 411 V369 H2140" class="red"/><text x="1830" y="350" class="s">красный → драйвер №1 VM</text>
+  <path d="M1870 479 V699 H2140" class="red"/><text x="1900" y="680" class="s">красный → драйвер №2 VM</text>
+  <path d="M1520 798 V444 H2140" class="black"/><text x="1540" y="540" class="s">чёрный → GND №1 рядом с VM</text>
+  <path d="M1595 852 V519 H2140" class="black"/><text x="1620" y="500" class="s">чёрный → GND №1 рядом с VIO</text>
+  <path d="M1670 852 V774 H2140" class="black"/><text x="1690" y="755" class="s">чёрный → GND №2 рядом с VM</text>
+  <path d="M1745 852 V849 H2140" class="black"/><text x="1765" y="835" class="s">чёрный → GND №2 рядом с VIO</text>
+  <path d="M1820 852 V1015 H2050" class="black"/><text x="1835" y="990" class="s">чёрный → ESP32 GND</text>
+  <text x="75" y="1120" class="h3" fill="#c9182b">ИТОГ: К ESP32 ИЗ ЭТОГО БЛОКА ИДЁТ ТОЛЬКО ЧЁРНЫЙ GND. КРАСНОГО ПРОВОДА К ESP32 НЕТ.</text>
+
+  <!-- SECTION 2 LOGIC -->
+  <rect x="45" y="1195" width="2410" height="850" rx="22" class="section"/>
+  <text x="75" y="1245" class="h2">ШАГ 2. СИГНАЛЬНЫЕ ПРОВОДА ESP32 → ДРАЙВЕРЫ</text>
+  <text x="75" y="1283" class="t">Ищи на ESP32 ровно эти надписи: D25/25, D26/26, D32/32, D33/33, D27/27, 3V3 и GND. Пин D4 здесь не используется.</text>
+
+  <!-- individual signal lanes -->
+  <rect x="90" y="1335" width="300" height="62" rx="10" class="esp"/><text x="240" y="1375" text-anchor="middle" class="pin">ESP32 D25 / GPIO25</text>
+  <path d="M390 1366 H1870" class="purple"/><text x="750" y="1350" class="h3" fill="#7c3db5">ФИОЛЕТОВЫЙ ПРОВОД</text>
+  <rect x="1870" y="1335" width="480" height="62" rx="10" class="drv"/><text x="2110" y="1375" text-anchor="middle" class="white">ДРАЙВЕР №1 → STEP</text>
+
+  <rect x="90" y="1425" width="300" height="62" rx="10" class="esp"/><text x="240" y="1465" text-anchor="middle" class="pin">ESP32 D26 / GPIO26</text>
+  <path d="M390 1456 H1870" class="orange"/><text x="750" y="1440" class="h3" fill="#ef7918">ОРАНЖЕВЫЙ ПРОВОД</text>
+  <rect x="1870" y="1425" width="480" height="62" rx="10" class="drv"/><text x="2110" y="1465" text-anchor="middle" class="white">ДРАЙВЕР №1 → DIR</text>
+
+  <rect x="90" y="1515" width="300" height="62" rx="10" class="esp"/><text x="240" y="1555" text-anchor="middle" class="pin">ESP32 D32 / GPIO32</text>
+  <path d="M390 1546 H1870" class="green"/><text x="750" y="1530" class="h3" fill="#13934a">ЗЕЛЁНЫЙ ПРОВОД</text>
+  <rect x="1870" y="1515" width="480" height="62" rx="10" class="drv"/><text x="2110" y="1555" text-anchor="middle" class="white">ДРАЙВЕР №2 → STEP</text>
+
+  <rect x="90" y="1605" width="300" height="62" rx="10" class="esp"/><text x="240" y="1645" text-anchor="middle" class="pin">ESP32 D33 / GPIO33</text>
+  <path d="M390 1636 H1870" class="cyan"/><text x="750" y="1620" class="h3" fill="#0093a6">БИРЮЗОВЫЙ ПРОВОД</text>
+  <rect x="1870" y="1605" width="480" height="62" rx="10" class="drv"/><text x="2110" y="1645" text-anchor="middle" class="white">ДРАЙВЕР №2 → DIR</text>
+
+  <!-- VIO splitter -->
+  <rect x="90" y="1720" width="300" height="62" rx="10" class="esp"/><text x="240" y="1760" text-anchor="middle" class="pin">ESP32 3V3</text>
+  <path d="M390 1751 H700 V1785 H812" class="blue"/>
+  <rect x="760" y="1690" width="440" height="150" rx="22" class="wago"/>
+  <text x="980" y="1723" text-anchor="middle" class="h3">WAGO 3 ОТВЕРСТИЯ — 3V3</text>
+  <circle cx="840" cy="1785" r="28" class="hole"/><circle cx="980" cy="1785" r="28" class="hole"/><circle cx="1120" cy="1785" r="28" class="hole"/>
+  <text x="840" y="1793" text-anchor="middle" class="pin">1</text><text x="980" y="1793" text-anchor="middle" class="pin">2</text><text x="1120" y="1793" text-anchor="middle" class="pin">3</text>
+  <text x="840" y="1828" text-anchor="middle" class="tiny">от ESP</text><text x="980" y="1828" text-anchor="middle" class="tiny">VIO №1</text><text x="1120" y="1828" text-anchor="middle" class="tiny">VIO №2</text>
+  <path d="M980 1813 V1731 H1870" class="blue"/><path d="M1120 1813 V1811 H1870" class="blue"/>
+  <rect x="1870" y="1700" width="480" height="62" rx="10" class="drv"/><text x="2110" y="1740" text-anchor="middle" class="white">ДРАЙВЕР №1 → VIO</text>
+  <rect x="1870" y="1780" width="480" height="62" rx="10" class="drv"/><text x="2110" y="1820" text-anchor="middle" class="white">ДРАЙВЕР №2 → VIO</text>
+
+  <!-- EN splitter -->
+  <rect x="90" y="1870" width="300" height="62" rx="10" class="esp"/><text x="240" y="1910" text-anchor="middle" class="pin">ESP32 D27 / GPIO27</text>
+  <path d="M390 1901 H700 V1955 H812" class="yellow"/>
+  <rect x="760" y="1860" width="440" height="150" rx="22" class="wago"/>
+  <text x="980" y="1893" text-anchor="middle" class="h3">WAGO 3 ОТВЕРСТИЯ — EN</text>
+  <circle cx="840" cy="1955" r="28" class="hole"/><circle cx="980" cy="1955" r="28" class="hole"/><circle cx="1120" cy="1955" r="28" class="hole"/>
+  <text x="840" y="1963" text-anchor="middle" class="pin">1</text><text x="980" y="1963" text-anchor="middle" class="pin">2</text><text x="1120" y="1963" text-anchor="middle" class="pin">3</text>
+  <text x="840" y="1998" text-anchor="middle" class="tiny">от ESP</text><text x="980" y="1998" text-anchor="middle" class="tiny">EN №1</text><text x="1120" y="1998" text-anchor="middle" class="tiny">EN №2</text>
+  <path d="M980 1983 V1901 H1870" class="yellow"/><path d="M1120 1983 V1981 H1870" class="yellow"/>
+  <rect x="1870" y="1870" width="480" height="62" rx="10" class="drv"/><text x="2110" y="1910" text-anchor="middle" class="white">ДРАЙВЕР №1 → EN / ENN</text>
+  <rect x="1870" y="1950" width="480" height="62" rx="10" class="drv"/><text x="2110" y="1990" text-anchor="middle" class="white">ДРАЙВЕР №2 → EN / ENN</text>
+  <text x="1225" y="2030" class="tiny" fill="#c9182b">EN подключать только к контакту, реально подписанному EN или ENN.</text>
+
+  <!-- SECTION 3 MOTORS -->
+  <rect x="45" y="2075" width="2410" height="640" rx="22" class="section"/>
+  <text x="75" y="2125" class="h2">ШАГ 3. КАЖДЫЙ МОТОР ИДЁТ ТОЛЬКО В СВОЙ ДРАЙВЕР</text>
+  <text x="75" y="2163" class="t">Оставляем порядок из прежней однодвигательной схемы: M1B чёрный, M1A зелёный, M2A синий, M2B красный.</text>
+
+  <!-- motor 1 -->
+  <text x="90" y="2220" class="h2">J1 — ОСНОВАНИЕ</text>
+  <rect x="90" y="2250" width="300" height="390" rx="18" class="drv"/>
+  <text x="240" y="2295" text-anchor="middle" class="white">ДРАЙВЕР №1</text>
+  <rect x="175" y="2330" width="180" height="48" class="hole"/><text x="265" y="2362" text-anchor="middle" class="pin">M1B</text>
+  <rect x="175" y="2400" width="180" height="48" class="hole"/><text x="265" y="2432" text-anchor="middle" class="pin">M1A</text>
+  <rect x="175" y="2470" width="180" height="48" class="hole"/><text x="265" y="2502" text-anchor="middle" class="pin">M2A</text>
+  <rect x="175" y="2540" width="180" height="48" class="hole"/><text x="265" y="2572" text-anchor="middle" class="pin">M2B</text>
+  <path d="M355 2354 H760" class="mblack"/><text x="470" y="2338" class="h3">ЧЁРНЫЙ</text>
+  <path d="M355 2424 H760" class="mgreen"/><text x="470" y="2408" class="h3" fill="#159447">ЗЕЛЁНЫЙ</text>
+  <path d="M355 2494 H760" class="mblue"/><text x="470" y="2478" class="h3" fill="#1769d2">СИНИЙ</text>
+  <path d="M355 2564 H760" class="mred"/><text x="470" y="2548" class="h3" fill="#dc2020">КРАСНЫЙ</text>
+  <rect x="760" y="2265" width="390" height="350" rx="18" class="box"/>
+  <text x="955" y="2310" text-anchor="middle" class="h2">NEMA17 №1</text>
+  <text x="790" y="2370" class="t">чёрный ← M1B</text><text x="790" y="2440" class="t">зелёный ← M1A</text>
+  <text x="790" y="2510" class="t">синий ← M2A</text><text x="790" y="2580" class="t">красный ← M2B</text>
+
+  <!-- motor 2 -->
+  <text x="1330" y="2220" class="h2">J2 — ПЛЕЧО</text>
+  <rect x="1330" y="2250" width="300" height="390" rx="18" class="drv"/>
+  <text x="1480" y="2295" text-anchor="middle" class="white">ДРАЙВЕР №2</text>
+  <rect x="1415" y="2330" width="180" height="48" class="hole"/><text x="1505" y="2362" text-anchor="middle" class="pin">M1B</text>
+  <rect x="1415" y="2400" width="180" height="48" class="hole"/><text x="1505" y="2432" text-anchor="middle" class="pin">M1A</text>
+  <rect x="1415" y="2470" width="180" height="48" class="hole"/><text x="1505" y="2502" text-anchor="middle" class="pin">M2A</text>
+  <rect x="1415" y="2540" width="180" height="48" class="hole"/><text x="1505" y="2572" text-anchor="middle" class="pin">M2B</text>
+  <path d="M1595 2354 H2000" class="mblack"/><text x="1710" y="2338" class="h3">ЧЁРНЫЙ</text>
+  <path d="M1595 2424 H2000" class="mgreen"/><text x="1710" y="2408" class="h3" fill="#159447">ЗЕЛЁНЫЙ</text>
+  <path d="M1595 2494 H2000" class="mblue"/><text x="1710" y="2478" class="h3" fill="#1769d2">СИНИЙ</text>
+  <path d="M1595 2564 H2000" class="mred"/><text x="1710" y="2548" class="h3" fill="#dc2020">КРАСНЫЙ</text>
+  <rect x="2000" y="2265" width="390" height="350" rx="18" class="box"/>
+  <text x="2195" y="2310" text-anchor="middle" class="h2">NEMA17 №2</text>
+  <text x="2030" y="2370" class="t">чёрный ← M1B</text><text x="2030" y="2440" class="t">зелёный ← M1A</text>
+  <text x="2030" y="2510" class="t">синий ← M2A</text><text x="2030" y="2580" class="t">красный ← M2B</text>
+  <text x="75" y="2685" class="h3" fill="#c9182b">Перед пайкой прозвони каждый мотор: чёрный+зелёный должны быть одной обмоткой, синий+красный — второй. Моторы друг с другом не соединять.</text>
+
+  <!-- SECTION 4 PHYSICAL PINOUT -->
+  <rect x="45" y="2745" width="2410" height="350" rx="22" class="section"/>
+  <text x="75" y="2795" class="h2">КАК ДЕРЖАТЬ LERDGE TMC2209 И КАКИЕ ПИНЫ ИСКАТЬ</text>
+  <rect x="85" y="2825" width="900" height="225" rx="18" class="drv"/>
+  <text x="535" y="2862" text-anchor="middle" class="white">ЛЕВАЯ ГРЕБЁНКА — СВЕРХУ ВНИЗ</text>
+  <text x="120" y="2905" class="white">1 EN/ENN*   2 MS1   3 MS2   4 PDN/UART</text>
+  <text x="120" y="2945" class="white">5 PDN/UART  6 CLK   7 STEP  8 DIR</text>
+  <text x="120" y="2990" class="s" fill="#ffd45a">* EN подключать только после проверки подписи на плате</text>
+  <rect x="1030" y="2825" width="1360" height="225" rx="18" class="drv"/>
+  <text x="1710" y="2862" text-anchor="middle" class="white">ПРАВАЯ ГРЕБЁНКА — СВЕРХУ ВНИЗ</text>
+  <text x="1070" y="2905" class="white">1 VM   2 GND рядом с VM   3 M1B   4 M1A</text>
+  <text x="1070" y="2945" class="white">5 M2A  6 M2B             7 VIO   8 GND рядом с VIO</text>
+  <text x="1070" y="2990" class="s" fill="#ffd45a">MS1, MS2, PDN/UART и CLK сейчас оставить пустыми.</text>
+
+  <text x="75" y="3130" class="h3" fill="#c9182b">До появления прошивки моторный БП не включать. USB и 12 V при пайке должны быть отключены.</text>
+</svg>

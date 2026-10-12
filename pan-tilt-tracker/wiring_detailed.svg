@@ -1,0 +1,275 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 1620" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ar"  markerWidth="12" markerHeight="12" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#888"/></marker>
+    <marker id="arR" markerWidth="12" markerHeight="12" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#d63b2f"/></marker>
+    <marker id="arB" markerWidth="12" markerHeight="12" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#333"/></marker>
+    <marker id="arO" markerWidth="12" markerHeight="12" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#e8820c"/></marker>
+    <marker id="d2" markerWidth="14" markerHeight="14" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#5a6577"/></marker>
+    <marker id="d2b" markerWidth="14" markerHeight="14" refX="2" refY="4" orient="auto"><path d="M8,0 L0,4 L8,8 Z" fill="#5a6577"/></marker>
+    <style>
+      .ttl{font-size:30px;font-weight:800;fill:#1c2330}
+      .h2{font-size:20px;font-weight:800;fill:#3a4660}
+      .sub{font-size:15px;fill:#5a6577}
+      .pnl{font-size:16px;font-weight:800;fill:#5a6577}
+      .lbl{font-size:15px;fill:#1c2330}
+      .lblb{font-size:16px;font-weight:700;fill:#1c2330}
+      .lblw{font-size:16px;font-weight:700;fill:#eaf0f8}
+      .sm{font-size:13px;fill:#6a7385}
+      .smw{font-size:13px;fill:#b7c2d4}
+      .pin{font-size:11px;fill:#9aa3b2}
+      .pinU{font-size:13px;font-weight:800}
+      .wl{font-size:14px;font-weight:700}
+      .big{font-size:18px;font-weight:800}
+      .red{stroke:#d63b2f;stroke-width:5;fill:none}
+      .blk{stroke:#333;stroke-width:5;fill:none}
+      .sig{stroke:#e8820c;stroke-width:5;fill:none}
+      .usb{stroke:#8a8f98;stroke-width:5;fill:none}
+      .wifi{stroke:#2e9e5b;stroke-width:4;fill:none;stroke-dasharray:9 6}
+      .stub{stroke:#9aa3b2;stroke-width:2}
+      .box{stroke-width:2.5}
+    </style>
+  </defs>
+  <rect x="0" y="0" width="1800" height="1620" fill="#fcfcfe"/>
+  <text x="44" y="50" class="ttl">Pan-Tilt трекер — подключение (понятная схема)</text>
+
+  <!-- ===================================================== -->
+  <!-- BLOCK 1: CONCEPT -->
+  <!-- ===================================================== -->
+  <rect x="40" y="78" width="1720" height="486" rx="14" fill="#f3f7ff" stroke="#cdd9ee" class="box"/>
+  <text x="64" y="112" class="h2">1 · КАК ВСЁ СВЯЗАНО — сначала пойми это</text>
+
+  <!-- yellow key banner -->
+  <rect x="64" y="126" width="1672" height="92" rx="10" fill="#fff6d6" stroke="#e0b020" class="box"/>
+  <text x="84" y="153" class="lblb">★ Сервы НЕ подключаются к компьютеру напрямую. К ПК идёт ТОЛЬКО ОДИН провод — USB от платы ESP32.</text>
+  <text x="84" y="178" class="lbl">★ У сервы 3 провода:  <tspan fill="#d63b2f" font-weight="700">🔴 +7.4 В</tspan>  и  <tspan font-weight="700">⚫ земля</tspan>  — это ПИТАНИЕ моторов;  <tspan fill="#b8650a" font-weight="700">🟠 Signal</tspan>  — это ДАННЫЕ, и он идёт в ESP32, а не в ПК.</text>
+  <text x="84" y="203" class="sm">★ Камера ESP32-CAM к этой проводке вообще не относится — она шлёт видео на ПК отдельно, по WiFi.</text>
+
+  <!-- stations -->
+  <rect x="100" y="300" width="280" height="150" rx="14" fill="#ede9ff" stroke="#7b66d6" class="box"/>
+  <text x="240" y="340" class="lblb" text-anchor="middle">ПК (Windows)</text>
+  <text x="240" y="368" class="sm" text-anchor="middle">видит лицо с камеры,</text>
+  <text x="240" y="388" class="sm" text-anchor="middle">считает: куда повернуть,</text>
+  <text x="240" y="408" class="sm" text-anchor="middle">шлёт «pan tilt» в ESP32</text>
+
+  <rect x="740" y="300" width="320" height="150" rx="14" fill="#2c3849" stroke="#0d1119" class="box"/>
+  <text x="900" y="340" class="lblw" text-anchor="middle">ESP32 — МОСТ (переводчик)</text>
+  <text x="900" y="370" class="smw" text-anchor="middle">принимает команды с ПК по USB</text>
+  <text x="900" y="392" class="smw" text-anchor="middle">и крутит сервы по линии Signal;</text>
+  <text x="900" y="414" class="smw" text-anchor="middle">читает их позицию обратно</text>
+
+  <rect x="1400" y="290" width="300" height="172" rx="14" fill="#fff8e8" stroke="#e0a030" class="box"/>
+  <text x="1550" y="318" class="lblb" text-anchor="middle">СЕРВЫ (2× STS3215)</text>
+  <rect x="1422" y="332" width="256" height="50" rx="8" fill="#fff3d6" stroke="#e0a030"/>
+  <text x="1550" y="362" class="lbl" text-anchor="middle">PAN · ID 1 (поворот)</text>
+  <rect x="1422" y="392" width="256" height="50" rx="8" fill="#fff3d6" stroke="#e0a030"/>
+  <text x="1550" y="422" class="lbl" text-anchor="middle">TILT · ID 2 (наклон)</text>
+
+  <!-- arrows between stations -->
+  <line x1="384" y1="375" x2="736" y2="375" class="usb" marker-start="url(#d2b)" marker-end="url(#d2)"/>
+  <text x="560" y="360" class="wl" fill="#6b7280" text-anchor="middle">USB-кабель · 1 шт</text>
+  <text x="560" y="398" class="sm" text-anchor="middle">→ команды   ← позиция</text>
+
+  <line x1="1064" y1="372" x2="1396" y2="372" class="sig" marker-start="url(#d2b)" marker-end="url(#d2)"/>
+  <text x="1230" y="357" class="wl" fill="#b8650a" text-anchor="middle">Signal · линия данных</text>
+  <text x="1230" y="396" class="sm" text-anchor="middle">(полудуплекс, 1 провод)</text>
+
+  <!-- power into servos -->
+  <rect x="1400" y="486" width="300" height="56" rx="10" fill="#fbe6e3" stroke="#d63b2f" class="box"/>
+  <text x="1550" y="509" class="wl" fill="#a82a20" text-anchor="middle">ПИТАНИЕ моторов (отдельно!)</text>
+  <text x="1550" y="529" class="sm" text-anchor="middle">розетка → БП 12В → LM2596 → 7.4В</text>
+  <line x1="1550" y1="486" x2="1550" y2="466" class="red" marker-end="url(#arR)"/>
+
+  <!-- correct/wrong inset -->
+  <rect x="100" y="478" width="560" height="66" rx="10" fill="#eef7ef" stroke="#9cc7a4" class="box"/>
+  <text x="120" y="505" class="lblb" fill="#2e7d46">✅  серво →  ESP32  → USB →  ПК</text>
+  <text x="120" y="530" class="lblb" fill="#b23026">❌  серво  →  ПК      (так НЕ бывает)</text>
+
+  <!-- ===================================================== -->
+  <!-- BLOCK 2: DETAIL WIRING -->
+  <!-- ===================================================== -->
+  <rect x="40" y="582" width="1720" height="1010" rx="14" fill="#ffffff" stroke="#cdd9ee" class="box"/>
+  <text x="64" y="616" class="h2">2 · ДЕТАЛЬНАЯ РАСПАЙКА — собирай по пинам (цвет провода = его роль)</text>
+
+  <!-- power chain -->
+  <g text-anchor="middle">
+    <rect x="80" y="678" width="96" height="54" rx="9" fill="#eef1f5" stroke="#aeb7c4" class="box"/>
+    <text x="128" y="702" class="lbl">220 В</text><text x="128" y="720" class="sm">розетка</text>
+    <rect x="196" y="678" width="116" height="54" rx="9" fill="#eef1f5" stroke="#aeb7c4" class="box"/>
+    <text x="254" y="702" class="lbl">БП 12 В</text><text x="254" y="720" class="sm">3 А</text>
+    <rect x="332" y="678" width="160" height="54" rx="9" fill="#eef1f5" stroke="#aeb7c4" class="box"/>
+    <text x="412" y="700" class="lbl">адаптер</text><text x="412" y="718" class="sm">бочонок→клеммы</text>
+  </g>
+  <g class="stub" marker-end="url(#ar)"><line x1="176" y1="705" x2="194" y2="705"/><line x1="312" y1="705" x2="330" y2="705"/></g>
+  <circle cx="496" cy="692" r="5" fill="#d63b2f"/><text x="506" y="696" class="sm" fill="#d63b2f">+12В</text>
+  <circle cx="496" cy="716" r="5" fill="#333"/><text x="506" y="720" class="sm">GND</text>
+
+  <!-- LM2596 -->
+  <rect x="150" y="790" width="300" height="160" rx="12" fill="#e9f2fb" stroke="#3f78c4" class="box"/>
+  <text x="300" y="820" class="lblb" text-anchor="middle">LM2596 · понижайка</text>
+  <circle cx="300" cy="872" r="28" fill="#2d5fa8"/><circle cx="300" cy="872" r="9" fill="#bcd2ef"/><line x1="300" y1="872" x2="300" y2="848" stroke="#fff" stroke-width="3"/>
+  <text x="300" y="930" class="sm" text-anchor="middle" fill="#b23026" font-weight="700">⚙ крути до 7.4 В (мультиметром!)</text>
+  <circle cx="150" cy="848" r="5" fill="#d63b2f"/><text x="138" y="852" class="sm" text-anchor="end">IN+</text>
+  <circle cx="150" cy="908" r="5" fill="#333"/><text x="138" y="912" class="sm" text-anchor="end">IN−</text>
+  <circle cx="450" cy="848" r="5" fill="#d63b2f"/><text x="462" y="852" class="sm" fill="#d63b2f">OUT+ 7.4В</text>
+  <circle cx="450" cy="908" r="5" fill="#333"/><text x="462" y="912" class="sm">OUT−</text>
+  <polyline class="red" points="496,692 524,692 524,762 120,762 120,848 148,848" marker-end="url(#arR)"/>
+  <polyline class="blk" points="496,716 548,716 548,778 100,778 100,908 148,908" marker-end="url(#arB)"/>
+
+  <!-- WAGO vertical rails -->
+  <rect x="1130" y="676" width="40" height="250" rx="8" fill="#fbe6e3" stroke="#d63b2f" class="box"/>
+  <text x="1150" y="805" class="wl" fill="#a82a20" text-anchor="middle" transform="rotate(90 1150 805)">WAGO  ·  +7.4 В</text>
+  <rect x="1192" y="676" width="40" height="486" rx="8" fill="#e7e9eb" stroke="#333" class="box"/>
+  <text x="1212" y="930" class="wl" fill="#222" text-anchor="middle" transform="rotate(90 1212 930)">WAGO  ·  GND (общая земля)</text>
+  <!-- LM OUT -> rails -->
+  <polyline class="red" points="455,848 488,848 488,656 1150,656 1150,676" marker-end="url(#arR)"/>
+  <text x="760" y="648" class="sm" fill="#d63b2f">+7.4 В на красную шину</text>
+  <polyline class="blk" points="455,908 512,908 512,636 1212,636 1212,676" marker-end="url(#arB)"/>
+  <text x="760" y="628" class="sm">GND на чёрную шину</text>
+
+  <!-- ESP32 board -->
+  <rect x="640" y="800" width="210" height="440" rx="14" fill="#222b39" stroke="#0d1119" class="box"/>
+  <rect x="652" y="812" width="186" height="416" rx="8" fill="#2c3849"/>
+  <text x="745" y="852" class="lblw" text-anchor="middle">ESP32</text>
+  <text x="745" y="872" class="smw" text-anchor="middle">мост к сервам</text>
+  <!-- USB at bottom for clean routing -->
+  <rect x="721" y="1240" width="48" height="26" rx="4" fill="#9aa3b2"/>
+  <text x="745" y="1284" class="sm" text-anchor="middle" fill="#6a7385">USB-разъём</text>
+
+  <!-- left pins -->
+  <g>
+    <line class="stub" x1="640" y1="900" x2="626" y2="900"/><text x="622" y="903" class="pin" text-anchor="end">EN</text>
+    <line class="stub" x1="640" y1="924" x2="626" y2="924"/><text x="622" y="927" class="pin" text-anchor="end">VP 36</text>
+    <line class="stub" x1="640" y1="948" x2="626" y2="948"/><text x="622" y="951" class="pin" text-anchor="end">VN 39</text>
+    <line class="stub" x1="640" y1="972" x2="626" y2="972"/><text x="622" y="975" class="pin" text-anchor="end">G34</text>
+    <line class="stub" x1="640" y1="996" x2="626" y2="996"/><text x="622" y="999" class="pin" text-anchor="end">G35</text>
+    <line class="stub" x1="640" y1="1020" x2="626" y2="1020"/><text x="622" y="1023" class="pin" text-anchor="end">G32</text>
+    <line class="stub" x1="640" y1="1044" x2="626" y2="1044"/><text x="622" y="1047" class="pin" text-anchor="end">G33</text>
+    <line class="stub" x1="640" y1="1068" x2="626" y2="1068"/><text x="622" y="1071" class="pin" text-anchor="end">G25</text>
+    <line class="stub" x1="640" y1="1092" x2="626" y2="1092"/><text x="622" y="1095" class="pin" text-anchor="end">G26</text>
+    <line class="stub" x1="640" y1="1116" x2="626" y2="1116"/><text x="622" y="1119" class="pin" text-anchor="end">G27</text>
+    <line class="stub" x1="640" y1="1140" x2="626" y2="1140"/><text x="622" y="1143" class="pin" text-anchor="end">G14</text>
+    <line class="stub" x1="640" y1="1164" x2="626" y2="1164"/><text x="622" y="1167" class="pin" text-anchor="end">G12</text>
+    <line class="stub" x1="640" y1="1188" x2="626" y2="1188"/><text x="622" y="1191" class="pin" text-anchor="end">G13</text>
+    <line class="stub" x1="640" y1="1212" x2="626" y2="1212"/><text x="622" y="1215" class="pin" text-anchor="end">VIN 5V</text>
+  </g>
+  <!-- right pins -->
+  <g>
+    <line class="stub" x1="850" y1="900" x2="864" y2="900"/><text x="868" y="903" class="pin">G23</text>
+    <line class="stub" x1="850" y1="924" x2="864" y2="924"/><text x="868" y="927" class="pin">G22</text>
+    <line class="stub" x1="850" y1="948" x2="864" y2="948"/><text x="868" y="951" class="pin">TX0</text>
+    <line class="stub" x1="850" y1="972" x2="864" y2="972"/><text x="868" y="975" class="pin">RX0</text>
+    <line class="stub" x1="850" y1="996" x2="864" y2="996"/><text x="868" y="999" class="pin">G21</text>
+    <line class="stub" x1="850" y1="1020" x2="864" y2="1020"/><text x="868" y="1023" class="pin">G19</text>
+    <line class="stub" x1="850" y1="1044" x2="864" y2="1044"/><text x="868" y="1047" class="pin">G18</text>
+    <line class="stub" x1="850" y1="1068" x2="864" y2="1068"/><text x="868" y="1071" class="pin">G5</text>
+    <!-- G17 TX2 used -->
+    <line x1="850" y1="1092" x2="892" y2="1092" class="sig"/>
+    <rect x="896" y="1080" width="104" height="24" rx="5" fill="#fff1df" stroke="#e8820c"/>
+    <text x="903" y="1097" class="pinU" fill="#b8650a">G17 · TX2</text>
+    <!-- G16 RX2 used -->
+    <line x1="850" y1="1116" x2="892" y2="1116" class="sig"/>
+    <rect x="896" y="1104" width="104" height="24" rx="5" fill="#fff1df" stroke="#e8820c"/>
+    <text x="903" y="1121" class="pinU" fill="#b8650a">G16 · RX2</text>
+    <line class="stub" x1="850" y1="1140" x2="864" y2="1140"/><text x="868" y="1143" class="pin">G4</text>
+    <line class="stub" x1="850" y1="1164" x2="864" y2="1164"/><text x="868" y="1167" class="pin">G2</text>
+    <!-- GND used -->
+    <line x1="850" y1="1188" x2="892" y2="1188" class="blk"/>
+    <rect x="896" y="1176" width="84" height="24" rx="5" fill="#e7e9eb" stroke="#333"/>
+    <text x="903" y="1193" class="pinU" fill="#222">GND</text>
+    <line class="stub" x1="850" y1="1212" x2="864" y2="1212"/><text x="868" y="1215" class="pin">3V3</text>
+  </g>
+
+  <!-- resistor + signal node -->
+  <rect x="1010" y="1074" width="150" height="38" rx="8" fill="#fff7e6" stroke="#d8a72e" class="box"/>
+  <text x="1085" y="1090" class="lblb" text-anchor="middle" fill="#8a6a16">≈ 1 кОм</text>
+  <text x="1085" y="1106" class="sm" text-anchor="middle">5 × 220 Ом</text>
+  <rect x="1042" y="1024" width="92" height="34" rx="6" fill="#d3d8df" stroke="#8a93a3" stroke-width="2"/>
+  <rect x="1050" y="1017" width="14" height="9" rx="2" fill="#e8820c"/>
+  <rect x="1071" y="1017" width="14" height="9" rx="2" fill="#e8820c"/>
+  <rect x="1092" y="1017" width="14" height="9" rx="2" fill="#e8820c"/>
+  <text x="1088" y="1046" class="sm" text-anchor="middle" fill="#3a4660">WAGO·Signal</text>
+  <!-- G17 -> resistor -> node ; G16 -> node direct -->
+  <polyline class="sig" points="1000,1092 1010,1093"/>
+  <polyline class="sig" points="1160,1093 1180,1093 1180,1040 1092,1040"/>
+  <polyline class="sig" points="1000,1116 1078,1116 1078,1047"/>
+  <!-- node -> servo Signal (THE DATA WIRE) -->
+  <polyline class="sig" points="1085,1033 1085,830 1318,830" marker-end="url(#arO)"/>
+  <text x="1095" y="900" class="wl" fill="#b8650a">🟠 Signal → в ESP32 (НЕ в ПК!)</text>
+
+  <!-- ESP32 GND -> common ground -->
+  <polyline class="blk" points="980,1188 1212,1188 1212,1162" marker-end="url(#arB)"/>
+  <text x="1010" y="1180" class="wl" fill="#222">общая земля → ESP32 GND</text>
+
+  <!-- ===== SERVOS ===== -->
+  <rect x="1320" y="760" width="260" height="150" rx="12" fill="#fff3d6" stroke="#e0a030" class="box"/>
+  <text x="1450" y="790" class="lblb" text-anchor="middle">STS3215 · PAN · ID 1</text>
+  <text x="1450" y="812" class="sm" text-anchor="middle">основание · поворот ⟲</text>
+  <circle cx="1450" cy="862" r="22" fill="#e0a030"/><circle cx="1450" cy="862" r="8" fill="#fff"/>
+  <!-- PAN 3-pin connector (left) -->
+  <circle cx="1320" cy="830" r="6" fill="#e8820c"/><text x="1335" y="834" class="sm" fill="#b8650a">Signal (белый)</text>
+  <circle cx="1320" cy="858" r="6" fill="#d63b2f"/><text x="1335" y="862" class="sm" fill="#d63b2f">VIN (красный)</text>
+  <circle cx="1320" cy="886" r="6" fill="#333"/><text x="1335" y="890" class="sm">GND (чёрный)</text>
+
+  <rect x="1320" y="960" width="260" height="150" rx="12" fill="#fff3d6" stroke="#e0a030" class="box"/>
+  <text x="1450" y="990" class="lblb" text-anchor="middle">STS3215 · TILT · ID 2</text>
+  <text x="1450" y="1012" class="sm" text-anchor="middle">на роге pan · наклон ⟳</text>
+  <circle cx="1450" cy="1062" r="22" fill="#e0a030"/><circle cx="1450" cy="1062" r="8" fill="#fff"/>
+
+  <!-- daisy PAN->TILT -->
+  <polyline class="sig" points="1420,910 1420,960"/>
+  <polyline class="red" points="1450,910 1450,960"/>
+  <polyline class="blk" points="1480,910 1480,960"/>
+  <text x="1595" y="935" class="sm">штатный 3-pin</text>
+  <text x="1595" y="952" class="sm">шлейф (daisy)</text>
+
+  <!-- PAN power from WAGO rails (SHORT) -->
+  <polyline class="red" points="1170,800 1260,800 1260,858 1318,858" marker-end="url(#arR)"/>
+  <text x="1200" y="792" class="wl" fill="#d63b2f">🔴 +7.4 В → VIN</text>
+  <polyline class="blk" points="1232,886 1318,886" marker-end="url(#arB)"/>
+  <text x="1240" y="906" class="wl" fill="#222">⚫ GND</text>
+
+  <!-- servo 3-wire callout -->
+  <rect x="1600" y="760" width="160" height="150" rx="10" fill="#fff8ee" stroke="#e0a030" class="box"/>
+  <text x="1680" y="786" class="lblb" text-anchor="middle" fill="#8a6a16">3 провода</text>
+  <text x="1612" y="814" class="sm" fill="#d63b2f">🔴 VIN → +7.4 В</text>
+  <text x="1612" y="838" class="sm">⚫ GND → земля</text>
+  <text x="1612" y="862" class="sm" fill="#b8650a">🟠 Signal → ESP32</text>
+  <text x="1612" y="894" class="sm" fill="#b23026" font-weight="700">в ПК НЕ идёт!</text>
+
+  <!-- ===== PC ===== -->
+  <rect x="1320" y="1300" width="300" height="180" rx="12" fill="#ede9ff" stroke="#7b66d6" class="box"/>
+  <text x="1470" y="1332" class="lblb" text-anchor="middle">ПК (Windows)</text>
+  <text x="1470" y="1360" class="sm" text-anchor="middle">OpenCV + MediaPipe</text>
+  <text x="1470" y="1382" class="sm" text-anchor="middle">P-регулятор → углы</text>
+  <text x="1470" y="1404" class="sm" text-anchor="middle">→ COM-порт ESP32</text>
+  <rect x="1336" y="1420" width="268" height="44" rx="8" fill="#fff" stroke="#b23026"/>
+  <text x="1470" y="1448" class="wl" fill="#b23026" text-anchor="middle">сюда идёт ТОЛЬКО USB от ESP32</text>
+
+  <!-- USB ESP32 -> PC -->
+  <polyline class="usb" points="745,1266 745,1300 1290,1300 1290,1390 1318,1390" marker-end="url(#ar)"/>
+  <text x="980" y="1292" class="wl" fill="#6b7280">USB → команды pan/tilt + чтение позиции (ReadPos) — единственный провод к ПК</text>
+
+  <!-- ===== CAMERA note ===== -->
+  <rect x="1450" y="636" width="310" height="98" rx="12" fill="#eef6f0" stroke="#9cc7a4" class="box"/>
+  <text x="1605" y="664" class="lblb" text-anchor="middle" fill="#2e7d46">ESP32-CAM 📷 — ОТДЕЛЬНО</text>
+  <text x="1465" y="690" class="sm">• питание 5 В — свой USB (зарядка/повербанк)</text>
+  <text x="1465" y="712" class="sm">• видео на ПК — по WiFi (MJPEG :81/stream)</text>
+  <text x="1465" y="730" class="sm" fill="#2e7d46">к проводам серв/питания НЕ подключается</text>
+
+  <!-- ===== LEGEND ===== -->
+  <rect x="80" y="1290" width="520" height="180" rx="12" fill="#f7f9fc" stroke="#d7dde6" class="box"/>
+  <text x="100" y="1320" class="pnl">ЛЕГЕНДА ПРОВОДОВ</text>
+  <line x1="100" y1="1346" x2="150" y2="1346" class="red"/><text x="162" y="1351" class="lbl">красный — питание (+12 В / +7.4 В)</text>
+  <line x1="100" y1="1376" x2="150" y2="1376" class="blk"/><text x="162" y="1381" class="lbl">чёрный — GND (общая земля!)</text>
+  <line x1="100" y1="1406" x2="150" y2="1406" class="sig"/><text x="162" y="1411" class="lbl">оранжевый — Signal (данные серв)</text>
+  <line x1="100" y1="1436" x2="150" y2="1436" class="usb"/><text x="162" y="1441" class="lbl">серый — USB (ESP32 ↔ ПК)</text>
+
+  <!-- ===== STEPS ===== -->
+  <rect x="630" y="1290" width="640" height="180" rx="12" fill="#fff5f4" stroke="#e3a59f" class="box"/>
+  <text x="650" y="1320" class="pnl" fill="#b23026">⚠ ПОРЯДОК СБОРКИ</text>
+  <text x="650" y="1348" class="lbl">1. LM2596: подать на IN только 12 В (сервы НЕ подключены).</text>
+  <text x="650" y="1372" class="lbl">2. Мультиметр на OUT → крути ⚙ до 7.4 В, потом паяй сервы.</text>
+  <text x="650" y="1396" class="lbl">3. VIN серв → +7.4 В (WAGO+);  GND серв → земля (WAGO−).</text>
+  <text x="650" y="1420" class="lbl">4. Белый Signal → в WAGO·Signal + 2 медных: G16 напрямую, G17 через ≈1 кОм.</text>
+  <text x="650" y="1444" class="lbl">5. Общая земля: GND серв = OUT− = ESP32 GND.  ESP32 → ПК по USB.</text>
+</svg>

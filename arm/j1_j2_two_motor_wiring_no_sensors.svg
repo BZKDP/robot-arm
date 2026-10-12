@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1900" height="1550" viewBox="0 0 1900 1550">
+  <defs>
+    <style>
+      .bg{fill:#f5f7fb}.panel{fill:#fff;stroke:#243047;stroke-width:3}.soft{fill:#eef3fb;stroke:#8ca0be;stroke-width:2}
+      .warn{fill:#fff3cd;stroke:#d79900;stroke-width:3}.danger{fill:#ffe4e6;stroke:#c9182b;stroke-width:3}
+      .t{font-family:'Segoe UI',Arial,sans-serif;fill:#172033}.h1{font-size:34px;font-weight:800}.h2{font-size:24px;font-weight:800}
+      .h3{font-size:19px;font-weight:700}.p{font-size:17px}.s{font-size:14px}.tiny{font-size:12px}.mono{font-family:Consolas,'Courier New',monospace}
+      .pin{fill:#fff;stroke:#243047;stroke-width:2}.pintext{font-family:Consolas,'Courier New',monospace;font-size:15px;font-weight:700;fill:#172033}
+      .vm{fill:none;stroke:#e22121;stroke-width:7}.gnd{fill:none;stroke:#16191f;stroke-width:7}.v3{fill:none;stroke:#1769d2;stroke-width:5}
+      .step1{fill:none;stroke:#8a35cc;stroke-width:5}.dir1{fill:none;stroke:#f07818;stroke-width:5}.step2{fill:none;stroke:#169447;stroke-width:5}.dir2{fill:none;stroke:#008a9c;stroke-width:5}.en{fill:none;stroke:#c99b00;stroke-width:5}
+      .motor-black{fill:none;stroke:#111;stroke-width:5}.motor-green{fill:none;stroke:#138a3d;stroke-width:5}.motor-red{fill:none;stroke:#dc2020;stroke-width:5}.motor-blue{fill:none;stroke:#1769d2;stroke-width:5}
+      .node-vm{fill:#e22121}.node-gnd{fill:#16191f}.node-v3{fill:#1769d2}.dash{stroke-dasharray:10 8}.dim{fill:#596579}.light{fill:#dbe8ff}
+    </style>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="130%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-opacity=".15"/></filter>
+  </defs>
+
+  <rect class="bg" width="1900" height="1550"/>
+  <text x="950" y="47" text-anchor="middle" class="t h1">РОБОРУКА: J1 + J2 — ПОЛНАЯ СХЕМА ПОДКЛЮЧЕНИЯ</text>
+  <text x="950" y="77" text-anchor="middle" class="t h3">ESP32 DevKit + 2× LERDGE TMC2209 + 2× NEMA17 · без AS5600, без UART</text>
+
+  <rect x="45" y="95" width="1810" height="76" rx="14" class="danger"/>
+  <text x="70" y="126" class="t h3">СТОП ПЕРЕД ПАЙКОЙ:</text>
+  <text x="310" y="126" class="t p">обесточь USB и моторный БП. Никогда не подключай/отключай мотор при включённом VM.</text>
+  <text x="70" y="154" class="t p">На физической плате сверь надписи VM, GND, M1A/M1B/M2A/M2B, VIO, STEP, DIR, EN/ENN. Не ориентируйся только по положению платы.</text>
+
+  <!-- DRIVER J1 -->
+  <g filter="url(#shadow)">
+    <rect x="55" y="205" width="510" height="650" rx="22" class="panel"/>
+    <rect x="55" y="205" width="510" height="62" rx="22" fill="#dde6f4"/>
+    <text x="310" y="245" text-anchor="middle" class="t h2">ДРАЙВЕР №1 — J1 ОСНОВАНИЕ</text>
+  </g>
+  <text x="80" y="296" class="t h3">LERDGE TMC2209</text>
+  <text x="80" y="322" class="t s dim">Надписи на плате важнее ориентации рисунка</text>
+
+  <!-- J1 logic pins, right edge -->
+  <rect x="445" y="342" width="120" height="34" class="pin"/><text x="505" y="365" text-anchor="middle" class="pintext">EN / ENN</text>
+  <rect x="445" y="394" width="120" height="34" class="pin"/><text x="505" y="417" text-anchor="middle" class="pintext">STEP</text>
+  <rect x="445" y="446" width="120" height="34" class="pin"/><text x="505" y="469" text-anchor="middle" class="pintext">DIR</text>
+  <rect x="445" y="498" width="120" height="34" class="pin"/><text x="505" y="521" text-anchor="middle" class="pintext">VIO</text>
+  <rect x="445" y="550" width="120" height="34" class="pin"/><text x="505" y="573" text-anchor="middle" class="pintext">GND logic</text>
+
+  <!-- J1 motor pins, left edge -->
+  <rect x="55" y="388" width="120" height="34" class="pin"/><text x="115" y="411" text-anchor="middle" class="pintext">M1A</text>
+  <rect x="55" y="440" width="120" height="34" class="pin"/><text x="115" y="463" text-anchor="middle" class="pintext">M1B</text>
+  <rect x="55" y="492" width="120" height="34" class="pin"/><text x="115" y="515" text-anchor="middle" class="pintext">M2A</text>
+  <rect x="55" y="544" width="120" height="34" class="pin"/><text x="115" y="567" text-anchor="middle" class="pintext">M2B</text>
+
+  <!-- J1 power pins, bottom -->
+  <rect x="205" y="803" width="90" height="52" class="pin"/><text x="250" y="836" text-anchor="middle" class="pintext">VM</text>
+  <rect x="315" y="803" width="110" height="52" class="pin"/><text x="370" y="836" text-anchor="middle" class="pintext">GND power</text>
+
+  <rect x="205" y="615" width="325" height="142" rx="12" class="soft"/>
+  <text x="225" y="645" class="t h3">ОСТАВИТЬ НЕПОДКЛЮЧЁННЫМИ:</text>
+  <text x="225" y="677" class="t p mono">MS1, MS2</text>
+  <text x="225" y="707" class="t p mono">PDN/UART (оба контакта)</text>
+  <text x="225" y="737" class="t p mono">CLK</text>
+
+  <!-- DRIVER J2 -->
+  <g filter="url(#shadow)">
+    <rect x="1335" y="205" width="510" height="650" rx="22" class="panel"/>
+    <rect x="1335" y="205" width="510" height="62" rx="22" fill="#dde6f4"/>
+    <text x="1590" y="245" text-anchor="middle" class="t h2">ДРАЙВЕР №2 — J2 ПЛЕЧО</text>
+  </g>
+  <text x="1360" y="296" class="t h3">LERDGE TMC2209</text>
+  <text x="1360" y="322" class="t s dim">Надписи на плате важнее ориентации рисунка</text>
+
+  <!-- J2 logic pins, left edge -->
+  <rect x="1335" y="342" width="120" height="34" class="pin"/><text x="1395" y="365" text-anchor="middle" class="pintext">EN / ENN</text>
+  <rect x="1335" y="394" width="120" height="34" class="pin"/><text x="1395" y="417" text-anchor="middle" class="pintext">STEP</text>
+  <rect x="1335" y="446" width="120" height="34" class="pin"/><text x="1395" y="469" text-anchor="middle" class="pintext">DIR</text>
+  <rect x="1335" y="498" width="120" height="34" class="pin"/><text x="1395" y="521" text-anchor="middle" class="pintext">VIO</text>
+  <rect x="1335" y="550" width="120" height="34" class="pin"/><text x="1395" y="573" text-anchor="middle" class="pintext">GND logic</text>
+
+  <!-- J2 motor pins, right edge -->
+  <rect x="1725" y="388" width="120" height="34" class="pin"/><text x="1785" y="411" text-anchor="middle" class="pintext">M1A</text>
+  <rect x="1725" y="440" width="120" height="34" class="pin"/><text x="1785" y="463" text-anchor="middle" class="pintext">M1B</text>
+  <rect x="1725" y="492" width="120" height="34" class="pin"/><text x="1785" y="515" text-anchor="middle" class="pintext">M2A</text>
+  <rect x="1725" y="544" width="120" height="34" class="pin"/><text x="1785" y="567" text-anchor="middle" class="pintext">M2B</text>
+
+  <!-- J2 power pins, bottom -->
+  <rect x="1475" y="803" width="90" height="52" class="pin"/><text x="1520" y="836" text-anchor="middle" class="pintext">VM</text>
+  <rect x="1585" y="803" width="110" height="52" class="pin"/><text x="1640" y="836" text-anchor="middle" class="pintext">GND power</text>
+
+  <rect x="1370" y="615" width="325" height="142" rx="12" class="soft"/>
+  <text x="1390" y="645" class="t h3">ОСТАВИТЬ НЕПОДКЛЮЧЁННЫМИ:</text>
+  <text x="1390" y="677" class="t p mono">MS1, MS2</text>
+  <text x="1390" y="707" class="t p mono">PDN/UART (оба контакта)</text>
+  <text x="1390" y="737" class="t p mono">CLK</text>
+
+  <!-- ESP32 -->
+  <g filter="url(#shadow)">
+    <rect x="675" y="205" width="550" height="545" rx="30" fill="#1b2f4e" stroke="#0a1322" stroke-width="4"/>
+    <rect x="850" y="230" width="200" height="70" rx="8" fill="#c9d3e1" stroke="#101722" stroke-width="3"/>
+    <text x="950" y="274" text-anchor="middle" class="t h2">ESP32 DevKit</text>
+    <rect x="860" y="682" width="180" height="45" rx="10" fill="#c9d3e1"/>
+    <text x="950" y="711" text-anchor="middle" class="t p">USB = питание ESP32</text>
+  </g>
+  <text x="950" y="334" text-anchor="middle" fill="#fff" class="h3">Только USB-питание</text>
+  <text x="950" y="362" text-anchor="middle" fill="#dbe8ff" class="p">12/24 V сюда НИКОГДА</text>
+
+  <!-- ESP left pins -->
+  <rect x="675" y="390" width="135" height="35" class="pin"/><text x="742" y="414" text-anchor="middle" class="pintext">GPIO25 STEP1</text>
+  <rect x="675" y="442" width="135" height="35" class="pin"/><text x="742" y="466" text-anchor="middle" class="pintext">GPIO26 DIR1</text>
+  <rect x="675" y="494" width="135" height="35" class="pin"/><text x="742" y="518" text-anchor="middle" class="pintext">GPIO27 EN</text>
+
+  <!-- ESP right pins -->
+  <rect x="1090" y="390" width="135" height="35" class="pin"/><text x="1157" y="414" text-anchor="middle" class="pintext">GPIO32 STEP2</text>
+  <rect x="1090" y="442" width="135" height="35" class="pin"/><text x="1157" y="466" text-anchor="middle" class="pintext">GPIO33 DIR2</text>
+
+  <!-- ESP power pins -->
+  <rect x="845" y="545" width="100" height="40" class="pin"/><text x="895" y="571" text-anchor="middle" class="pintext">3V3</text>
+  <rect x="965" y="545" width="100" height="40" class="pin"/><text x="1015" y="571" text-anchor="middle" class="pintext">GND</text>
+
+  <!-- Logic wires J1 -->
+  <path d="M675 407 H610 V411 H565" class="step1"/><text x="588" y="393" class="t s" fill="#8a35cc">L03</text>
+  <path d="M675 459 H625 V463 H565" class="dir1"/><text x="598" y="448" class="t s" fill="#f07818">L04</text>
+  <path d="M675 511 H635 V359 H565" class="en"/><text x="610" y="350" class="t s">L07</text>
+  <!-- Logic wires J2 -->
+  <path d="M1225 407 H1290 V411 H1335" class="step2"/><text x="1262" y="393" class="t s" fill="#169447">L05</text>
+  <path d="M1225 459 H1275 V463 H1335" class="dir2"/><text x="1262" y="448" class="t s" fill="#008a9c">L06</text>
+  <path d="M1225 511 H1265 V359 H1335" class="en"/>
+  <path d="M810 511 H1225" class="en"/>
+  <circle cx="635" cy="511" r="7" fill="#c99b00"/><circle cx="1225" cy="511" r="7" fill="#c99b00"/>
+
+  <!-- VIO branches -->
+  <path d="M895 585 V610 H620 V515 H565" class="v3"/>
+  <path d="M895 610 H1280 V515 H1335" class="v3"/>
+  <circle cx="895" cy="610" r="8" class="node-v3"/>
+  <text x="730" y="601" class="t s light">L01: 3V3 → оба VIO</text>
+
+  <!-- logic grounds to common bus -->
+  <path d="M1015 585 V1188" class="gnd"/>
+  <path d="M565 567 H595 V1188" class="gnd"/>
+  <path d="M1335 567 H1305 V1188" class="gnd"/>
+  <text x="1028" y="625" class="t s light">L02: ESP GND → общая земля</text>
+
+  <!-- pull-up -->
+  <path d="M895 610 V646 H834" class="v3"/>
+  <rect x="805" y="636" width="29" height="20" fill="#e8c178" stroke="#6a4b11" stroke-width="2"/>
+  <path d="M805 646 H760 V540 H635 V511" class="en"/>
+  <text x="720" y="678" class="t s light">L08: 10 кОм между 3V3 и общей линией EN</text>
+  <text x="720" y="699" class="t tiny light">GPIO27: HIGH = драйверы выключены, LOW = включены</text>
+
+  <!-- MOTORS -->
+  <g filter="url(#shadow)"><rect x="55" y="900" width="455" height="215" rx="22" class="panel"/></g>
+  <circle cx="175" cy="1004" r="73" fill="#cbd3df" stroke="#243047" stroke-width="4"/>
+  <circle cx="175" cy="1004" r="28" fill="#7c8798"/>
+  <text x="285" y="940" class="t h2">NEMA17 №1 — J1</text>
+  <text x="285" y="972" class="t p">4 провода, 2 обмотки</text>
+  <text x="285" y="1008" class="t p"><tspan font-weight="700">пара A:</tspan> чёрный + зелёный*</text>
+  <text x="285" y="1042" class="t p"><tspan font-weight="700">пара B:</tspan> красный + синий*</text>
+  <text x="285" y="1080" class="t s">*обязательно подтвердить мультиметром</text>
+
+  <g filter="url(#shadow)"><rect x="1390" y="900" width="455" height="215" rx="22" class="panel"/></g>
+  <circle cx="1725" cy="1004" r="73" fill="#cbd3df" stroke="#243047" stroke-width="4"/>
+  <circle cx="1725" cy="1004" r="28" fill="#7c8798"/>
+  <text x="1415" y="940" class="t h2">NEMA17 №2 — J2</text>
+  <text x="1415" y="972" class="t p">4 провода, 2 обмотки</text>
+  <text x="1415" y="1008" class="t p"><tspan font-weight="700">пара A:</tspan> чёрный + зелёный*</text>
+  <text x="1415" y="1042" class="t p"><tspan font-weight="700">пара B:</tspan> красный + синий*</text>
+  <text x="1415" y="1080" class="t s">*обязательно подтвердить мультиметром</text>
+
+  <!-- Motor wires J1 -->
+  <path d="M55 405 H25 V930 H105" class="motor-black"/><text x="30" y="889" class="t s">M01 чёрный</text>
+  <path d="M55 457 H35 V955 H105" class="motor-green"/><text x="39" y="918" class="t s" fill="#138a3d">M02 зелёный</text>
+  <path d="M55 509 H45 V1053 H105" class="motor-red"/><text x="50" y="1025" class="t s" fill="#dc2020">M03 красный</text>
+  <path d="M55 561 H55 V1078 H105" class="motor-blue"/><text x="62" y="1056" class="t s" fill="#1769d2">M04 синий</text>
+
+  <!-- Motor wires J2 -->
+  <path d="M1845 405 H1875 V930 H1795" class="motor-black"/><text x="1760" y="889" class="t s">M05 чёрный</text>
+  <path d="M1845 457 H1865 V955 H1795" class="motor-green"/><text x="1752" y="918" class="t s" fill="#138a3d">M06 зелёный</text>
+  <path d="M1845 509 H1855 V1053 H1795" class="motor-red"/><text x="1745" y="1025" class="t s" fill="#dc2020">M07 красный</text>
+  <path d="M1845 561 H1845 V1078 H1795" class="motor-blue"/><text x="1744" y="1056" class="t s" fill="#1769d2">M08 синий</text>
+
+  <!-- Capacitors -->
+  <rect x="520" y="875" width="205" height="165" rx="16" class="warn"/>
+  <text x="622" y="907" text-anchor="middle" class="t h3">C1 У ДРАЙВЕРА 1</text>
+  <text x="622" y="936" text-anchor="middle" class="t p">470 µF / 50 V</text>
+  <text x="622" y="968" text-anchor="middle" class="t p" fill="#e22121">+ к VM</text>
+  <text x="622" y="997" text-anchor="middle" class="t p">− к GND power</text>
+  <text x="622" y="1024" text-anchor="middle" class="t s">максимально близко</text>
+
+  <rect x="1175" y="875" width="205" height="165" rx="16" class="warn"/>
+  <text x="1277" y="907" text-anchor="middle" class="t h3">C2 У ДРАЙВЕРА 2</text>
+  <text x="1277" y="936" text-anchor="middle" class="t p">470 µF / 50 V</text>
+  <text x="1277" y="968" text-anchor="middle" class="t p" fill="#e22121">+ к VM</text>
+  <text x="1277" y="997" text-anchor="middle" class="t p">− к GND power</text>
+  <text x="1277" y="1024" text-anchor="middle" class="t s">максимально близко</text>
+
+  <!-- Power distribution -->
+  <rect x="755" y="870" width="390" height="235" rx="20" class="panel"/>
+  <text x="950" y="908" text-anchor="middle" class="t h2">МОТОРНЫЙ БЛОК ПИТАНИЯ</text>
+  <text x="950" y="942" text-anchor="middle" class="t p">12–24 V DC · для первого теста лучше 12 V</text>
+  <rect x="785" y="973" width="135" height="70" rx="10" fill="#ffe8e8" stroke="#e22121" stroke-width="3"/>
+  <text x="852" y="1003" text-anchor="middle" class="t h3">+ V</text>
+  <text x="852" y="1029" text-anchor="middle" class="t s">к предохранителю</text>
+  <rect x="980" y="973" width="135" height="70" rx="10" fill="#e5e7eb" stroke="#16191f" stroke-width="3"/>
+  <text x="1047" y="1003" text-anchor="middle" class="t h3">− V</text>
+  <text x="1047" y="1029" text-anchor="middle" class="t s">на общую GND</text>
+  <text x="950" y="1074" text-anchor="middle" class="t s">ESP32 от этого БП не питать — ESP32 остаётся на USB</text>
+
+  <!-- +V path, fuse and switch -->
+  <path d="M852 1043 V1120" class="vm"/>
+  <rect x="780" y="1110" width="145" height="38" rx="8" fill="#fff" stroke="#e22121" stroke-width="3"/>
+  <text x="852" y="1136" text-anchor="middle" class="t h3">F1 3 A</text>
+  <path d="M852 1148 V1163 H736" class="vm"/>
+  <rect x="610" y="1144" width="126" height="38" rx="8" fill="#fff" stroke="#e22121" stroke-width="3"/>
+  <text x="673" y="1170" text-anchor="middle" class="t h3">SW / STOP</text>
+  <path d="M610 1163 H250 V855" class="vm"/>
+  <path d="M610 1163 H1520 V855" class="vm"/>
+  <circle cx="250" cy="1163" r="8" class="node-vm"/><circle cx="1520" cy="1163" r="8" class="node-vm"/>
+  <text x="360" y="1152" class="t s" fill="#e22121">P01–P05: общая шина +VM после F1 и выключателя</text>
+
+  <!-- Capacitor + connections -->
+  <path d="M520 968 H486 V1163" class="vm"/><path d="M1380 968 H1415 V1163" class="vm"/>
+
+  <!-- GND bus -->
+  <path d="M1047 1043 V1188 H370 V855" class="gnd"/>
+  <path d="M1047 1188 H1640 V855" class="gnd"/>
+  <path d="M520 997 H500 V1188" class="gnd"/><path d="M1380 997 H1400 V1188" class="gnd"/>
+  <circle cx="595" cy="1188" r="8" class="node-gnd"/><circle cx="1015" cy="1188" r="8" class="node-gnd"/><circle cx="1305" cy="1188" r="8" class="node-gnd"/>
+  <text x="1080" y="1217" class="t s">P03, P06–P10 + L02: БП−, обе GND power, обе GND logic и ESP GND — ОДНА ОБЩАЯ ЗЕМЛЯ</text>
+
+  <!-- EN uncertainty warning -->
+  <rect x="55" y="1235" width="1790" height="90" rx="14" class="warn"/>
+  <text x="80" y="1268" class="t h3">ВАЖНО ПРО EN/ENN:</text>
+  <text x="285" y="1268" class="t p">GPIO27 подключать только к контакту, который на реальной плате подписан EN или ENN.</text>
+  <text x="80" y="1298" class="t p">Если такого обозначения на твоей версии LERDGE нет — не угадывай по рисунку: оставь этот контакт пустым и пришли крупное фото обеих сторон драйвера.</text>
+
+  <!-- Legend / final checks -->
+  <rect x="55" y="1345" width="890" height="170" rx="16" class="soft"/>
+  <text x="80" y="1378" class="t h2">ЦВЕТА СИГНАЛЬНЫХ ПРОВОДОВ</text>
+  <line x1="80" y1="1408" x2="160" y2="1408" class="step1"/><text x="175" y="1414" class="t p">GPIO25 → STEP J1</text>
+  <line x1="410" y1="1408" x2="490" y2="1408" class="dir1"/><text x="505" y="1414" class="t p">GPIO26 → DIR J1</text>
+  <line x1="80" y1="1448" x2="160" y2="1448" class="step2"/><text x="175" y="1454" class="t p">GPIO32 → STEP J2</text>
+  <line x1="410" y1="1448" x2="490" y2="1448" class="dir2"/><text x="505" y="1454" class="t p">GPIO33 → DIR J2</text>
+  <line x1="80" y1="1488" x2="160" y2="1488" class="en"/><text x="175" y="1494" class="t p">GPIO27 → оба EN</text>
+  <line x1="410" y1="1488" x2="490" y2="1488" class="v3"/><text x="505" y="1494" class="t p">3V3 → оба VIO</text>
+
+  <rect x="965" y="1345" width="880" height="170" rx="16" class="danger"/>
+  <text x="990" y="1378" class="t h2">ПЕРЕД ПЕРВЫМ ВКЛЮЧЕНИЕМ</text>
+  <text x="990" y="1410" class="t p">1. Между +VM и GND нет короткого замыкания.</text>
+  <text x="990" y="1440" class="t p">2. Полоска на электролите = минус; его «+» идёт на VM.</text>
+  <text x="990" y="1470" class="t p">3. Механически подпереть плечо J2; сначала тестировать по одному мотору.</text>
+  <text x="990" y="1500" class="t p">4. Ток драйверов настроить до движения собранной руки.</text>
+</svg>

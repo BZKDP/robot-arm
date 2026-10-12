@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Робо-рука v5 — база J1 + плечо J2 · интерактивный BOM</title>
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#1a1d23;font-family:Segoe UI,Arial,sans-serif}
+  .panel{position:fixed;background:rgba(28,32,40,.94);color:#e8eaf0;border-radius:10px;
+         box-shadow:0 4px 18px rgba(0,0,0,.5);padding:12px 14px}
+  #ui{top:12px;left:12px;width:240px}
+  #ui h1{font-size:14px;margin:0 0 8px}
+  .row{margin:8px 0}
+  .row label{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px;color:#aeb6c4}
+  .row b{color:#fff} input[type=range]{width:100%}
+  #hint{font-size:11px;color:#8f97a5;margin-top:8px;border-top:1px solid #333a46;padding-top:6px;line-height:1.45}
+  #bom{top:12px;right:12px;width:290px;max-height:92vh;overflow:auto}
+  #bom h2{font-size:14px;margin:0 0 8px}
+  .item{padding:5px 8px;border-radius:6px;font-size:12.5px;cursor:pointer;margin:2px 0}
+  .item:hover{background:#2a3140}.item.sel{background:#33507a}
+  .st{float:right;font-size:11px}
+  #card{border-top:1px solid #333a46;margin-top:8px;padding-top:8px;font-size:12.5px;line-height:1.55;display:none}
+  #card .nm{font-weight:700;font-size:13.5px;color:#fff}
+  #card .q{color:#7fc97f;font-family:Consolas,monospace;font-size:12px;background:#20262f;
+           padding:3px 6px;border-radius:5px;display:inline-block;margin-top:4px}
+</style>
+</head>
+<body>
+<div id="ui" class="panel">
+  <h1>🦾 База J1 + плечо J2 (v5)</h1>
+  <div class="row"><label>J1 поворот <b id="v1">30°</b></label><input id="j1" type="range" min="-180" max="180" value="30"></div>
+  <div class="row"><label>J2 наклон <b id="v2">30°</b></label><input id="j2" type="range" min="-100" max="100" value="30"></div>
+  <div id="hint">ЛКМ — вращать · колесо — зум · ПКМ — сдвиг<br><b>Клик по детали</b> — карточка с размерами и покупкой</div>
+</div>
+<div id="bom" class="panel">
+  <h2>📦 Детали (кликай)</h2>
+  <div id="list"></div>
+  <div id="card"></div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const scene=new THREE.Scene(); scene.background=new THREE.Color(0x1a1d23);
+const cam=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,1,5000);
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(devicePixelRatio);
+document.body.appendChild(renderer.domElement);
+scene.add(new THREE.AmbientLight(0xffffff,.55));
+const dl=new THREE.DirectionalLight(0xffffff,.8);dl.position.set(200,400,250);scene.add(dl);
+const dl2=new THREE.DirectionalLight(0xa0b0ff,.3);dl2.position.set(-250,150,-200);scene.add(dl2);
+scene.add(new THREE.GridHelper(600,30,0x39404d,0x262b33));
+
+const M=c=>new THREE.MeshStandardMaterial({color:c,roughness:.55,metalness:.35});
+const mat={sup:M(0x8a8a8a),plate:M(0xb7bcc4),motor:M(0x2f2f2f),gb:M(0x2b4a9b),face:M(0x9aa4ad),
+ car:M(0xc9c9c9),shaft:M(0xe6e6e6),alu:M(0xc8ccd2),beam:M(0xd4d8de),buy:M(0x7f8790),
+ mag:M(0xc02626),hall:M(0x1b7f3b),pcb:M(0x1b7f3b),stand:M(0xc9a227),screw:M(0x22252b),printed:M(0xe0912b),
+ conn:M(0xf0f0e8),hole:new THREE.MeshBasicMaterial({color:0x14161b,side:THREE.DoubleSide})};
+
+// ---------- BOM ----------
+const BOM={
+ sup:{n:'Опора базы — ТВОЁ (бруски/фанера/магниты)',d:'высота ~55мм, любая конструкция; держит пластину',s:'🔧 сам'},
+ plate:{n:'Пластина-сэндвич (шла с редуктором)',d:'~56×56×3мм, 4 потайных отв.; зажимается между мотором и редуктором штатными винтами',s:'✅ есть'},
+ motor:{n:'Шаговый мотор NEMA17 17HS4401',d:'42×42×47мм, вал 5мм, 1.7А; разъём JST 4pin',s:'✅ есть (докупить 3-4: «nema17 17hs4401»)'},
+ gb:{n:'Планетарный редуктор 1:71 (CM36)',d:'Ø36×35мм; неподвижный торец: 4 резьбы крепления; ВРАЩАЕТСЯ: ступица Ø19×4 с 2 резьбами + вал Ø8 (лыски 5.9) + штатный МАГНИТ на торце',s:'✅ есть ×5'},
+ car:{n:'Ступица редуктора — НЕПОДВИЖНА (проверено)',d:'Ø19×4мм, 2 резьбовых отв. — НЕ крутится (крутится только вал!). Используем её резьбы для кронштейна датчика Холла',s:'✅ часть редуктора'},
+ shaft:{n:'Выходной вал редуктора',d:'Ø8мм, 2 лыски до 5.9мм, длина ~11мм + магнит Ø5 сверху',s:'✅ часть редуктора'},
+ magtop:{n:'Штатный магнит энкодера (на валу)',d:'Ø~5×5мм, запрессован в торец вала',s:'✅ есть'},
+ chan:{n:'U-скоба алюминиевая 3111-0004-0001',d:'~48×48×96мм (уточнить), сетка отв. шаг 8мм Ø4.2, большие Ø14; = платформа J1 + вилка J2. Сверлить: ось Ø20.5 и Ø9, 2×Ø3.2 в дне',s:'✅ есть ×2 (+2 низких)'},
+ beam:{n:'Балка 1102-0023-0184 (goBILDA-тип)',d:'184×8×4мм, 23 отв. Ø4.2 шаг 8мм. Крепление: 2 балки бок-о-бок на линии фланца (x=±8), каждая 2 болта М4 шаг 32 — не прокрутится. Роль: временное плечо + накладки/распорки; несущие звенья позже = U-каналы',s:'✅ есть ×6'},
+ coup:{n:'Муфта фланцевая — ВРЕМЕННО ПЕЧАТНАЯ (PETG)',d:'STL готов: arm/printed/flange_coupling_8mm_PETG.stl. Фланец 26×42×5, 4×М4 на (±8,±16)= сетка 8мм (сверлить не надо!), D-бор по лыскам, хомут 2×М3×16. Металлические (4шт) едут — замена 1-в-1',s:'🖨 печатать 2шт'},
+ bridge:{n:'Мост стаб-оси (печать, мелочь)',d:'планка 26×20×5 на 4×М4 в отверстия балок + гнездо Ø8.2 под болт М8/трубку — держит дальнюю ось соосно J2',s:'🖨 печать 15 мин (STL сделаю)'},
+ kfl:{n:'Корпусной подшипник KFL08',d:'бор 8мм, ромб-фланец, межцентровое 37мм, 2 болта М4',s:'🛒 «KFL08 подшипник 8 мм»'},
+ rod:{n:'Стаб-ось из прутка Ø8',d:'алюм. пруток Д16Т Ø8, отрезок ~45мм; в KFL08; на торец — магнит AS5600',s:'✅ пруток есть (1м)'},
+ pcb:{n:'Модуль энкодера AS5600',d:'плата 20×20мм, I2C (3.3В); чип по центру, зазор до магнита 1-2мм',s:'✅ есть ×5'},
+ magj2:{n:'Магнит диаметральный AS5600',d:'Ø6×2.5мм, клеится на торец прутка соосно',s:'✅/🛒 «магнит диаметральный 6х2.5»'},
+ stand:{n:'Стойки латунные М3',d:'~20-22мм + винты М3; крепят плату AS5600 к стенке скобы',s:'🛒 «стойки латунные М3 набор»'},
+ hall:{n:'Датчик Холла SS49E (индекс J1) + кронштейн',d:'ТО-92, аналоговый; на Г-кронштейне, прикрученном в резьбу неподвижного торца редуктора; индекс-магнит в дне скобы проходит над ним при вращении',s:'🛒 «датчик холла SS49E»'},
+ magj1:{n:'Магнит-индекс J1',d:'неодим Ø3×2мм, вклеен заподлицо в отверстие дна скобы (r≈15)',s:'🛒 «неодимовый магнит 3х2»'},
+ scr:{n:'Крепёж М3/М4',d:'J2-редуктор: 4×М3×10 сквозь стенку в резьбы торца; ступица: 2×М3×8; KFL08: 2×М4×12; муфта-балки: М3×10',s:'🛒 «винты М3 набор» + «М4 набор»'},
+ conn:{n:'Разъём мотора JST-XH 4pin',d:'штатный на моторе; кабель до драйвера TMC2209',s:'✅ есть'}};
+const allG=[];
+function G(key){ const g=new THREE.Group(); g.userData.bom=key; allG.push(g); return g; }
+
+function box(w,h,d,m,x,y,z,g){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);g.add(o);return o}
+function cylY(dia,h,m,x,y,z,g){const o=new THREE.Mesh(new THREE.CylinderGeometry(dia/2,dia/2,h,36),m);o.position.set(x,y,z);g.add(o);return o}
+function cylZ(dia,h,m,x,y,z,g){const o=cylY(dia,h,m,0,0,0,g);o.rotation.x=Math.PI/2;o.position.set(x,y,z);return o}
+function cylX(dia,h,m,x,y,z,g){const o=cylY(dia,h,m,0,0,0,g);o.rotation.z=Math.PI/2;o.position.set(x,y,z);return o}
+function holeZ(r,x,y,z,g){const o=new THREE.Mesh(new THREE.CircleGeometry(r,18),mat.hole);o.position.set(x,y,z);g.add(o);return o}
+function holeY(r,x,y,z,g){const o=new THREE.Mesh(new THREE.CircleGeometry(r,18),mat.hole);o.rotation.x=-Math.PI/2;o.position.set(x,y,z);g.add(o);return o}
+
+// ---------- key coords ----------
+const FACE1=93, WEB1=117.5, AX=177.5;   // printed coupling: hub15+flange5 under web
+
+// ================= STATIC =================
+const gSup=G('sup'); scene.add(gSup);
+box(20,55,50,mat.sup,-35,27.5,0,gSup); box(20,55,50,mat.sup,35,27.5,0,gSup);
+const gPlate=G('plate'); scene.add(gPlate);
+box(56,3,56,mat.plate,0,56.5,0,gPlate);
+for(const s of [[-24,-24],[24,-24],[-24,24],[24,24]]) holeY(2.3,s[0],58.05,s[1],gPlate);
+const gMot1=G('motor'); scene.add(gMot1);
+box(42.3,47,42.3,mat.motor,0,34.5,0,gMot1);
+const gConn=G('conn'); scene.add(gConn);
+box(14,8,6,mat.conn,0,18,23,gConn);                                   // JST on motor1
+const gGb1=G('gb'); scene.add(gGb1);
+cylY(36,35,mat.gb,0,75.5,0,gGb1); cylY(36,1.2,mat.face,0,93.6,0,gGb1);
+const gCar1=G('car'); scene.add(gCar1);
+cylY(19,4,mat.car,0,95,0,gCar1);
+const gSh1=G('shaft'); scene.add(gSh1);
+cylY(8,11,mat.shaft,0,102.5,0,gSh1);
+const gMagT=G('magtop'); scene.add(gMagT);
+cylY(5,5,M(0x555b66),0,110.5,0,gMagT);                                // штатный магнит (виден в отв. дна)
+const gCoup1=G('coup'); scene.add(gCoup1);                             // ПЕЧАТНАЯ МУФТА J1
+cylY(22,15,mat.printed,0,104.7,0,gCoup1);                              // хаб (D-бор внутри)
+box(26,15,16,mat.printed,0,104.7,0,gCoup1);                            // уши хомута
+box(1.8,15,16.5,M(0x14161b),0,104.7,0,gCoup1);                         // пропил
+box(26,5,42,mat.printed,0,114.8,0,gCoup1);                             // фланец 26x42x5
+cylZ(3,19,mat.screw,9.5,104.7,0,gCoup1); cylZ(3,19,mat.screw,-9.5,104.7,0,gCoup1); // 2xМ3 хомута
+const gHall=G('hall'); scene.add(gHall);
+box(6,12,1.5,mat.buy,14,100.2,0,gHall);                                // Г-кронштейн вверх
+box(4,1.6,3,mat.hall,14,106.9,0,gHall);                                // SS49E сверху
+cylY(3,2,mat.screw,14,95.2,0,gHall);                                   // винт в резьбу ступицы/торца
+
+// ================= J1 GROUP =================
+const g1=new THREE.Group(); scene.add(g1);
+const gChan=G('chan'); g1.add(gChan);
+box(48,2.5,43,mat.alu,0,WEB1+1.25,0,gChan);                            // web
+for(let x=-16;x<=16;x+=8) for(let z=-16;z<=16;z+=8)
+  if(!(x==0&&z==0)) holeY(2.1,x,WEB1+2.55,z,gChan);
+holeY(4.2,0,WEB1+2.55,0,gChan);                                        // shaft pass
+for(const s of [-1,1]){                                                // walls + full grid
+  box(48,96,2.5,mat.alu,0,WEB1+48,s*22.75,gChan);
+  const zo=s*24.05;
+  for(let x=-20;x<=20;x+=8) for(let y=WEB1+6;y<=WEB1+92;y+=8) holeZ(2.1,x,y,zo*0.998,gChan);
+  holeZ(7,0,WEB1+30,zo,gChan); holeZ(10.3,0,AX,zo,gChan); holeZ(7,0,WEB1+88,zo,gChan);
+}
+const gMagJ1=G('magj1'); g1.add(gMagJ1);
+cylY(3,2,mat.mag,14,WEB1-1,0,gMagJ1);                                  // индекс над холлом
+const gScr=G('scr'); g1.add(gScr);
+for(const p of [[8,16],[8,-16],[-8,16],[-8,-16]]){                     // 4xМ4 дно->фланец (сетка 8мм!)
+  cylY(4,10,mat.screw,p[0],WEB1-3,p[1],gScr);
+  cylY(7,2,mat.screw,p[0],WEB1+3.6,p[1],gScr);                          // головки над дном
+}
+
+// J2 drive outside wall (-Z)
+const gGb2=G('gb'); g1.add(gGb2);
+cylZ(36,35,mat.gb,0,AX,-41.5,gGb2); cylZ(36,1.2,mat.face,0,AX,-23.6,gGb2);
+const gMot2=G('motor'); g1.add(gMot2);
+box(42.3,42.3,47,mat.motor,0,AX,-82.5,gMot2);
+const gConn2=G('conn'); g1.add(gConn2); box(14,6,8,mat.conn,0,AX-24,-90,gConn2);
+const gCar2=G('car'); g1.add(gCar2);
+cylZ(19,4,mat.car,0,AX,-22,gCar2);
+for(const a of [45,135,225,315]){                                      // 4xM3 через стенку в торец
+  const x=13.5*Math.cos(a*Math.PI/180), y=AX+13.5*Math.sin(a*Math.PI/180);
+  cylZ(3,8,mat.screw,x,y,-20,gScr);
+}
+const gKFL=G('kfl'); g1.add(gKFL);
+box(37,18,11,mat.buy,0,AX,29.5,gKFL);
+cylZ(18,11,mat.buy,-18.5,AX,29.5,gKFL); cylZ(18,11,mat.buy,18.5,AX,29.5,gKFL);
+cylZ(16,13,mat.buy,0,AX,29.5,gKFL);
+cylZ(4,14,mat.screw,-18.5,AX,27,gScr); cylZ(4,14,mat.screw,18.5,AX,27,gScr);   // 2xM4
+const gPcb=G('pcb'); g1.add(gPcb);
+box(20,20,1.6,mat.pcb,0,AX,41,gPcb); box(4,4,1.2,M(0x111),0,AX,39.9,gPcb);     // плата+чип
+const gStand=G('stand'); g1.add(gStand);
+cylZ(5,16,mat.stand,-8,AX+8,32,gStand); cylZ(5,16,mat.stand,8,AX-8,32,gStand);
+
+// ================= ARM (J2) =================
+const g2=new THREE.Group(); g2.position.set(0,AX,0); g1.add(g2);
+const gCoup=G('coup'); g2.add(gCoup);                                  // ПЕЧАТНАЯ МУФТА J2
+cylZ(22,15,mat.printed,0,0,-13.7,gCoup);                               // хаб на валу
+box(26,16,15,mat.printed,0,0,-13.7,gCoup);                             // уши хомута
+box(1.8,16.5,15,M(0x14161b),0,0,-13.7,gCoup);                          // пропил
+box(26,42,5,mat.printed,0,0,-3.7,gCoup);                               // фланец 26x42
+cylY(3,19,mat.screw,9.5,0,-13.7,gCoup); cylY(3,19,mat.screw,-9.5,0,-13.7,gCoup); // 2xМ3 хомута
+const gSh2=G('shaft'); g2.add(gSh2);
+cylZ(8,11,mat.shaft,0,0,-16.5,gSh2);
+// 2 БАЛКИ бок-о-бок на линиях крепежа фланца (x=+-8), каждая на 2 болтах М4 (шаг 32)
+const gBeam=G('beam'); g2.add(gBeam);
+for(const xo of [-8,8]){
+  box(8,184,4,mat.beam,xo,72,1,gBeam);
+  for(let y=-16;y<=156;y+=8){ holeZ(2.1,xo,y,3.06,gBeam); holeZ(2.1,xo,y,-1.06,gBeam); }
+}
+const gScr2=G('scr'); g2.add(gScr2);                                    // БОЛТЫ балок->фланец!
+for(const p of [[8,16],[8,-16],[-8,16],[-8,-16]]){
+  cylZ(4,11,mat.screw,p[0],p[1],-2,gScr2);
+  cylZ(7,2,mat.screw,p[0],p[1],4.2,gScr2);                              // головки поверх балок
+}
+// мост стаб-оси (печать): планка на балках + гнездо Ø8
+const gBridge=G('bridge'); g2.add(gBridge);
+box(26,20,5,mat.printed,0,0,5.7,gBridge);
+cylZ(13,5,mat.printed,0,0,10.7,gBridge);
+for(const p of [[8,8],[8,-8],[-8,8],[-8,-8]]) cylZ(4,9,mat.screw,p[0],p[1],5.2,gBridge);
+const gRod=G('rod'); g2.add(gRod);
+cylZ(8,25,mat.shaft,0,0,23,gRod);                                       // болт М8/трубка до KFL08
+const gMagJ2=G('magj2'); g2.add(gMagJ2);
+cylZ(6,2.5,mat.mag,0,0,36.8,gMagJ2);
+
+// ---------- controls ----------
+const target=new THREE.Vector3(0,110,0);
+let th=0.9,ph=1.15,R=430,drag=0,px=0,py=0,moved=0;
+function setCam(){cam.position.set(target.x+R*Math.sin(ph)*Math.cos(th),target.y+R*Math.cos(ph),target.z+R*Math.sin(ph)*Math.sin(th));cam.lookAt(target);}
+addEventListener('mousedown',e=>{if(e.target.closest('.panel'))return;drag=e.button===2?2:1;px=e.clientX;py=e.clientY;moved=0});
+addEventListener('mouseup',e=>{if(drag&&moved<5)pick(e);drag=0});
+addEventListener('contextmenu',e=>e.preventDefault());
+addEventListener('mousemove',e=>{if(!drag)return;const dx=e.clientX-px,dy=e.clientY-py;moved+=Math.abs(dx)+Math.abs(dy);px=e.clientX;py=e.clientY;
+ if(drag===1){th+=dx*.006;ph=Math.min(2.9,Math.max(.2,ph-dy*.006));}
+ else{const s=R*.0016;target.x-=dx*s*Math.cos(th-Math.PI/2);target.z-=dx*s*Math.sin(th-Math.PI/2);target.y+=dy*s;}
+ setCam();});
+addEventListener('wheel',e=>{R=Math.min(1600,Math.max(120,R*(e.deltaY>0?1.12:0.9)));setCam();});
+addEventListener('resize',()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+
+// ---------- BOM UI + picking ----------
+const list=document.getElementById('list'),card=document.getElementById('card');
+let restore=[];
+function select(key){
+ restore.forEach(r=>r.mesh.material=r.m); restore=[];
+ for(const g of allG) if(g.userData.bom===key)
+   g.traverse(o=>{ if(o.isMesh&&o.material.emissive){
+     restore.push({mesh:o,m:o.material});
+     o.material=o.material.clone(); o.material.emissive.setHex(0x2a4a7a); }});
+ const b=BOM[key];
+ card.style.display='block';
+ card.innerHTML='<div class="nm">'+b.n+'</div>'+b.d+'<br><b>'+b.s+'</b>';
+ document.querySelectorAll('.item').forEach(el=>el.classList.toggle('sel',el.dataset.k===key));
+}
+for(const k in BOM){
+ const el=document.createElement('div');el.className='item';el.dataset.k=k;
+ el.innerHTML=BOM[k].n.split('(')[0].split('—')[0].slice(0,34)+'<span class="st">'+BOM[k].s.slice(0,2)+'</span>';
+ el.onclick=()=>select(k); list.appendChild(el);
+}
+const ray=new THREE.Raycaster(),mv=new THREE.Vector2();
+function pick(e){
+ mv.x=(e.clientX/innerWidth)*2-1; mv.y=-(e.clientY/innerHeight)*2+1;
+ ray.setFromCamera(mv,cam);
+ const hits=ray.intersectObjects(scene.children,true);
+ for(const h of hits){ let o=h.object;
+   while(o){ if(o.userData&&o.userData.bom){select(o.userData.bom);return;} o=o.parent; } }
+}
+
+// ---------- pose ----------
+const s1=document.getElementById('j1'),s2=document.getElementById('j2');
+function upd(){g1.rotation.y=-s1.value*Math.PI/180;g2.rotation.z=-s2.value*Math.PI/180;
+ document.getElementById('v1').textContent=s1.value+'°';
+ document.getElementById('v2').textContent=s2.value+'°';}
+s1.oninput=upd;s2.oninput=upd;upd();setCam();
+(function loop(){requestAnimationFrame(loop);renderer.render(scene,cam);})();
+</script>
+</body>
+</html>

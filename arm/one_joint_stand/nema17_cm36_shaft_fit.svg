@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="850" viewBox="0 0 1400 850">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#111"/>
+    </marker>
+    <marker id="redarrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#c1121f"/>
+    </marker>
+    <style>
+      .title{font:700 34px Arial,sans-serif;fill:#111}
+      .h{font:700 24px Arial,sans-serif;fill:#111}
+      .t{font:19px Arial,sans-serif;fill:#111}
+      .small{font:16px Arial,sans-serif;fill:#222}
+      .warn{font:700 22px Arial,sans-serif;fill:#b00020}
+      .motor{fill:#333;stroke:#111;stroke-width:3;rx:8}
+      .flange{fill:#cfd8dc;stroke:#555;stroke-width:3;rx:4}
+      .shaft{fill:#b0bec5;stroke:#333;stroke-width:3}
+      .gear{fill:#1f78d1;stroke:#0b3f7a;stroke-width:3;rx:10}
+      .face{fill:#e0e0e0;stroke:#555;stroke-width:3;rx:5}
+      .ok{fill:#eefbea;stroke:#1b7f36;stroke-width:3;rx:10}
+      .bad{fill:#fff0f0;stroke:#c1121f;stroke-width:3;rx:10}
+      .line{stroke:#111;stroke-width:3;marker-end:url(#arrow)}
+      .rline{stroke:#c1121f;stroke-width:4;marker-end:url(#redarrow)}
+      .dash{stroke-dasharray:10 8}
+    </style>
+  </defs>
+  <rect width="1400" height="850" fill="#fff"/>
+  <text x="45" y="58" class="title">Посадка NEMA17 в редуктор CM36 1:71</text>
+  <text x="45" y="94" class="warn">Болты не должны дотягивать редуктор силой. Фланцы должны сойтись от руки.</text>
+
+  <!-- Wrong side -->
+  <rect x="55" y="145" width="610" height="610" class="bad"/>
+  <text x="85" y="190" class="h">Плохо: вал упирается внутри</text>
+  <rect x="95" y="360" width="190" height="170" class="motor"/>
+  <rect x="285" y="330" width="38" height="230" class="flange"/>
+  <rect x="323" y="415" width="205" height="60" class="shaft"/>
+  <rect x="515" y="300" width="115" height="290" class="gear"/>
+  <rect x="475" y="330" width="40" height="230" class="face"/>
+  <line x1="528" y1="415" x2="555" y2="475" class="rline"/>
+  <text x="365" y="405" class="warn">упор</text>
+  <line x1="323" y1="555" x2="520" y2="555" class="line"/>
+  <text x="330" y="585" class="small">вал длиннее глубины посадки</text>
+  <text x="100" y="645" class="t">Симптомы:</text>
+  <text x="100" y="680" class="small">стук, шарканье, редуктор не садится вплотную,</text>
+  <text x="100" y="705" class="small">болты тянут корпус, входная шестерня получает осевую нагрузку.</text>
+
+  <!-- Correct side -->
+  <rect x="735" y="145" width="610" height="610" class="ok"/>
+  <text x="765" y="190" class="h">Правильно: есть зазор 0.5-1 мм</text>
+  <rect x="775" y="360" width="190" height="170" class="motor"/>
+  <rect x="965" y="330" width="38" height="230" class="flange"/>
+  <rect x="1003" y="415" width="150" height="60" class="shaft"/>
+  <rect x="1195" y="300" width="115" height="290" class="gear"/>
+  <rect x="1155" y="330" width="40" height="230" class="face"/>
+  <line x1="1153" y1="390" x2="1153" y2="500" stroke="#1b7f36" stroke-width="5" class="dash"/>
+  <line x1="1195" y1="390" x2="1195" y2="500" stroke="#1b7f36" stroke-width="5" class="dash"/>
+  <text x="1142" y="377" class="small">0.5-1 мм</text>
+  <line x1="1003" y1="555" x2="1153" y2="555" class="line"/>
+  <text x="1005" y="585" class="small">отрезанный вал</text>
+  <text x="780" y="645" class="t">Проверка:</text>
+  <text x="780" y="680" class="small">редуктор садится на фланец рукой, без усилия;</text>
+  <text x="780" y="705" class="small">болты только фиксируют, а не вдавливают вал внутрь.</text>
+
+  <!-- Measurement notes -->
+  <rect x="80" y="780" width="1240" height="45" fill="#f7f7f7" stroke="#333" stroke-width="2" rx="8"/>
+  <text x="105" y="810" class="t">Формула: длина вала после резки = глубина посадки редуктора - 0.5...1 мм. После резки снять фаску и восстановить D-flat под стопорный винт.</text>
+</svg>

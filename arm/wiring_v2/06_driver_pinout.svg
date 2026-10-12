@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <style>
+    .bg{fill:#fff}.panel{fill:#f5f8fc;stroke:#9aa9bd;stroke-width:3}.drv{fill:#171717;stroke:#000;stroke-width:5}.pinbox{fill:#e6ebf0;stroke:#253247;stroke-width:3}.used{fill:#dff5e7;stroke:#12833d;stroke-width:3}.empty{fill:#f1f2f4;stroke:#999;stroke-width:2}
+    .h1{font:800 32px 'Segoe UI',Arial}.h2{font:800 24px 'Segoe UI',Arial}.t{font:20px 'Segoe UI',Arial}.s{font:17px 'Segoe UI',Arial}.pin{font:800 19px Consolas,monospace}.white{font:800 22px 'Segoe UI',Arial;fill:#fff}.warn{fill:#fff8d9;stroke:#d09a00;stroke-width:3}
+  </style>
+  <rect width="1600" height="900" class="bg"/>
+  <text x="800" y="48" text-anchor="middle" class="h1">ЛИСТ 6 — ГДЕ ИСКАТЬ ПИНЫ НА КАЖДОМ LERDGE TMC2209</text>
+  <rect x="35" y="80" width="1530" height="770" rx="20" class="panel"/>
+  <text x="800" y="125" text-anchor="middle" class="h2">Рисунок один и тот же для драйвера №1 и №2</text>
+
+  <rect x="430" y="165" width="740" height="610" rx="24" class="drv"/>
+  <text x="800" y="210" text-anchor="middle" class="white">LERDGE TMC2209 — НАДПИСИ НА ПЛАТЕ ВАЖНЕЕ РИСУНКА</text>
+
+  <!-- left row -->
+  <rect x="250" y="250" width="330" height="48" rx="8" class="used"/><text x="415" y="282" text-anchor="middle" class="pin">1  EN/ENN — ПОКА НЕ ПАЯТЬ*</text>
+  <rect x="250" y="315" width="330" height="48" rx="8" class="empty"/><text x="415" y="347" text-anchor="middle" class="pin">2  MS1 — ПУСТО</text>
+  <rect x="250" y="380" width="330" height="48" rx="8" class="empty"/><text x="415" y="412" text-anchor="middle" class="pin">3  MS2 — ПУСТО</text>
+  <rect x="250" y="445" width="330" height="48" rx="8" class="empty"/><text x="415" y="477" text-anchor="middle" class="pin">4  PDN/UART — ПУСТО</text>
+  <rect x="250" y="510" width="330" height="48" rx="8" class="empty"/><text x="415" y="542" text-anchor="middle" class="pin">5  PDN/UART — ПУСТО</text>
+  <rect x="250" y="575" width="330" height="48" rx="8" class="empty"/><text x="415" y="607" text-anchor="middle" class="pin">6  CLK — ПУСТО</text>
+  <rect x="250" y="640" width="330" height="48" rx="8" class="used"/><text x="415" y="672" text-anchor="middle" class="pin">7  STEP — ПОДКЛЮЧИТЬ</text>
+  <rect x="250" y="705" width="330" height="48" rx="8" class="used"/><text x="415" y="737" text-anchor="middle" class="pin">8  DIR — ПОДКЛЮЧИТЬ</text>
+
+  <!-- right row -->
+  <rect x="1020" y="250" width="330" height="48" rx="8" class="used"/><text x="1185" y="282" text-anchor="middle" class="pin">1  VM — КРАСНЫЙ +12 V</text>
+  <rect x="1020" y="315" width="330" height="48" rx="8" class="used"/><text x="1185" y="347" text-anchor="middle" class="pin">2  GND — ЧЁРНЫЙ</text>
+  <rect x="1020" y="380" width="330" height="48" rx="8" class="used"/><text x="1185" y="412" text-anchor="middle" class="pin">3  M1B — ЧЁРНЫЙ МОТОРА</text>
+  <rect x="1020" y="445" width="330" height="48" rx="8" class="used"/><text x="1185" y="477" text-anchor="middle" class="pin">4  M1A — ЗЕЛЁНЫЙ МОТОРА</text>
+  <rect x="1020" y="510" width="330" height="48" rx="8" class="used"/><text x="1185" y="542" text-anchor="middle" class="pin">5  M2A — СИНИЙ МОТОРА</text>
+  <rect x="1020" y="575" width="330" height="48" rx="8" class="used"/><text x="1185" y="607" text-anchor="middle" class="pin">6  M2B — КРАСНЫЙ МОТОРА</text>
+  <rect x="1020" y="640" width="330" height="48" rx="8" class="used"/><text x="1185" y="672" text-anchor="middle" class="pin">7  VIO — ОТ ESP32 3V3</text>
+  <rect x="1020" y="705" width="330" height="48" rx="8" class="empty"/><text x="1185" y="737" text-anchor="middle" class="pin">8  GND У VIO — ПУСТО</text>
+
+  <text x="200" y="810" class="t">Зелёные поля подключаем. Серые оставляем пустыми. К каждому драйверу идёт только один чёрный GND — контакт №2 справа.</text>
+  <rect x="200" y="830" width="1200" height="50" rx="10" class="warn"/>
+  <text x="800" y="862" text-anchor="middle" class="s">* EN/ENN подключим после крупной фотографии платы. Не определять этот контакт только по его положению.</text>
+</svg>

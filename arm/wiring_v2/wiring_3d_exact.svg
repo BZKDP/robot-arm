@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1800" viewBox="0 0 2400 1800">
+  <defs>
+    <linearGradient id="plate" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7f8fa"/><stop offset="1" stop-color="#d7dce2"/></linearGradient>
+    <linearGradient id="esp" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1672bd"/><stop offset="1" stop-color="#0d3f78"/></linearGradient>
+    <linearGradient id="drv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#262b31"/><stop offset="1" stop-color="#090b0e"/></linearGradient>
+    <linearGradient id="wago" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb22e"/><stop offset="1" stop-color="#de7710"/></linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#152033" flood-opacity=".28"/></filter>
+    <filter id="wireShadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="5" stdDeviation="3" flood-color="#000" flood-opacity=".35"/></filter>
+    <style>
+      .h1{font:800 38px 'Segoe UI',Arial;fill:#142035}.h2{font:800 25px 'Segoe UI',Arial;fill:#142035}.h3{font:800 20px 'Segoe UI',Arial;fill:#142035}
+      .t{font:18px 'Segoe UI',Arial;fill:#172033}.s{font:15px 'Segoe UI',Arial;fill:#273448}.tiny{font:13px 'Segoe UI',Arial;fill:#dbe9f8}.pin{font:800 16px Consolas,'Courier New',monospace}
+      .red{fill:none;stroke:#df1d25;stroke-width:13;stroke-linecap:round;stroke-linejoin:round;filter:url(#wireShadow)}
+      .black{fill:none;stroke:#16191f;stroke-width:13;stroke-linecap:round;stroke-linejoin:round;filter:url(#wireShadow)}
+      .blue{fill:none;stroke:#1769d2;stroke-width:11;stroke-linecap:round;stroke-linejoin:round;filter:url(#wireShadow)}
+      .purple{fill:none;stroke:#8a35cc;stroke-width:11;stroke-linecap:round;filter:url(#wireShadow)}
+      .orange{fill:none;stroke:#f07818;stroke-width:11;stroke-linecap:round;filter:url(#wireShadow)}
+      .green{fill:none;stroke:#159447;stroke-width:11;stroke-linecap:round;filter:url(#wireShadow)}
+      .cyan{fill:none;stroke:#0093a6;stroke-width:11;stroke-linecap:round;filter:url(#wireShadow)}
+      .mblack{fill:none;stroke:#111;stroke-width:11;stroke-linecap:round;filter:url(#wireShadow)}
+      .mgreen{fill:none;stroke:#159447;stroke-width:11;stroke-linecap:round;filter:url(#wireShadow)}
+      .mblue{fill:none;stroke:#1769d2;stroke-width:11;stroke-linecap:round;filter:url(#wireShadow)}
+      .mred{fill:none;stroke:#dc2020;stroke-width:11;stroke-linecap:round;filter:url(#wireShadow)}
+      .used{fill:#e9fff0;stroke:#1c9b52;stroke-width:2}.unused{fill:#e2e6eb;stroke:#929ba8;stroke-width:1}.term{fill:#fff;stroke:#253247;stroke-width:2}.joinred{fill:#b90f1a;stroke:#671018;stroke-width:3}.joinblack{fill:#222;stroke:#000;stroke-width:3}.light{fill:#fff}.esptext{fill:#e6f3ff}.mutelight{fill:#cfd8e5}
+    </style>
+  </defs>
+
+  <rect width="2400" height="1800" fill="#eef2f6"/>
+  <text x="1200" y="50" text-anchor="middle" class="h1">3D-МОНТАЖНАЯ ПЛОСКОСТЬ — ESP32 + ДВА TMC2209 + ДВЕ NEMA</text>
+  <text x="1200" y="82" text-anchor="middle" class="t">Только необходимые соединения · без датчиков · без UART · без EN · две существующие WAGO на 3 контакта</text>
+
+  <!-- 3D plate -->
+  <g filter="url(#shadow)">
+    <path d="M70 115 H2330 Q2370 115 2370 155 V1690 L2340 1720 H85 L40 1680 V155 Q40 115 70 115Z" fill="#aeb5be"/>
+    <rect x="40" y="100" width="2330" height="1580" rx="35" fill="url(#plate)" stroke="#8d98a8" stroke-width="4"/>
+  </g>
+  <g fill="#8b939e" stroke="#555d68" stroke-width="4">
+    <circle cx="90" cy="150" r="22"/><circle cx="2320" cy="150" r="22"/><circle cx="90" cy="1630" r="22"/><circle cx="2320" cy="1630" r="22"/>
+  </g>
+
+  <!-- PSU adapter -->
+  <g filter="url(#shadow)">
+    <rect x="120" y="185" width="260" height="240" rx="24" fill="#24282e" stroke="#101216" stroke-width="4"/>
+    <rect x="160" y="245" width="180" height="95" rx="12" fill="#27b96d" stroke="#111" stroke-width="4"/>
+    <circle cx="210" cy="292" r="26" class="term"/><circle cx="290" cy="292" r="26" class="term"/>
+    <text x="210" y="302" text-anchor="middle" class="h2">−</text><text x="290" y="302" text-anchor="middle" class="h2" fill="#df1d25">+</text>
+    <text x="250" y="220" text-anchor="middle" class="h3 light">ПЕРЕХОДНИК БП 12 V</text>
+    <text x="250" y="380" text-anchor="middle" class="s light">винтовые клеммы + / −</text>
+  </g>
+
+  <!-- WAGO plus -->
+  <g filter="url(#shadow)">
+    <rect x="470" y="150" width="390" height="185" rx="25" fill="url(#wago)" stroke="#713b05" stroke-width="4"/>
+    <path d="M470 315 H860 L842 337 H488Z" fill="#a34f08"/>
+    <text x="665" y="185" text-anchor="middle" class="h3">WAGO «+» — ТВОЯ, НА 3</text>
+    <circle cx="550" cy="250" r="35" class="term"/><circle cx="665" cy="250" r="35" class="term"/><circle cx="780" cy="250" r="35" class="term"/>
+    <text x="550" y="257" text-anchor="middle" class="pin">1</text><text x="665" y="257" text-anchor="middle" class="pin">2</text><text x="780" y="257" text-anchor="middle" class="pin">3</text>
+    <text x="550" y="310" text-anchor="middle" class="s">от БП +</text><text x="665" y="310" text-anchor="middle" class="s">C +</text><text x="780" y="310" text-anchor="middle" class="s">выход +</text>
+  </g>
+
+  <!-- WAGO ground -->
+  <g filter="url(#shadow)">
+    <rect x="1180" y="150" width="390" height="185" rx="25" fill="url(#wago)" stroke="#713b05" stroke-width="4"/>
+    <path d="M1180 315 H1570 L1552 337 H1198Z" fill="#a34f08"/>
+    <text x="1375" y="185" text-anchor="middle" class="h3">WAGO «GND» — ТВОЯ, НА 3</text>
+    <circle cx="1260" cy="250" r="35" class="term"/><circle cx="1375" cy="250" r="35" class="term"/><circle cx="1490" cy="250" r="35" class="term"/>
+    <text x="1260" y="257" text-anchor="middle" class="pin">1</text><text x="1375" y="257" text-anchor="middle" class="pin">2</text><text x="1490" y="257" text-anchor="middle" class="pin">3</text>
+    <text x="1260" y="310" text-anchor="middle" class="s">от БП −</text><text x="1375" y="310" text-anchor="middle" class="s">C −</text><text x="1490" y="310" text-anchor="middle" class="s">выход GND</text>
+  </g>
+
+  <!-- capacitor -->
+  <g filter="url(#shadow)">
+    <ellipse cx="1020" cy="185" rx="62" ry="25" fill="#6f9da7" stroke="#18343d" stroke-width="4"/>
+    <rect x="958" y="185" width="124" height="145" fill="#294b59" stroke="#18343d" stroke-width="4"/>
+    <rect x="1040" y="185" width="42" height="145" fill="#d8dde0"/>
+    <ellipse cx="1020" cy="330" rx="62" ry="25" fill="#18343d"/>
+    <text x="1015" y="235" text-anchor="middle" class="h3 light">470 µF</text><text x="1015" y="267" text-anchor="middle" class="t light">50 V</text>
+    <text x="978" y="310" class="h2 light">+</text><text x="1052" y="310" class="h2">−</text>
+  </g>
+
+  <!-- source + capacitor wires -->
+  <path d="M290 266 H550" class="red"/><path d="M210 318 V390 H1160 V250 H1225" class="black"/>
+  <path d="M980 330 V360 H665 V285" class="red"/><path d="M1060 330 V390 H1375 V285" class="black"/>
+
+  <!-- solder split joints -->
+  <path d="M815 250 H910" class="red"/><rect x="910" y="225" width="190" height="50" rx="25" class="joinred"/><text x="1005" y="258" text-anchor="middle" class="h3 light">ПАЙКА + → 2</text>
+  <path d="M1525 250 H1640" class="black"/><rect x="1640" y="225" width="230" height="50" rx="25" class="joinblack"/><text x="1755" y="258" text-anchor="middle" class="h3 light">ПАЙКА GND → 3</text>
+
+  <!-- ESP32 -->
+  <g filter="url(#shadow)">
+    <path d="M835 505 H1565 V1040 L1545 1065 H855 L820 1035 V520Z" fill="#0a315d"/>
+    <rect x="820" y="480" width="745" height="560" rx="25" fill="url(#esp)" stroke="#082d56" stroke-width="5"/>
+    <rect x="1030" y="525" width="325" height="155" rx="12" fill="#c8ccd0" stroke="#555" stroke-width="4"/>
+    <path d="M1060 560 H1325 V650 H1060Z" fill="#dfe3e6"/>
+    <rect x="1110" y="950" width="160" height="90" rx="12" fill="#cbd0d5" stroke="#555" stroke-width="4"/>
+    <text x="1192" y="730" text-anchor="middle" class="h1 esptext">ESP32 DevKit 30 pin</text>
+    <text x="1192" y="765" text-anchor="middle" class="t esptext">USB снизу · питание ESP32 только USB</text>
+  </g>
+
+  <!-- ESP left full pin labels -->
+  <g class="pin">
+    <g fill="#fff"><rect x="655" y="520" width="205" height="29" rx="6" class="used"/><text x="758" y="541" text-anchor="middle">3V3</text></g>
+    <g><rect x="655" y="552" width="205" height="29" rx="6" class="used"/><text x="758" y="573" text-anchor="middle">GND</text></g>
+    <g><rect x="655" y="584" width="205" height="29" rx="6" class="unused"/><text x="758" y="605" text-anchor="middle">D15</text></g>
+    <g><rect x="655" y="616" width="205" height="29" rx="6" class="unused"/><text x="758" y="637" text-anchor="middle">D2</text></g>
+    <g><rect x="655" y="648" width="205" height="29" rx="6" class="unused"/><text x="758" y="669" text-anchor="middle">D4</text></g>
+    <g><rect x="655" y="680" width="205" height="29" rx="6" class="unused"/><text x="758" y="701" text-anchor="middle">RX2 (16)</text></g>
+    <g><rect x="655" y="712" width="205" height="29" rx="6" class="unused"/><text x="758" y="733" text-anchor="middle">TX2 (17)</text></g>
+    <g><rect x="655" y="744" width="205" height="29" rx="6" class="unused"/><text x="758" y="765" text-anchor="middle">D5</text></g>
+    <g><rect x="655" y="776" width="205" height="29" rx="6" class="unused"/><text x="758" y="797" text-anchor="middle">D18</text></g>
+    <g><rect x="655" y="808" width="205" height="29" rx="6" class="unused"/><text x="758" y="829" text-anchor="middle">D19</text></g>
+    <g><rect x="655" y="840" width="205" height="29" rx="6" class="unused"/><text x="758" y="861" text-anchor="middle">D21</text></g>
+    <g><rect x="655" y="872" width="205" height="29" rx="6" class="unused"/><text x="758" y="893" text-anchor="middle">RX0</text></g>
+    <g><rect x="655" y="904" width="205" height="29" rx="6" class="unused"/><text x="758" y="925" text-anchor="middle">TX0</text></g>
+    <g><rect x="655" y="936" width="205" height="29" rx="6" class="unused"/><text x="758" y="957" text-anchor="middle">D22</text></g>
+    <g><rect x="655" y="968" width="205" height="29" rx="6" class="unused"/><text x="758" y="989" text-anchor="middle">D23</text></g>
+  </g>
+
+  <!-- ESP right full pin labels -->
+  <g class="pin">
+    <g><rect x="1525" y="520" width="205" height="29" rx="6" class="unused"/><text x="1628" y="541" text-anchor="middle">VIN 5V</text></g>
+    <g><rect x="1525" y="552" width="205" height="29" rx="6" class="unused"/><text x="1628" y="573" text-anchor="middle">GND</text></g>
+    <g><rect x="1525" y="584" width="205" height="29" rx="6" class="unused"/><text x="1628" y="605" text-anchor="middle">D13</text></g>
+    <g><rect x="1525" y="616" width="205" height="29" rx="6" class="unused"/><text x="1628" y="637" text-anchor="middle">D12</text></g>
+    <g><rect x="1525" y="648" width="205" height="29" rx="6" class="unused"/><text x="1628" y="669" text-anchor="middle">D14</text></g>
+    <g><rect x="1525" y="680" width="205" height="29" rx="6" class="unused"/><text x="1628" y="701" text-anchor="middle">D27 — ПОКА ПУСТО</text></g>
+    <g><rect x="1525" y="712" width="205" height="29" rx="6" class="used"/><text x="1628" y="733" text-anchor="middle">D26 → DIR1</text></g>
+    <g><rect x="1525" y="744" width="205" height="29" rx="6" class="used"/><text x="1628" y="765" text-anchor="middle">D25 → STEP1</text></g>
+    <g><rect x="1525" y="776" width="205" height="29" rx="6" class="used"/><text x="1628" y="797" text-anchor="middle">D33 → DIR2</text></g>
+    <g><rect x="1525" y="808" width="205" height="29" rx="6" class="used"/><text x="1628" y="829" text-anchor="middle">D32 → STEP2</text></g>
+    <g><rect x="1525" y="840" width="205" height="29" rx="6" class="unused"/><text x="1628" y="861" text-anchor="middle">D35</text></g>
+    <g><rect x="1525" y="872" width="205" height="29" rx="6" class="unused"/><text x="1628" y="893" text-anchor="middle">D34</text></g>
+    <g><rect x="1525" y="904" width="205" height="29" rx="6" class="unused"/><text x="1628" y="925" text-anchor="middle">VN</text></g>
+    <g><rect x="1525" y="936" width="205" height="29" rx="6" class="unused"/><text x="1628" y="957" text-anchor="middle">VP</text></g>
+    <g><rect x="1525" y="968" width="205" height="29" rx="6" class="unused"/><text x="1628" y="989" text-anchor="middle">EN ESP32</text></g>
+  </g>
+
+  <!-- Driver 1 -->
+  <g filter="url(#shadow)">
+    <path d="M250 1145 H860 V1585 L840 1610 H270 L230 1580 V1165Z" fill="#050609"/>
+    <rect x="230" y="1120" width="630" height="470" rx="24" fill="url(#drv)" stroke="#000" stroke-width="5"/>
+    <rect x="405" y="1240" width="280" height="190" rx="10" fill="#323943" stroke="#58616d" stroke-width="3"/>
+    <circle cx="650" cy="1275" r="28" fill="#a7adb5" stroke="#333" stroke-width="3"/>
+    <text x="545" y="1170" text-anchor="middle" class="h2 light">ДРАЙВЕР №1 — J1 ОСНОВАНИЕ</text>
+    <text x="545" y="1202" text-anchor="middle" class="s mutelight">LERDGE TMC2209</text>
+  </g>
+  <!-- Driver 2 -->
+  <g filter="url(#shadow)">
+    <path d="M1540 1145 H2150 V1585 L2130 1610 H1560 L1520 1580 V1165Z" fill="#050609"/>
+    <rect x="1520" y="1120" width="630" height="470" rx="24" fill="url(#drv)" stroke="#000" stroke-width="5"/>
+    <rect x="1695" y="1240" width="280" height="190" rx="10" fill="#323943" stroke="#58616d" stroke-width="3"/>
+    <circle cx="1940" cy="1275" r="28" fill="#a7adb5" stroke="#333" stroke-width="3"/>
+    <text x="1835" y="1170" text-anchor="middle" class="h2 light">ДРАЙВЕР №2 — J2 ПЛЕЧО</text>
+    <text x="1835" y="1202" text-anchor="middle" class="s mutelight">LERDGE TMC2209</text>
+  </g>
+
+  <!-- Driver terminal callouts: simplified placement, exact names -->
+  <g class="pin">
+    <!-- D1 outer/power -->
+    <rect x="120" y="1175" width="170" height="28" rx="6" class="used"/><text x="205" y="1195" text-anchor="middle">VM</text>
+    <rect x="120" y="1210" width="170" height="28" rx="6" class="used"/><text x="205" y="1230" text-anchor="middle">GND у VM</text>
+    <rect x="120" y="1245" width="170" height="28" rx="6" class="used"/><text x="205" y="1265" text-anchor="middle">M1B</text>
+    <rect x="120" y="1280" width="170" height="28" rx="6" class="used"/><text x="205" y="1300" text-anchor="middle">M1A</text>
+    <rect x="120" y="1315" width="170" height="28" rx="6" class="used"/><text x="205" y="1335" text-anchor="middle">M2A</text>
+    <rect x="120" y="1350" width="170" height="28" rx="6" class="used"/><text x="205" y="1370" text-anchor="middle">M2B</text>
+    <rect x="120" y="1385" width="170" height="28" rx="6" class="used"/><text x="205" y="1405" text-anchor="middle">VIO</text>
+    <rect x="120" y="1420" width="170" height="28" rx="6" class="unused"/><text x="205" y="1440" text-anchor="middle">GND у VIO — пусто</text>
+    <!-- D1 inner/control -->
+    <rect x="800" y="1175" width="190" height="28" rx="6" class="unused"/><text x="895" y="1195" text-anchor="middle">EN/ENN — пусто</text>
+    <rect x="800" y="1210" width="190" height="28" rx="6" class="unused"/><text x="895" y="1230" text-anchor="middle">MS1 — пусто</text>
+    <rect x="800" y="1245" width="190" height="28" rx="6" class="unused"/><text x="895" y="1265" text-anchor="middle">MS2 — пусто</text>
+    <rect x="800" y="1280" width="190" height="28" rx="6" class="unused"/><text x="895" y="1300" text-anchor="middle">PDN/UART — пусто</text>
+    <rect x="800" y="1315" width="190" height="28" rx="6" class="unused"/><text x="895" y="1335" text-anchor="middle">PDN/UART — пусто</text>
+    <rect x="800" y="1350" width="190" height="28" rx="6" class="unused"/><text x="895" y="1370" text-anchor="middle">CLK — пусто</text>
+    <rect x="800" y="1385" width="190" height="28" rx="6" class="used"/><text x="895" y="1405" text-anchor="middle">STEP</text>
+    <rect x="800" y="1420" width="190" height="28" rx="6" class="used"/><text x="895" y="1440" text-anchor="middle">DIR</text>
+    <!-- D2 inner/control -->
+    <rect x="1460" y="1175" width="190" height="28" rx="6" class="unused"/><text x="1555" y="1195" text-anchor="middle">EN/ENN — пусто</text>
+    <rect x="1460" y="1210" width="190" height="28" rx="6" class="unused"/><text x="1555" y="1230" text-anchor="middle">MS1 — пусто</text>
+    <rect x="1460" y="1245" width="190" height="28" rx="6" class="unused"/><text x="1555" y="1265" text-anchor="middle">MS2 — пусто</text>
+    <rect x="1460" y="1280" width="190" height="28" rx="6" class="unused"/><text x="1555" y="1300" text-anchor="middle">PDN/UART — пусто</text>
+    <rect x="1460" y="1315" width="190" height="28" rx="6" class="unused"/><text x="1555" y="1335" text-anchor="middle">PDN/UART — пусто</text>
+    <rect x="1460" y="1350" width="190" height="28" rx="6" class="unused"/><text x="1555" y="1370" text-anchor="middle">CLK — пусто</text>
+    <rect x="1460" y="1385" width="190" height="28" rx="6" class="used"/><text x="1555" y="1405" text-anchor="middle">STEP</text>
+    <rect x="1460" y="1420" width="190" height="28" rx="6" class="used"/><text x="1555" y="1440" text-anchor="middle">DIR</text>
+    <!-- D2 outer/power -->
+    <rect x="2090" y="1175" width="190" height="28" rx="6" class="used"/><text x="2185" y="1195" text-anchor="middle">VM</text>
+    <rect x="2090" y="1210" width="190" height="28" rx="6" class="used"/><text x="2185" y="1230" text-anchor="middle">GND у VM</text>
+    <rect x="2090" y="1245" width="190" height="28" rx="6" class="used"/><text x="2185" y="1265" text-anchor="middle">M1B</text>
+    <rect x="2090" y="1280" width="190" height="28" rx="6" class="used"/><text x="2185" y="1300" text-anchor="middle">M1A</text>
+    <rect x="2090" y="1315" width="190" height="28" rx="6" class="used"/><text x="2185" y="1335" text-anchor="middle">M2A</text>
+    <rect x="2090" y="1350" width="190" height="28" rx="6" class="used"/><text x="2185" y="1370" text-anchor="middle">M2B</text>
+    <rect x="2090" y="1385" width="190" height="28" rx="6" class="used"/><text x="2185" y="1405" text-anchor="middle">VIO</text>
+    <rect x="2090" y="1420" width="190" height="28" rx="6" class="unused"/><text x="2185" y="1440" text-anchor="middle">GND у VIO — пусто</text>
+  </g>
+
+  <!-- POWER OUTER ROUTES: no motor intersections -->
+  <path d="M1005 225 V120 H80 V1189 H120" class="red"/>
+  <path d="M1005 225 V95 H2320 V1189 H2280" class="red"/>
+  <path d="M1755 225 V145 H105 V1224 H120" class="black"/>
+  <path d="M1755 225 V170 H2295 V1224 H2280" class="black"/>
+  <!-- GND to ESP -->
+  <path d="M1755 275 V430 H620 V566 H655" class="black"/>
+
+  <!-- 3V3 two wires from one ESP pin -->
+  <circle cx="655" cy="534" r="11" fill="#1769d2"/><text x="475" y="520" class="h3" fill="#1769d2">ДВА СИНИХ ВМЕСТЕ В 3V3</text>
+  <path d="M655 534 H560 V1090 H100 V1399 H120" class="blue"/>
+  <path d="M655 534 H585 V1060 H2300 V1399 H2280" class="blue"/>
+
+  <!-- STEP / DIR fan-out -->
+  <path d="M1525 758 C1320 820 1120 1110 990 1399" class="purple"/>
+  <path d="M1525 726 C1370 850 1180 1160 990 1434" class="orange"/>
+  <path d="M1730 822 C1810 930 1710 1160 1650 1399" class="green"/>
+  <path d="M1730 790 C1860 930 1780 1190 1650 1434" class="cyan"/>
+  <text x="1120" y="1160" class="h3" fill="#8a35cc">D25 → STEP1</text><text x="1160" y="1210" class="h3" fill="#f07818">D26 → DIR1</text>
+  <text x="1710" y="1120" class="h3" fill="#159447">D32 → STEP2</text><text x="1770" y="1170" class="h3" fill="#0093a6">D33 → DIR2</text>
+
+  <!-- MOTOR CABLES DOWN, four straight lanes each -->
+  <path d="M290 1259 H350 V1640" class="mblack"/><path d="M290 1294 H450 V1640" class="mgreen"/>
+  <path d="M290 1329 H550 V1640" class="mblue"/><path d="M290 1364 H650 V1640" class="mred"/>
+  <rect x="250" y="1640" width="520" height="90" rx="18" fill="#fff" stroke="#253247" stroke-width="4"/>
+  <text x="510" y="1678" text-anchor="middle" class="h2">КАБЕЛЬ К NEMA17 №1 — J1</text>
+  <text x="510" y="1710" text-anchor="middle" class="t">M1B чёрный · M1A зелёный · M2A синий · M2B красный</text>
+
+  <path d="M2090 1259 H1750 V1640" class="mblack"/><path d="M2090 1294 H1850 V1640" class="mgreen"/>
+  <path d="M2090 1329 H1950 V1640" class="mblue"/><path d="M2090 1364 H2050 V1640" class="mred"/>
+  <rect x="1630" y="1640" width="620" height="90" rx="18" fill="#fff" stroke="#253247" stroke-width="4"/>
+  <text x="1940" y="1678" text-anchor="middle" class="h2">КАБЕЛЬ К NEMA17 №2 — J2</text>
+  <text x="1940" y="1710" text-anchor="middle" class="t">M1B чёрный · M1A зелёный · M2A синий · M2B красный</text>
+
+  <!-- safety legend -->
+  <rect x="810" y="1640" width="780" height="90" rx="18" fill="#fff0f1" stroke="#c9182b" stroke-width="4"/>
+  <text x="1200" y="1675" text-anchor="middle" class="h2" fill="#c9182b">ДО ПРОШИВКИ БП 12 V НЕ ВКЛЮЧАТЬ</text>
+  <text x="1200" y="1710" text-anchor="middle" class="t">каждая пайка закрывается отдельной термоусадкой</text>
+</svg>

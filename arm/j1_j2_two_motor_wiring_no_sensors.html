@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Роборука J1 + J2 — подключение двух NEMA к ESP32</title>
+  <style>
+    :root{--ink:#172033;--muted:#5d6879;--line:#cad3e0;--blue:#1769d2;--red:#c9182b;--amber:#996900;--bg:#eef2f7;--card:#fff}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Segoe UI",Arial,sans-serif}
+    main{max-width:1420px;margin:auto;padding:28px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;margin:18px 0;box-shadow:0 5px 18px #17203312}
+    h1{font-size:34px;line-height:1.18;margin:0 0 8px}h2{font-size:24px;margin:0 0 14px}h3{font-size:19px;margin:20px 0 8px}
+    p{margin:8px 0}.lead{font-size:19px;color:var(--muted)}.danger{border:3px solid var(--red);background:#fff0f1}.warn{border:2px solid #dfa900;background:#fff8db}
+    .diagram{width:100%;display:block;border-radius:12px;background:#f5f7fb}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:850px}
+    th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}th{background:#eaf0f8}code,pre{font-family:Consolas,"Courier New",monospace}
+    code{background:#edf1f6;padding:2px 5px;border-radius:5px}pre{background:#121a28;color:#e9f0ff;padding:16px;border-radius:12px;overflow:auto}
+    .tag{display:inline-block;padding:2px 9px;border-radius:999px;background:#e8eef8;font-weight:700}.vm{color:#c9182b}.gnd{color:#111}.sig{color:#1769d2}
+    ol.check li,ul.check li{margin:.5em 0}.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}@media(max-width:900px){main{padding:12px}.two{grid-template-columns:1fr}h1{font-size:27px}}
+    .small{font-size:14px;color:var(--muted)}.yes{color:#087a39;font-weight:700}.no{color:#b11226;font-weight:700}
+  </style>
+</head>
+<body><main>
+  <section class="card">
+    <h1>Подключение двух NEMA17 к ESP32 через два LERDGE TMC2209</h1>
+    <p class="lead">Финальная схема для J1 (основание) и J2 (плечо). Сейчас без магнитных датчиков AS5600 и без UART.</p>
+  </section>
+
+  <section class="card danger">
+    <h2>Перед любой пайкой полностью отключи USB и моторный блок питания</h2>
+    <p><strong>Нельзя</strong> вставлять или вынимать разъём мотора, пока на <code>VM</code> драйвера есть питание: так часто сгорает TMC2209.</p>
+    <p><strong>Нельзя</strong> подавать 12/24 В на ESP32, его <code>VIN/5V</code> или <code>3V3</code>. На первом этапе ESP32 получает питание только по USB.</p>
+  </section>
+
+  <section class="card">
+    <h2>Главная схема — можно открыть отдельно и увеличить</h2>
+    <a href="j1_j2_two_motor_wiring_no_sensors.svg" target="_blank"><img class="diagram" src="j1_j2_two_motor_wiring_no_sensors.svg" alt="Схема подключения ESP32, двух TMC2209 и двух NEMA17"></a>
+    <p class="small">Нажми на схему, чтобы открыть SVG отдельно. Он векторный и не теряет чёткость при увеличении.</p>
+  </section>
+
+  <section class="card warn">
+    <h2>Один критичный нюанс именно с твоей версией LERDGE</h2>
+    <p>В ранних материалах проекта верхний левый контакт драйвера был помечен как «EN нет», а в поздней общей схеме он использован как <code>EN</code>. Поэтому <strong>GPIO27 припаивай только к контакту, который на самой плате реально подписан <code>EN</code> или <code>ENN</code></strong>. Если такой подписи нет — контакт пока оставь пустым и пришли крупное фото обеих сторон драйвера. Подключать неизвестный контакт наугад нельзя.</p>
+  </section>
+
+  <section class="card danger">
+    <h2>Два мотора между собой не соединяются</h2>
+    <p>У каждого NEMA свой отдельный TMC2209. Выходы <code>M1A/M1B/M2A/M2B</code> двух драйверов никогда не объединяются. Общими являются только питание <code>+VM</code>, земля <code>GND</code>, логические <code>3V3</code> и, если подтверждён контакт, линия <code>EN/ENN</code>.</p>
+  </section>
+
+  <section class="card">
+    <h2>Физический порядок контактов LERDGE TMC2209</h2>
+    <p>Это порядок, зафиксированный в предыдущей схеме проекта. Держи плату так же, как на старом рисунке, и всё равно сверяй каждую надпись на шелкографии.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>№ сверху</th><th>Левая гребёнка</th><th>Что делать сейчас</th><th>Правая гребёнка</th><th>Что делать сейчас</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><code>EN/ENN</code> — только если так подписан</td><td>к GPIO27 обоих драйверов</td><td><code>VM</code></td><td>к +12…24 V после F1/выключателя</td></tr>
+        <tr><td>2</td><td><code>MS1</code></td><td>оставить пустым</td><td><code>GND power</code></td><td>к общей GND</td></tr>
+        <tr><td>3</td><td><code>MS2</code></td><td>оставить пустым</td><td><code>M1B</code></td><td>провод №2 первой обмотки</td></tr>
+        <tr><td>4</td><td><code>PDN/UART</code></td><td>оставить пустым</td><td><code>M1A</code></td><td>провод №1 первой обмотки</td></tr>
+        <tr><td>5</td><td><code>PDN/UART</code></td><td>оставить пустым</td><td><code>M2A</code></td><td>провод №1 второй обмотки</td></tr>
+        <tr><td>6</td><td><code>CLK</code></td><td>оставить пустым</td><td><code>M2B</code></td><td>провод №2 второй обмотки</td></tr>
+        <tr><td>7</td><td><code>STEP</code></td><td>GPIO25 для J1 / GPIO32 для J2</td><td><code>VIO</code></td><td>к ESP32 3V3</td></tr>
+        <tr><td>8</td><td><code>DIR</code></td><td>GPIO26 для J1 / GPIO33 для J2</td><td><code>GND logic</code></td><td>к общей GND</td></tr>
+      </tbody>
+    </table></div>
+    <p class="small">Если расположение или подписи на реальном модуле отличаются хотя бы в одном месте, не продолжай по этой таблице: нужна фотография именно твоей ревизии платы.</p>
+  </section>
+
+  <section class="card">
+    <h2>Карта контактов ESP32</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Контакт ESP32</th><th>Куда идёт</th><th>Назначение</th><th>Рекомендуемый цвет</th></tr></thead>
+      <tbody>
+        <tr><td><code>GPIO25</code></td><td><code>STEP</code> драйвера №1</td><td>Шаги J1 — основание</td><td>фиолетовый</td></tr>
+        <tr><td><code>GPIO26</code></td><td><code>DIR</code> драйвера №1</td><td>Направление J1</td><td>оранжевый</td></tr>
+        <tr><td><code>GPIO32</code></td><td><code>STEP</code> драйвера №2</td><td>Шаги J2 — плечо</td><td>зелёный</td></tr>
+        <tr><td><code>GPIO33</code></td><td><code>DIR</code> драйвера №2</td><td>Направление J2</td><td>бирюзовый</td></tr>
+        <tr><td><code>GPIO27</code></td><td>оба <code>EN/ENN</code>, параллельно</td><td><code>LOW</code> — драйверы включены; <code>HIGH</code> — выключены</td><td>жёлтый</td></tr>
+        <tr><td><code>3V3</code></td><td>оба <code>VIO</code>, параллельно</td><td>Питание логики драйверов 3,3 В</td><td>синий</td></tr>
+        <tr><td><code>GND</code></td><td>общая шина земли</td><td>Общая точка для ESP32, БП и обоих драйверов</td><td>чёрный</td></tr>
+      </tbody>
+    </table></div>
+    <p><strong>Не подключаем сейчас:</strong> <code>MS1</code>, <code>MS2</code>, оба <code>PDN/UART</code>, <code>CLK</code>. Контакты датчиков тоже пока отсутствуют.</p>
+  </section>
+
+  <section class="card">
+    <h2>Все места соединения и пайки — по номерам</h2>
+    <h3>Моторное питание</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>№</th><th>Откуда</th><th>Куда</th><th>Провод / замечание</th></tr></thead>
+      <tbody>
+        <tr><td>P01</td><td><span class="vm">БП +12…24 V</span></td><td>вход держателя предохранителя F1</td><td>красный, 0,5–0,75 мм²</td></tr>
+        <tr><td>P02</td><td>выход F1</td><td>выключатель или аварийная кнопка моторного питания</td><td>предохранитель 3 А для имеющегося БП 3 А</td></tr>
+        <tr><td>P03</td><td><span class="gnd">БП −</span></td><td>общая шина GND</td><td>чёрный, 0,5–0,75 мм²</td></tr>
+        <tr><td>P04</td><td>шина +VM после F1/выключателя</td><td><code>VM</code> драйвера №1</td><td>отдельная ветка, красный</td></tr>
+        <tr><td>P05</td><td>шина +VM после F1/выключателя</td><td><code>VM</code> драйвера №2</td><td>отдельная ветка, красный</td></tr>
+        <tr><td>P06</td><td>общая GND</td><td><code>GND power</code> драйвера №1</td><td>отдельная ветка, чёрный</td></tr>
+        <tr><td>P07</td><td>общая GND</td><td><code>GND power</code> драйвера №2</td><td>отдельная ветка, чёрный</td></tr>
+        <tr><td>P08</td><td>C1 <strong>плюс</strong></td><td><code>VM</code> драйвера №1</td><td>470 мкФ / 50 В, максимально близко к драйверу</td></tr>
+        <tr><td>P09</td><td>C1 <strong>минус</strong>, сторона с полосой</td><td><code>GND power</code> драйвера №1</td><td>не перепутать полярность</td></tr>
+        <tr><td>P10</td><td>C2 плюс / минус</td><td><code>VM</code> / <code>GND power</code> драйвера №2</td><td>второй отдельный 470 мкФ / 50 В</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Логика ESP32 → драйверы</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>№</th><th>Соединение</th><th>Как сделать</th></tr></thead>
+      <tbody>
+        <tr><td>L01</td><td><code>ESP32 3V3</code> → <code>VIO</code> драйвера №1 и <code>VIO</code> драйвера №2</td><td>одна точка разветвления на два провода</td></tr>
+        <tr><td>L02</td><td><code>ESP32 GND</code> → общая GND; обе <code>GND logic</code> → туда же</td><td>это обязательная общая земля; без неё STEP/DIR не имеют общего уровня</td></tr>
+        <tr><td>L03</td><td><code>GPIO25</code> → <code>STEP</code> №1</td><td>прямой сигнальный провод</td></tr>
+        <tr><td>L04</td><td><code>GPIO26</code> → <code>DIR</code> №1</td><td>прямой сигнальный провод</td></tr>
+        <tr><td>L05</td><td><code>GPIO32</code> → <code>STEP</code> №2</td><td>прямой сигнальный провод</td></tr>
+        <tr><td>L06</td><td><code>GPIO33</code> → <code>DIR</code> №2</td><td>прямой сигнальный провод</td></tr>
+        <tr><td>L07</td><td><code>GPIO27</code> → оба подтверждённых <code>EN/ENN</code></td><td>одна точка разветвления; только если контакт реально подписан EN/ENN</td></tr>
+        <tr><td>L08</td><td>резистор 10 кОм между линией EN и <code>3V3</code></td><td>подтяжка держит драйверы выключенными, пока ESP32 запускается</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Моторы</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>№</th><th>Драйвер</th><th>Контакт</th><th>Провод мотора по текущей модели*</th></tr></thead>
+      <tbody>
+        <tr><td>M01</td><td>№1 J1</td><td><code>M1A</code></td><td>чёрный</td></tr><tr><td>M02</td><td>№1 J1</td><td><code>M1B</code></td><td>зелёный</td></tr>
+        <tr><td>M03</td><td>№1 J1</td><td><code>M2A</code></td><td>красный</td></tr><tr><td>M04</td><td>№1 J1</td><td><code>M2B</code></td><td>синий</td></tr>
+        <tr><td>M05</td><td>№2 J2</td><td><code>M1A</code></td><td>чёрный</td></tr><tr><td>M06</td><td>№2 J2</td><td><code>M1B</code></td><td>зелёный</td></tr>
+        <tr><td>M07</td><td>№2 J2</td><td><code>M2A</code></td><td>красный</td></tr><tr><td>M08</td><td>№2 J2</td><td><code>M2B</code></td><td>синий</td></tr>
+      </tbody>
+    </table></div>
+    <p class="small">* Цвета взяты из предыдущих материалов этого проекта, но у разных партий NEMA они могут отличаться. Сначала обязательно найди реальные пары мультиметром.</p>
+  </section>
+
+  <section class="card">
+    <h2>Как правильно определить четыре провода каждого NEMA</h2>
+    <ol class="check">
+      <li>Полностью отсоедини мотор от драйвера.</li>
+      <li>Поставь мультиметр в режим сопротивления или прозвонки.</li>
+      <li>Перебирай пары проводов. Два провода одной обмотки покажут небольшое сопротивление; между проводами разных обмоток будет обрыв.</li>
+      <li>Первую найденную пару подключи к <code>M1A + M1B</code>, вторую — к <code>M2A + M2B</code>.</li>
+      <li>Порядок двух проводов <em>внутри одной пары</em> влияет только на направление. Но нельзя поставить на одну обмотку по одному проводу из двух разных пар.</li>
+    </ol>
+    <p>Для имеющихся моторов ожидается: <strong>чёрный + зелёный</strong> — одна пара, <strong>красный + синий</strong> — вторая. Подтверди это отдельно на J1 и J2.</p>
+  </section>
+
+  <section class="card two">
+    <div>
+      <h2>Что лучше паять, а где оставить разъём</h2>
+      <ul class="check">
+        <li>Сигнальные провода ESP32 ↔ драйверы можно паять, каждую пайку закрыть термоусадкой.</li>
+        <li>Питание лучше разветвить клеммниками/WAGO или распределительной колодкой.</li>
+        <li>На моторном кабеле полезен подписанный разъём, но его разрешено размыкать только при выключенном БП.</li>
+        <li>Многожильный провод под винтовую клемму обжимай НШВИ. Залуженный припоем конец под винтом со временем ослабевает.</li>
+        <li>Каждый кабель подпиши с обеих сторон: <code>J1 STEP</code>, <code>J1 DIR</code>, <code>J2 STEP</code>, <code>J2 DIR</code>, <code>EN</code>, <code>3V3</code>, <code>GND</code>.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Провода и детали</h2>
+      <ul class="check">
+        <li>силовые и моторные: 0,5–0,75 мм²;</li>
+        <li>сигнальные: 0,14–0,25 мм²;</li>
+        <li>2× электролит 470 мкФ / 50 В;</li>
+        <li>1× резистор 10 кОм для EN;</li>
+        <li>держатель предохранителя + предохранитель 3 А;</li>
+        <li>две распределительные точки: +VM и GND;</li>
+        <li>термоусадка, НШВИ/разъёмы, стяжки и разгрузка кабеля от натяжения.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Пины для будущей прошивки</h2>
+    <pre>constexpr int J1_STEP_PIN = 25;
+constexpr int J1_DIR_PIN  = 26;
+constexpr int J2_STEP_PIN = 32;
+constexpr int J2_DIR_PIN  = 33;
+constexpr int DRIVERS_EN_PIN = 27; // LOW = включить, HIGH = выключить</pre>
+    <p>В самом начале <code>setup()</code> прошивка должна настроить <code>GPIO27</code> как выход и сразу выставить <code>HIGH</code>. Включать драйверы через <code>LOW</code> только перед контролируемым тестом.</p>
+  </section>
+
+  <section class="card danger">
+    <h2>Порядок первого включения</h2>
+    <ol class="check">
+      <li>USB и моторный БП отключены. Механически подопри плечо J2, чтобы оно не упало при случайном движении.</li>
+      <li>Прозвони обе пары каждого мотора и подпиши их.</li>
+      <li>Проверь полярность обоих электролитов: полоса на корпусе означает <strong>минус</strong>.</li>
+      <li>Мультиметром проверь, что между <code>+VM</code> и <code>GND</code> нет короткого замыкания, а <code>+VM</code> не соединён с <code>3V3</code>.</li>
+      <li>Сначала подключи только USB. Проверь, что ESP32 запускается, а линия EN не включает моторы самопроизвольно.</li>
+      <li>Настрой ограничение тока обоих драйверов. Точное значение Vref нельзя безопасно назначить без маркировки резисторов Rsense на конкретной ревизии LERDGE.</li>
+      <li>Подай моторное питание через F1. Первый тест делай на низкой скорости и только одним мотором за раз.</li>
+      <li>Если направление неверное — позже инвертируем <code>DIR</code> в программе. Не передёргивай моторные провода под напряжением.</li>
+    </ol>
+  </section>
+</main></body></html>

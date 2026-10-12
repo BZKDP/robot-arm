@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Робо-рука v7.1 — 6 осей с ROLL · поворотный круг · BOM</title>
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#1a1d23;font-family:Segoe UI,Arial,sans-serif}
+  canvas{touch-action:none;display:block}
+  .panel{position:fixed;background:rgba(28,32,40,.94);color:#e8eaf0;border-radius:10px;
+         box-shadow:0 4px 18px rgba(0,0,0,.5);padding:12px 14px}
+  #ui{top:12px;left:12px;width:242px}
+  #ui h1{font-size:14px;margin:0 0 8px}
+  .row{margin:6px 0}
+  .row label{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:2px;color:#aeb6c4}
+  .row b{color:#fff} input[type=range]{width:100%}
+  #mswap{width:100%;margin-top:6px;padding:7px;border:0;border-radius:7px;background:#2f6fdb;color:#fff;font-size:12.5px;cursor:pointer}
+  #orbit{width:100%;margin-top:5px;padding:6px;border:0;border-radius:7px;background:#3a7d4f;color:#fff;font-size:12.5px;cursor:pointer}
+  #hint{font-size:11px;color:#8f97a5;margin-top:8px;border-top:1px solid #333a46;padding-top:6px;line-height:1.45}
+  #bom{top:12px;right:12px;width:295px;max-height:92vh;overflow:auto}
+  #bom h2{font-size:14px;margin:0 0 8px}
+  .item{padding:5px 8px;border-radius:6px;font-size:12.5px;cursor:pointer;margin:2px 0}
+  .item:hover{background:#2a3140}.item.sel{background:#33507a}
+  .st{float:right;font-size:11px}
+  #card{border-top:1px solid #333a46;margin-top:8px;padding-top:8px;font-size:12.5px;line-height:1.55;display:none}
+  #card .nm{font-weight:700;font-size:13.5px;color:#fff}
+</style>
+</head>
+<body>
+<div id="ui" class="panel">
+  <h1>🦾 Рука 6 осей (v7.1)</h1>
+  <div class="row"><label>J1 база <b id="v1">20°</b></label><input id="j1" type="range" min="-180" max="180" value="20"></div>
+  <div class="row"><label>J2 плечо <b id="v2">25°</b></label><input id="j2" type="range" min="-100" max="100" value="25"></div>
+  <div class="row"><label>J3 локоть <b id="v3">-35°</b></label><input id="j3" type="range" min="-120" max="120" value="-35"></div>
+  <div class="row"><label>J4 РОЛЛ 🔄 <b id="v4">40°</b></label><input id="j4" type="range" min="-180" max="180" value="40"></div>
+  <div class="row"><label>J5 запястье <b id="v5">-30°</b></label><input id="j5" type="range" min="-120" max="120" value="-30"></div>
+  <button id="mswap">Муфты: ПЕЧАТНЫЕ (PETG) — переключить</button>
+  <button id="orbit">✈ Облёт камерой: ВЫКЛ</button>
+  <div id="hint">ЛКМ вращать · колесо зум (только 3D) · ПКМ сдвиг · клик по детали — карточка</div>
+</div>
+<div id="bom" class="panel"><h2>📦 Детали</h2><div id="list"></div><div id="card"></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const scene=new THREE.Scene(); scene.background=new THREE.Color(0x1a1d23);
+const cam=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,1,6000);
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(devicePixelRatio);
+document.body.appendChild(renderer.domElement);
+scene.add(new THREE.AmbientLight(0xffffff,.55));
+const dl=new THREE.DirectionalLight(0xffffff,.8);dl.position.set(250,450,300);scene.add(dl);
+const dl2=new THREE.DirectionalLight(0xa0b0ff,.3);dl2.position.set(-300,200,-250);scene.add(dl2);
+scene.add(new THREE.GridHelper(900,30,0x39404d,0x262b33));
+
+const M=c=>new THREE.MeshStandardMaterial({color:c,roughness:.55,metalness:.35});
+const mat={sup:M(0x8a8a8a),plate:M(0xb7bcc4),motor:M(0x2f2f2f),gb:M(0x2b4a9b),face:M(0x9aa4ad),
+ car:M(0xc9c9c9),shaft:M(0xe6e6e6),alu:M(0xc8ccd2),tube:M(0xb4bac2),buy:M(0x7f8790),susan:M(0x9aa4ad),
+ mag:M(0xc02626),pcb:M(0x1b7f3b),stand:M(0xc9a227),screw:M(0x22252b),printed:M(0xe0912b),
+ conn:M(0xf0f0e8),n14:M(0x3d4450),hole:new THREE.MeshBasicMaterial({color:0x2e333b,side:THREE.DoubleSide})};
+
+const BOM={
+ sup:{n:'Опора базы — ТВОЁ',d:'высота ~55мм; пластина-сэндвич J1 крепится к ней',s:'🔧 сам'},
+ plate:{n:'Пластина-сэндвич (штатная, ×5)',d:'~56×56×3, зажимается между мотором и редуктором. Используется: J1 (крепление к опоре) и J4-РОЛЛ (крепление узла к торцу трубы)',s:'✅ ×5'},
+ motor:{n:'Мотор NEMA17 — ВСЕ 5 В ДЕЛЕ',d:'J1+J2+J3+J4roll+J5. NEMA23 к CM36 НЕ подходит! Усиление J2 = длинный 17HS8401 (та же посадка)',s:'✅ ×5'},
+ gb:{n:'Планетарный редуктор 1:71 CM36',d:'Ø36×35; вращается ТОЛЬКО вал Ø8 (лыски 5.9) + штатный магнит на торце; ступица Ø19 и торец с 4 резьбами НЕПОДВИЖНЫ; лимит ~10-15Нм',s:'✅ ×5'},
+ coupP:{n:'Муфта ПЕЧАТНАЯ Ø20 (PETG)',d:'flange_coupling_8mm_PETG.stl: D-бор по лыскам (глубина 10), компакт-хомут 2×М3 внутри Ø20, фланец 26×42, 4×М4 (±8,±16)=сетка. В верт. узлах (J1/J4) фланец СВЕРХУ под дном, носик не используется; в pitch-узлах носик в отв. Ø14 стенки',s:'🖨 ×4-5'},
+ coupM:{n:'Муфта МЕТАЛЛ 8мм (едет)',d:'⚠️ хаб Ø16 не проходит отв.14 стенки (pitch-узлы = рассверлить 14→16.5 потом); в верт. узлах встаёт сразу; узел с ней на ~5мм ниже печатной — уточним по приезду',s:'🚚'},
+ chan:{n:'U-скоба 48×48×96 — БЕЗ СВЕРЛЕНИЯ',d:'3 больших Ø14 (шаг 24) + овалы 9мм вокруг + сетка 8мм по узлам. Ось сустава = верхнее Ø14 (72 от дна). Ступица прячется в проставку, вал/носик сквозь Ø14, болт М8 сквозь Ø14 напротив',s:'✅ целые'},
+ spacer:{n:'Проставка редуктора 5мм (печать)',d:'gearbox_spacer_5mm_PETG.stl: карман Ø20.4 под ступицу, 4×М3 потай BC27 в торец, 4×М4 крест 32 в сетку стенки. Для pitch-узлов J2/J3/J5',s:'🖨 ×3'},
+ tube:{n:'Труба 20×20×1.5 — КОРОТКИЕ звенья 60мм',d:'куски: J2→J3 = 60мм, J3→roll = 60мм, J5 = 110мм (итого <25см из 500мм хлыста). Низ: 4×М4 к фланцу; ось: болт М8; верх: 2 уголка. Сверлить: 4×Ø4.5 + 2×Ø8.2 на звено. Короче звено = меньше момент = проще сборка',s:'✅'},
+ corner:{n:'Уголок стальной 20×20',d:'по 2 на стык «труба→дно вилки» и «труба→пластина roll»: полка к грани трубы (М4 насквозь), полка под дно/пластину (М4 в штатное отверстие)',s:'🛒 ×6-8'},
+ kfl:{n:'KFL08 (бор 8мм)',d:'дальняя опора каждого pitch-сустава (J2/J3/J5): болт М8 сквозь трубу → в него; 2×М4 к стенке',s:'🚚 ×3-4'},
+ rod:{n:'Стаб-ось = болт М8×45',d:'сквозь трубу на оси, гайка внутри, хвост в KFL08 (2 гайки к обойме); на торец — магнит AS5600',s:'✅/🛒 хозмаг'},
+ pcb:{n:'AS5600 на J2/J3/J5',d:'плата 20×20 на стойках на стенке Б, магнит Ø6×2.5 на торце болта М8. Полный контроль угла',s:'✅ ×5'},
+ hallj1:{n:'Индекс J1: SS49E + магнит 3×2',d:'холл на кронштейне к торцу редуктора, магнит в дне скобы; + счёт шагов + автокалибровка нулём',s:'🛒'},
+ rollj:{n:'J4 РОЛЛ — осевой сустав (KUKA A4)',d:'торец трубы J3 → уголки → пластина-сэндвич → мотор+редуктор ВДОЛЬ руки → муфта (фланец сверху) → дно вилки-3. ±180°. Датчик: индекс SS49E (опция: двухвальный мотор + AS5600 сзади). Нагрузка 1.3-2Нм (запас 5×+)',s:'🆕 из имеющегося'},
+ susan:{n:'ПОВОРОТНЫЙ КРУГ 71×71×8 (заказан ×2)',d:'разгрузка roll-узла: муфта передаёт ТОЛЬКО кручение, весь вес/изгиб/растяжение — через круг (прикручен с обеих сторон — соскочить невозможно). Стек: торец редуктора → адаптер-низ (печать, 4×М3 потай BC27) → круг (4×М4 углы) → адаптер-верх (печать) → 4×М4 в сетку дна вилки. Хаб муфты проходит сквозь центр круга. Второй круг — резерв под J1',s:'🚚 ×2'},
+ adap:{n:'Адаптеры круга (печать ×2)',d:'квадраты ~72×72: низ 4мм (торец редуктора→круг), верх ~12мм (круг→дно вилки, выравнивает высоту фланца муфты). STL — после замера круга (толщина/отверстия/внутр.Ø)',s:'🖨 после замера'},
+ n14:{n:'NEMA14 — кисть J6',d:'~0.1Нм: поворот кисти/гриппер (подъём не тянет)',s:'✅'},
+ scr:{n:'Крепёж',d:'М3 потай (проставки/адаптер), М3×10 (редуктор-стенка), М3×16 (хомуты муфт), М4×10/12/30 + нейлок, М8×45. Фиксатор резьбы на всё',s:'🛒 наборы'},
+ conn:{n:'Разъёмы моторов JST',d:'кабели до TMC2209 у базы',s:'✅'},
+ wire:{n:'Проводка',d:'магистраль ВНУТРИ полых труб, сервисные петли 60-80мм у каждой оси (у J1 и J4-roll — большие, оси ±180°), стяжки в сетку, разъёмы у суставов',s:'✅+стяжки'},
+ calc:{n:'📐 РАСЧЁТЫ (6 осей, компакт) И ВЕРДИКТ',d:'ЗВЕНЬЯ УРЕЗАНЫ до 60мм (минимум под М8+крепёж): рука короче на ~180мм, диспропорция ушла. МОМЕНТЫ (лимит 10-15Нм): J5=0.5 (20×) · J4 roll=1.3-2 (5-7×) · J3=~3 (3-4×) · J2=~5.7 пик (1.75-2.6× ✅ больше НЕ впритык; 17HS8401 на J2 теперь опция, а не необходимость) · J1 свободно.<br>ЗАЗОРЫ: хаб Ø20 vs головки М3 (потай!) ✅ · углы труб у стенок — ФАСКА 2×45° обязательна · носик Ø13.6 в отв.14 = опора скольжения · roll разгружен кругом ✅.<br>ТОЧНОСТЬ: повторяемость ±0.3-0.5мм (однонаправленный подход + ток + затяжка).<br>СВЕРЛОВКА: скобы 0 отверстий; трубы 4×4.5+2×8.2 на звено; пластина-сэндвич roll: 2×4.5 под уголки.<br>ВЕРДИКТ: 6 осей собираются из имеющегося + круг/уголки/крепёж; блокеров нет',s:'✅ проверено'}};
+
+const allG=[];
+function G(key){const g=new THREE.Group();g.userData.bom=key;allG.push(g);return g;}
+function box(w,h,d,m,x,y,z,g){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);g.add(o);return o}
+function cylY(dia,h,m,x,y,z,g){const o=new THREE.Mesh(new THREE.CylinderGeometry(dia/2,dia/2,h,32),m);o.position.set(x,y,z);g.add(o);return o}
+function cylZ(dia,h,m,x,y,z,g){const o=cylY(dia,h,m,0,0,0,g);o.rotation.x=Math.PI/2;o.position.set(x,y,z);return o}
+function cylX(dia,h,m,x,y,z,g){const o=cylY(dia,h,m,0,0,0,g);o.rotation.z=Math.PI/2;o.position.set(x,y,z);return o}
+function hexY(af,h,m,x,y,z,g){const o=new THREE.Mesh(new THREE.CylinderGeometry(af/1.732,af/1.732,h,6),m);o.position.set(x,y,z);g.add(o);return o}
+function hexZ(af,h,m,x,y,z,g){const o=hexY(af,h,m,0,0,0,g);o.rotation.x=Math.PI/2;o.position.set(x,y,z);return o}
+function holeZ(r,x,y,z,g){const o=new THREE.Mesh(new THREE.CircleGeometry(r,16),mat.hole);o.position.set(x,y,z);g.add(o);return o}
+function holeY(r,x,y,z,g){const o=new THREE.Mesh(new THREE.CircleGeometry(r,16),mat.hole);o.rotation.x=-Math.PI/2;o.position.set(x,y,z);g.add(o);return o}
+function ovalZ(x,y,z,ang,g){const o=new THREE.Mesh(new THREE.CircleGeometry(2.25,14),mat.hole);
+ o.scale.set(2,1,1);o.rotation.z=ang;o.position.set(x,y,z);g.add(o);return o}
+const wmat=new THREE.MeshStandardMaterial({color:0x111318,roughness:.9});
+function wire(g,pts,r){const c=new THREE.CatmullRomCurve3(pts.map(p=>new THREE.Vector3(p[0],p[1],p[2])));
+ const o=new THREE.Mesh(new THREE.TubeGeometry(c,24,r||1.7,6),wmat);o.userData.bom='wire';g.add(o);return o}
+
+// ================= ОБЩИЕ СБОРКИ =================
+function mgbY(g,y0){ // ВЕРТИКАЛЬНЫЙ мотор+редуктор: низ мотора на y0, ось Y; торец = y0+82
+  box(42.3,47,42.3,mat.motor,0,y0+23.5,0,g);
+  cylY(36,35,mat.gb,0,y0+64.5,0,g);
+  cylY(36,1.2,mat.face,0,y0+82.6,0,g);
+  cylY(19,4,mat.car,0,y0+84,0,g);              // ступица 82..86
+  cylY(8,11,mat.shaft,0,y0+91.5,0,g);          // вал 86..97
+  cylY(5,5,M(0x555b66),0,y0+99.5,0,g);         // штатный магнит
+  box(14,8,6,mat.conn,0,y0+8,23,g);
+}
+function mgbZ(g){ // горизонтальный (pitch): торец=z0, тело в -z
+  box(42.3,42.3,47,mat.motor,0,0,-58.5,g);
+  cylZ(36,35,mat.gb,0,0,-17.5,g); cylZ(36,1.2,mat.face,0,0,0.6,g);
+  cylZ(19,4,mat.car,0,0,3,g); cylZ(8,11,mat.shaft,0,0,10.5,g); cylZ(5,5,M(0x555b66),0,0,18.5,g);
+  box(14,6,8,mat.conn,0,-24,-66,g);
+}
+// ВЕРТИКАЛЬНАЯ пара муфт: фланец СВЕРХУ; yStub = низ ступицы; возвращает y дна (верх фланца+0.3)
+function vertCoupler(parent, yStub){
+  const yHub=yStub+4.5;                          // хаб над ступицей (зазор 0.5)
+  const p=G('coupP'); parent.add(p);
+  cylY(20,15,mat.printed,0,yHub+7.5,0,p);        // хаб 15 (D-бор охват вала 10)
+  box(6.5,15,1.7,M(0x14161b),6.6,yHub+7.5,0,p);  // пропил
+  cylZ(3,20,mat.screw,6.4,yHub+4,0,p); cylZ(3,20,mat.screw,6.4,yHub+11,0,p); // 2xМ3 хомута
+  box(26,5,42,mat.printed,0,yHub+17.5,0,p);      // фланец 26x42 СВЕРХУ
+  const m=G('coupM'); parent.add(m);
+  cylY(16,15,mat.buy,0,yHub+7.5,0,m);
+  cylY(30,3,mat.buy,0,yHub+16.5,0,m);
+  const yTop=yHub+20;                             // верх фланца (print)
+  // 4xМ4: сверху сквозь дно -> гайки под фланцем (обе версии)
+  for(const q of [[8,16],[8,-16],[-8,16],[-8,-16]]){
+    cylY(4,14,mat.screw,q[0],yTop+2,q[1],p); cylY(7,2,mat.screw,q[0],yTop+6.6,q[1],p);
+    hexY(8.5,3.2,mat.screw,q[0],yHub+13.2,q[1],p);
+  }
+  for(const q of [[6,10.4],[6,-10.4],[-6,10.4],[-6,-10.4]]){
+    cylY(3,14,mat.screw,q[0],yTop+2,q[1],m); cylY(6.5,2.2,mat.screw,q[0],yTop+6.4,q[1],m);
+    hexY(7,2.6,mat.screw,q[0],yHub+12.6,q[1],m);
+  }
+  return {p,m,yWeb:yTop+0.3};
+}
+const BIGS=[24,48,72];
+function fork(g,axY){ // вилка дном ВНИЗ (y0..2.5), стенки 96, 3 больших Ø14+овалы+сетка по узлам
+  const f=G('chan'); g.add(f);
+  box(48,2.5,43,mat.alu,0,1.25,0,f);
+  for(const yo of [2.56,-0.06]){
+    for(let x=-16;x<=16;x+=8) for(let z=-16;z<=16;z+=8)
+      if(!(x===0&&z===0)) holeY(2.1,x,yo,z,f);
+    holeY(7,0,yo,0,f);
+    for(const q of [[11,11],[-11,11],[11,-11],[-11,-11]]) holeY(3.2,q[0],yo,q[1],f);
+  }
+  for(const s of [-1,1]){
+    box(48,96,2.5,mat.alu,0,48,s*22.75,f);
+    for(const zo of [s*24.06, s*21.44]){
+      for(const by of BIGS){
+        holeZ(7,0,by,zo,f);
+        for(const d of [[1,1],[-1,1],[1,-1],[-1,-1]])
+          ovalZ(d[0]*8.6,by+d[1]*8.6,zo,Math.atan2(d[1],d[0]),f);
+      }
+      for(let x=-16;x<=16;x+=8) for(let y=8;y<=88;y+=8){
+        let skip=false;
+        for(const by of BIGS){ if(Math.abs(x)<4&&Math.abs(y-by)<4) skip=true;
+          if(Math.abs(Math.abs(x)-8)<2&&Math.abs(Math.abs(y-by)-8)<3) skip=true; }
+        if(!skip) holeZ(2.1,x,y,zo,f);
+      }
+    }
+  }
+  return f;
+}
+function tubeCorners(g,tubeTop){ // 2 уголка: грани трубы <-> дно/пластина над ней
+  const c=G('corner'); g.add(c);
+  const yV=tubeTop-10, yH=tubeTop-1;
+  box(16,16,2,mat.buy,0,yV,20,c);   box(16,2,17,mat.buy,0,yH,11.5,c);
+  cylZ(4,26,mat.screw,0,yV,8.5,c);  cylZ(7,2.2,mat.screw,0,yV,22.2,c);
+  cylY(4,9,mat.screw,0,yH+1,8,c);   cylY(7,2.2,mat.screw,0,yH+5,8,c);
+  box(2,16,16,mat.buy,11,yV,1,c);   box(17,2,16,mat.buy,3.5,yH,1,c);
+  cylX(4,26,mat.screw,0.5,yV,1,c);  cylX(7,2.2,mat.screw,13.2,yV,1,c);
+  cylY(4,9,mat.screw,0,yH+1,-6,c);  cylY(7,2.2,mat.screw,0,yH+5,-6,c);
+}
+const couplers=[];
+// PITCH-узел в вилке: мотор снаружи -z за ПРОСТАВКОЙ, муфта(+носик), KFL08, AS5600, труба
+function jointModule(parent, axY, tubeLen){
+  tubeLen=tubeLen||150;
+  const drive=G('gb'); parent.add(drive);
+  drive.position.set(0,axY,-29); mgbZ(drive);
+  const sp=G('spacer'); parent.add(sp);
+  cylZ(52,5,mat.printed,0,axY,-26.5,sp);
+  const scrD=G('scr'); parent.add(scrD);
+  for(const a of [0,90,180,270]){
+    const x=16*Math.cos(a*Math.PI/180), y=axY+16*Math.sin(a*Math.PI/180);
+    cylZ(4,12,mat.screw,x,y,-25,scrD); hexZ(8,3,mat.screw,x,y,-19.8,scrD); }
+  const kfl=G('kfl'); parent.add(kfl);
+  box(37,18,11,mat.buy,0,axY,29.5,kfl);
+  cylZ(18,11,mat.buy,-18.5,axY,29.5,kfl); cylZ(18,11,mat.buy,18.5,axY,29.5,kfl);
+  cylZ(16,13,mat.buy,0,axY,29.5,kfl);
+  const pcb=G('pcb'); parent.add(pcb);
+  box(20,20,1.6,mat.pcb,0,axY,43,pcb); box(4,4,1.2,M(0x111),0,axY,41.9,pcb);
+  cylZ(5,7,mat.stand,-8,axY+8,38.5,pcb); cylZ(5,7,mat.stand,8,axY-8,38.5,pcb);
+  const pv=new THREE.Group(); pv.position.set(0,axY,0); parent.add(pv);
+  const p=G('coupP'); pv.add(p);                              // печатная муфта с НОСИКОМ
+  cylZ(20,15,mat.printed,0,0,-13.7,p);
+  cylZ(13.6,3.3,mat.printed,0,0,-22.9,p);
+  box(6.5,1.7,15,M(0x14161b),6.6,0,-13.7,p);
+  cylY(3,19,mat.screw,9.5,0,-13.7,p); cylY(3,19,mat.screw,-9.5,0,-13.7,p);
+  box(26,42,5,mat.printed,0,0,-3.7,p);
+  const m=G('coupM'); pv.add(m);                              // металл (нужна рассверловка 14→16.5)
+  cylZ(16,15,mat.buy,0,0,-13.7,m); cylZ(30,3,mat.buy,0,0,-4.7,m);
+  couplers.push({p,m});
+  for(const q of [[8,16],[8,-16],[-8,16],[-8,-16]]){           // болты трубы (печатная)
+    hexZ(8.5,3.2,mat.screw,q[0],q[1],-7.6,p);
+    cylZ(4,26,mat.screw,q[0],q[1],7,p); cylZ(8,2.6,mat.screw,q[0],q[1],20.4,p); }
+  for(const q of [[6,10.4],[6,-10.4],[-6,10.4],[-6,-10.4]]){   // болты трубы (металл)
+    hexZ(7,2.6,mat.screw,q[0],q[1],-6.5,m);
+    cylZ(3,25,mat.screw,q[0],q[1],7,m); cylZ(6.5,2.4,mat.screw,q[0],q[1],19.9,m); }
+  const tube=G('tube'); pv.add(tube);
+  box(20,tubeLen,20,mat.tube,0,tubeLen/2-20,9,tube);
+  for(let y=-12;y<=tubeLen-26;y+=8) holeZ(2.2,0,y,19.2,tube);
+  box(17,0.3,17,mat.hole,0,tubeLen-19.95,9,tube);
+  box(17,0.3,17,mat.hole,0,-20.05,9,tube);
+  const rod=G('rod'); pv.add(rod);
+  cylZ(8,40,mat.shaft,0,0,17,rod); cylZ(13,5,mat.screw,0,0,-4.5,rod);
+  const mg=G('pcb'); pv.add(mg); cylZ(6,2.5,mat.mag,0,0,38.4,mg);
+  wire(pv,[[0,-14,9],[0,tubeLen*0.4,9],[0,tubeLen-28,9],[0,tubeLen-16,13],[2,tubeLen-8,-8],[3,tubeLen,-40]]);
+  wire(parent,[[0,axY-2,-100],[6,axY-28,-80],[10,20,-40],[4,6,-14],[0,-8,0]],1.7);
+  wire(parent,[[0,axY-10,44],[10,axY-40,34],[12,16,20],[4,4,10],[0,-8,4]],1.2);
+  return {pivot:pv};
+}
+
+// ================= СТАТИКА + J1 =================
+const gSup=G('sup'); scene.add(gSup);
+box(20,55,50,mat.sup,-35,27.5,0,gSup); box(20,55,50,mat.sup,35,27.5,0,gSup);
+const gPl1=G('plate'); scene.add(gPl1);
+box(56,3,56,mat.plate,0,56.5,0,gPl1);
+for(const s of [[-24,-24],[24,-24],[-24,24],[24,24]]) holeY(2.3,s[0],58.05,s[1],gPl1);
+const gM1=G('gb'); scene.add(gM1);
+mgbY(gM1,11);                                   // мотор 11..58, торец 93, ступица 93..97, вал 97..108
+const gHall=G('hallj1'); scene.add(gHall);
+box(6,12,1.5,mat.buy,14,100.2,0,gHall); box(4,1.6,3,mat.pcb,14,106.9,0,gHall);
+cylY(3,2,mat.screw,14,94.8,0,gHall);
+// J1 вертикальная муфта: ступица низ = 93
+const j1c=new THREE.Group(); scene.add(j1c);
+const cp1=vertCoupler(j1c,93); couplers.push(cp1);
+const WEB1=cp1.yWeb;                            // = 117.8
+const AXH=72;
+
+// ================= ВРАЩАЮЩАЯСЯ ЧАСТЬ (J1) =================
+const g1=new THREE.Group(); scene.add(g1);
+const gMagJ1=G('hallj1'); g1.add(gMagJ1); cylY(3,2,mat.mag,14,WEB1-1,0,gMagJ1);
+const scb=new THREE.Group(); scb.position.set(0,WEB1,0); g1.add(scb);
+fork(scb,AXH);                                  // скоба-1: ось J2 = WEB1+72
+const J2=jointModule(scb,AXH,60);               // КОРОТКОЕ звено (минимум: М8 + крепёж фланца)
+wire(g1,[[0,WEB1+6,-22],[18,WEB1-2,-14],[34,108,0],[42,90,14],[40,72,26]],2.2);
+wire(scene,[[40,72,26],[52,62,30],[62,56,20],[68,52,6]],2.2);
+
+// вилка-2 дном вниз на торце короткой трубы J2 (труба до 40)
+const f2h=new THREE.Group(); f2h.position.set(0,41,0); J2.pivot.add(f2h);
+fork(f2h,72); tubeCorners(J2.pivot,40);
+const J3=jointModule(f2h,72,60);                // тоже короткое звено
+
+// ================= J4 = ROLL (труба J3 до 40 — компакт!) =================
+tubeCorners(J3.pivot,40);                       // уголки: труба -> пластина-сэндвич
+const gPl4=G('plate'); J3.pivot.add(gPl4);
+box(56,3,56,mat.plate,0,41.6,9,gPl4);
+for(const s of [[-24,-24+9],[24,-24+9],[-24,24+9],[24,24+9]]) holeY(2.3,s[0],43.15,s[1],gPl4);
+const gR=G('rollj'); J3.pivot.add(gR);
+gR.position.set(0,0,9);
+mgbY(gR,43.3);                                  // мотор 43..90, редуктор 90..125, торец 125.3
+const rHall=G('rollj'); J3.pivot.add(rHall);
+box(6,12,1.5,mat.buy,14,132.3,9,rHall); box(4,1.6,3,mat.pcb,14,139,9,rHall);
+// ПОВОРОТНЫЙ КРУГ + адаптеры (разгрузка roll)
+const gAdL=G('adap'); J3.pivot.add(gAdL);
+box(72,4,72,mat.printed,0,127.5,9,gAdL);        // адаптер-низ 125.5..129.5 (4×М3 потай BC27)
+for(const a of [45,135,225,315]) cylY(3,5,mat.screw,13.5*Math.cos(a*Math.PI/180),127.5,9+13.5*Math.sin(a*Math.PI/180),gAdL);
+const gSus=G('susan'); J3.pivot.add(gSus);
+box(71,1.5,71,mat.susan,0,130.25,9,gSus);       // нижняя пластина круга
+box(71,1.5,71,mat.susan,0,136.75,9,gSus);       // верхняя (вращается)
+cylY(56,5,mat.susan,0,133.6,9,gSus);            // кольцо шариков
+for(const s of [[-30,-30],[30,-30],[-30,30],[30,30]])
+  cylY(4,7,mat.screw,s[0],128.7,9+s[1],gSus);   // 4xМ4 низ круга -> адаптер-низ
+// вертикальная муфта roll: ступица низ = 125.3
+const j4c=new THREE.Group(); j4c.position.set(0,0,9); J3.pivot.add(j4c);
+const cp4=vertCoupler(j4c,125.3); couplers.push(cp4);
+// ================= ВРАЩАЮЩАЯСЯ ЧАСТЬ ROLL (g4) =================
+const g4=new THREE.Group(); g4.position.set(0,cp4.yWeb,9); J3.pivot.add(g4); // = 150.1
+const gAdU=G('adap'); g4.add(gAdU);
+box(72,11.5,72,mat.printed,0,-6.05,0,gAdU);     // адаптер-верх: от верха круга (227.6) до дна (240.9)
+for(const s of [[-30,-30],[30,-30],[-30,30],[30,30]])
+  cylY(4,7,mat.screw,s[0],-10.5,s[1],gAdU);     // 4xМ4 верх круга -> адаптер-верх
+const scrU=G('scr'); g4.add(scrU);
+for(const s of [[-16,0],[16,0],[0,-16],[0,16]]){
+  cylY(4,12,mat.screw,s[0],2,s[1],scrU); hexY(8.5,3,mat.screw,s[0],-3.5,s[1],scrU); } // адаптер->сетка дна
+const gMagR=G('rollj'); g4.add(gMagR); cylY(3,2,mat.mag,14,-1,0,gMagR);
+const f3h=new THREE.Group(); f3h.position.set(0,0.3,0); g4.add(f3h);
+fork(f3h,72);
+const J5=jointModule(f3h,72,110);
+const gN14=G('n14'); J5.pivot.add(gN14);
+box(35,28,35,mat.n14,0,76,9,gN14); box(10,3,10,mat.shaft,0,92,9,gN14);
+
+// ================= УПРАВЛЕНИЕ =================
+let printedMode=true;
+function applyCoup(){ for(const c of couplers){ c.p.visible=printedMode; c.m.visible=!printedMode; }
+ document.getElementById('mswap').textContent='Муфты: '+(printedMode?'ПЕЧАТНЫЕ (PETG)':'МЕТАЛЛИЧЕСКИЕ')+' — переключить';
+ document.querySelectorAll('.item').forEach(el=>{
+  if(el.dataset.k==='coupP') el.style.display=printedMode?'':'none';
+  if(el.dataset.k==='coupM') el.style.display=printedMode?'none':''; }); }
+document.getElementById('mswap').onclick=()=>{printedMode=!printedMode;applyCoup();};
+let autoOrbit=false;
+document.getElementById('orbit').onclick=()=>{autoOrbit=!autoOrbit;
+ document.getElementById('orbit').textContent='✈ Облёт камерой: '+(autoOrbit?'ВКЛ':'ВЫКЛ');};
+
+const target=new THREE.Vector3(0,230,0);
+let th=0.9,ph=1.2,R=780,drag=0,px=0,py=0,moved=0;
+function setCam(){cam.position.set(target.x+R*Math.sin(ph)*Math.cos(th),target.y+R*Math.cos(ph),target.z+R*Math.sin(ph)*Math.sin(th));cam.lookAt(target);}
+addEventListener('mousedown',e=>{if(e.target.closest('.panel'))return;drag=e.button===2?2:1;px=e.clientX;py=e.clientY;moved=0});
+addEventListener('mouseup',e=>{if(drag&&moved<5)pick(e);drag=0});
+addEventListener('contextmenu',e=>e.preventDefault());
+addEventListener('mousemove',e=>{if(!drag)return;const dx=e.clientX-px,dy=e.clientY-py;moved+=Math.abs(dx)+Math.abs(dy);px=e.clientX;py=e.clientY;
+ if(drag===1){th+=dx*.006;ph=Math.min(2.9,Math.max(.2,ph-dy*.006));}
+ else{const s=R*.0016;target.x-=dx*s*Math.cos(th-Math.PI/2);target.z-=dx*s*Math.sin(th-Math.PI/2);target.y+=dy*s;}
+ setCam();});
+renderer.domElement.addEventListener('wheel',e=>{e.preventDefault();
+ R=Math.min(2400,Math.max(150,R*(e.deltaY>0?1.12:0.9)));setCam();},{passive:false});
+addEventListener('keydown',e=>{if(e.ctrlKey&&(e.key==='+'||e.key==='-'||e.key==='='))e.preventDefault();});
+addEventListener('resize',()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+
+const list=document.getElementById('list'),card=document.getElementById('card');
+let restore=[];
+function select(key){
+ restore.forEach(r=>r.mesh.material=r.m); restore=[];
+ for(const g of allG) if(g.userData.bom===key)
+  g.traverse(o=>{if(o.isMesh&&o.material.emissive){restore.push({mesh:o,m:o.material});
+   o.material=o.material.clone();o.material.emissive.setHex(0x2a4a7a);}});
+ const b=BOM[key]; if(!b) return;
+ card.style.display='block';
+ card.innerHTML='<div class="nm">'+b.n+'</div>'+b.d+'<br><b>'+b.s+'</b>';
+ document.querySelectorAll('.item').forEach(el=>el.classList.toggle('sel',el.dataset.k===key));
+}
+for(const k in BOM){const el=document.createElement('div');el.className='item';el.dataset.k=k;
+ el.innerHTML=BOM[k].n.split('(')[0].split('—')[0].slice(0,36)+'<span class="st">'+BOM[k].s.slice(0,2)+'</span>';
+ el.onclick=()=>select(k);list.appendChild(el);}
+const ray=new THREE.Raycaster(),mv=new THREE.Vector2();
+function pick(e){mv.x=(e.clientX/innerWidth)*2-1;mv.y=-(e.clientY/innerHeight)*2+1;
+ ray.setFromCamera(mv,cam);
+ const hits=ray.intersectObjects(scene.children,true);
+ for(const h of hits){let o=h.object;while(o){if(o.userData&&o.userData.bom){select(o.userData.bom);return;}o=o.parent;}}}
+
+const S={};
+for(const id of ['j1','j2','j3','j4','j5']) S[id]=document.getElementById(id);
+function upd(){
+ g1.rotation.y=-S.j1.value*Math.PI/180;
+ J2.pivot.rotation.z=-S.j2.value*Math.PI/180;
+ J3.pivot.rotation.z=-S.j3.value*Math.PI/180;
+ g4.rotation.y=-S.j4.value*Math.PI/180;
+ J5.pivot.rotation.z=-S.j5.value*Math.PI/180;
+ for(let i=1;i<=5;i++) document.getElementById('v'+i).textContent=S['j'+i].value+'°';
+ j1c.rotation.y=g1.rotation.y;
+}
+for(const id in S) S[id].oninput=upd;
+upd(); setCam(); applyCoup();
+(function loop(){requestAnimationFrame(loop);
+ if(autoOrbit){th+=0.004;setCam();}
+ renderer.render(scene,cam);})();
+</script>
+</body>
+</html>

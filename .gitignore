@@ -1,0 +1,46 @@
+# Build / generated
+build/
+dist/
+__pycache__/
+*.pyc
+*.pyo
+
+# Slicer / print output
+gcode_output/
+gcode/
+*.gcode
+*.3mf
+
+# Logs, telemetry, local databases
+logs/
+*.log
+*.csv
+*.db
+*.db-wal
+*.db-shm
+*.db-journal
+*.journal
+
+# Browser-render artifacts
+output/
+playwright/
+.playwright-cli/
+
+# Media dumps / archives
+*.mp4
+*.bin
+*.zip
+*.tar.gz
+
+# Secrets / local config
+.env
+.env.*
+*.key
+*.pem
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/

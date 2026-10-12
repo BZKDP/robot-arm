@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1320 860" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arR" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#d63b2f"/></marker>
+    <marker id="arB" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#333"/></marker>
+    <marker id="arO" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#e8820c"/></marker>
+    <marker id="ar" markerWidth="11" markerHeight="11" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#888"/></marker>
+    <style>
+      .ttl{font-size:24px;font-weight:800;fill:#1c2330}
+      .lbl{font-size:15px;fill:#1c2330}
+      .lblb{font-size:16px;font-weight:700;fill:#1c2330}
+      .sm{font-size:13px;fill:#6a7385}
+      .smw{font-size:13px;fill:#b7c2d4}
+      .red{stroke:#d63b2f;stroke-width:5;fill:none}
+      .blk{stroke:#333;stroke-width:5;fill:none}
+      .sig{stroke:#e8820c;stroke-width:5;fill:none}
+      .usb{stroke:#8a8f98;stroke-width:5;fill:none}
+      .box{stroke-width:2.5}
+    </style>
+  </defs>
+  <rect x="0" y="0" width="1320" height="860" fill="#fcfcfe"/>
+  <text x="40" y="46" class="ttl">Стенд на ОДНУ серву — что осталось подключить</text>
+
+  <!-- legend -->
+  <circle cx="900" cy="40" r="12" fill="#2e9e5b"/><text x="900" y="45" font-size="14" font-weight="800" fill="#fff" text-anchor="middle">✓</text>
+  <text x="918" y="45" class="sm">— уже сделал</text>
+  <circle cx="1060" cy="40" r="12" fill="#e8820c"/><text x="1060" y="45" font-size="13" font-weight="800" fill="#fff" text-anchor="middle">1</text>
+  <text x="1078" y="45" class="sm">— сделать сейчас (по шагам)</text>
+
+  <!-- PSU 12V -->
+  <rect x="50" y="100" width="150" height="58" rx="10" fill="#eef1f5" stroke="#aeb7c4" class="box"/>
+  <text x="125" y="125" class="lbl" text-anchor="middle">БП 12 В</text>
+  <text x="125" y="145" class="sm" text-anchor="middle">бочонок в розетку</text>
+
+  <!-- adapter -->
+  <rect x="240" y="100" width="150" height="58" rx="10" fill="#eef1f5" stroke="#aeb7c4" class="box"/>
+  <text x="315" y="125" class="lbl" text-anchor="middle">адаптер</text>
+  <text x="315" y="145" class="sm" text-anchor="middle">бочонок→клеммы</text>
+  <circle cx="200" cy="129" r="4" fill="#777"/>
+
+  <!-- LM2596 -->
+  <rect x="120" y="220" width="240" height="150" rx="12" fill="#e9f2fb" stroke="#3f78c4" class="box"/>
+  <text x="240" y="248" class="lblb" text-anchor="middle">LM2596</text>
+  <circle cx="240" cy="300" r="26" fill="#2d5fa8"/><circle cx="240" cy="300" r="9" fill="#bcd2ef"/><line x1="240" y1="300" x2="240" y2="277" stroke="#fff" stroke-width="3"/>
+  <text x="240" y="352" class="sm" text-anchor="middle" fill="#b23026" font-weight="700">крути до 7.4 В</text>
+  <circle cx="120" cy="276" r="5" fill="#d63b2f"/><text x="108" y="280" class="sm" text-anchor="end">IN+</text>
+  <circle cx="120" cy="332" r="5" fill="#333"/><text x="108" y="336" class="sm" text-anchor="end">IN−</text>
+  <circle cx="360" cy="276" r="5" fill="#d63b2f"/><text x="372" y="280" class="sm" fill="#d63b2f">OUT+</text>
+  <circle cx="360" cy="332" r="5" fill="#333"/><text x="372" y="336" class="sm">OUT−</text>
+  <!-- adapter -> LM IN -->
+  <polyline class="red" points="315,158 315,190 95,190 95,276 118,276" marker-end="url(#arR)"/>
+  <polyline class="blk" points="345,158 345,205 80,205 80,332 118,332" marker-end="url(#arB)"/>
+  <!-- step 1 badge -->
+  <circle cx="200" cy="190" r="14" fill="#e8820c"/><text x="200" y="195" font-size="15" font-weight="800" fill="#fff" text-anchor="middle">1</text>
+  <!-- step 2 badge (pot) -->
+  <circle cx="296" cy="300" r="14" fill="#e8820c"/><text x="296" y="305" font-size="15" font-weight="800" fill="#fff" text-anchor="middle">2</text>
+
+  <!-- WAGO+ -->
+  <rect x="470" y="250" width="170" height="46" rx="8" fill="#fbe6e3" stroke="#d63b2f" class="box"/>
+  <text x="555" y="278" font-size="15" font-weight="700" fill="#a82a20" text-anchor="middle">WAGO  +7.4 В</text>
+  <circle cx="650" cy="240" r="14" fill="#e8820c"/><text x="650" y="245" font-size="15" font-weight="800" fill="#fff" text-anchor="middle">3</text>
+  <!-- OUT+ -> WAGO+ -->
+  <polyline class="red" points="365,276 420,276 420,273 470,273" marker-end="url(#arR)"/>
+
+  <!-- WAGO- (GND) -->
+  <rect x="470" y="330" width="170" height="46" rx="8" fill="#e7e9eb" stroke="#333" class="box"/>
+  <text x="555" y="358" font-size="15" font-weight="700" fill="#222" text-anchor="middle">WAGO  GND</text>
+  <circle cx="650" cy="320" r="14" fill="#e8820c"/><text x="650" y="325" font-size="15" font-weight="800" fill="#fff" text-anchor="middle">4</text>
+  <!-- OUT- -> WAGO- -->
+  <polyline class="blk" points="365,332 420,332 420,353 470,353" marker-end="url(#arB)"/>
+
+  <!-- SERVO -->
+  <rect x="880" y="230" width="230" height="170" rx="12" fill="#fff3d6" stroke="#e0a030" class="box"/>
+  <text x="995" y="262" class="lblb" text-anchor="middle">STS3215 (одна!)</text>
+  <text x="995" y="284" class="sm" text-anchor="middle">ID 1 · вторую НЕ вешать</text>
+  <circle cx="995" cy="340" r="22" fill="#e0a030"/><circle cx="995" cy="340" r="8" fill="#fff"/>
+  <!-- servo 3 pins -->
+  <circle cx="880" cy="300" r="6" fill="#e8820c"/><text x="868" y="304" class="sm" fill="#b8650a" text-anchor="end">белый</text>
+  <circle cx="880" cy="328" r="6" fill="#d63b2f"/><text x="868" y="332" class="sm" fill="#d63b2f" text-anchor="end">красный</text>
+  <circle cx="880" cy="356" r="6" fill="#333"/><text x="868" y="360" class="sm" text-anchor="end">чёрный</text>
+
+  <!-- WAGO+ -> servo red -->
+  <polyline class="red" points="640,273 760,273 760,328 878,328" marker-end="url(#arR)"/>
+  <!-- WAGO- -> servo black -->
+  <polyline class="blk" points="640,353 740,353 740,356 878,356" marker-end="url(#arB)"/>
+
+  <!-- recheck voltage badge 5 -->
+  <circle cx="820" cy="300" r="14" fill="#e8820c"/><text x="820" y="305" font-size="15" font-weight="800" fill="#fff" text-anchor="middle">5</text>
+  <text x="820" y="285" class="sm" text-anchor="middle" fill="#b23026">мерь 7.4В</text>
+
+  <!-- ESP32 -->
+  <rect x="150" y="500" width="200" height="250" rx="14" fill="#222b39" stroke="#0d1119" class="box"/>
+  <text x="250" y="535" class="lblb" text-anchor="middle" fill="#eaf0f8">ESP32</text>
+  <text x="250" y="740" class="smw" text-anchor="middle">USB → ПК</text>
+  <!-- pins -->
+  <rect x="350" y="560" width="92" height="24" rx="5" fill="#fff1df" stroke="#e8820c"/><text x="396" y="577" font-size="13" font-weight="800" fill="#b8650a" text-anchor="middle">G17·TX2</text>
+  <line x1="350" y1="572" x2="338" y2="572" stroke="#e8820c" stroke-width="4"/>
+  <rect x="350" y="600" width="92" height="24" rx="5" fill="#fff1df" stroke="#e8820c"/><text x="396" y="617" font-size="13" font-weight="800" fill="#b8650a" text-anchor="middle">G16·RX2</text>
+  <line x1="350" y1="612" x2="338" y2="612" stroke="#e8820c" stroke-width="4"/>
+  <rect x="350" y="650" width="92" height="24" rx="5" fill="#e7e9eb" stroke="#333"/><text x="396" y="667" font-size="13" font-weight="800" fill="#222" text-anchor="middle">GND</text>
+  <line x1="350" y1="662" x2="338" y2="662" stroke="#333" stroke-width="4"/>
+
+  <!-- WAGO Signal (DONE) -->
+  <rect x="540" y="560" width="190" height="120" rx="12" fill="#eef6f0" stroke="#2e9e5b" class="box"/>
+  <text x="635" y="588" class="lblb" text-anchor="middle" fill="#2e7d46">WAGO·Signal</text>
+  <text x="635" y="610" class="sm" text-anchor="middle">белый + резистор + медный</text>
+  <circle cx="635" cy="645" r="16" fill="#2e9e5b"/><text x="635" y="651" font-size="18" font-weight="800" fill="#fff" text-anchor="middle">✓</text>
+  <text x="635" y="700" class="sm" text-anchor="middle" fill="#2e7d46">уже собрано</text>
+
+  <!-- resistor (done) between G17 and WAGO Signal -->
+  <rect x="450" y="556" width="78" height="32" rx="6" fill="#fff7e6" stroke="#d8a72e"/>
+  <text x="489" y="576" class="sm" text-anchor="middle" fill="#8a6a16">5×220</text>
+  <polyline class="sig" points="442,572 450,572"/>
+  <polyline class="sig" points="528,572 540,572 540,580"/>
+  <circle cx="489" cy="540" r="13" fill="#2e9e5b"/><text x="489" y="545" font-size="14" font-weight="800" fill="#fff" text-anchor="middle">✓</text>
+  <!-- G16 -> WAGO signal (done) -->
+  <polyline class="sig" points="442,612 560,612 560,620"/>
+  <!-- servo white -> WAGO signal (done) -->
+  <polyline class="sig" points="880,300 770,300 770,600 730,600"/>
+  <circle cx="770" cy="470" r="13" fill="#2e9e5b"/><text x="770" y="475" font-size="14" font-weight="800" fill="#fff" text-anchor="middle">✓</text>
+
+  <!-- common ground: WAGO- -> ESP32 GND (step 4) -->
+  <polyline class="blk" points="470,353 460,353 460,440 300,440 300,662 338,662" marker-end="url(#arB)"/>
+  <text x="320" y="432" class="sm" fill="#222">общая земля → GND ESP32</text>
+
+  <!-- PC + USB -->
+  <rect x="980" y="560" width="240" height="150" rx="12" fill="#ede9ff" stroke="#7b66d6" class="box"/>
+  <text x="1100" y="592" class="lblb" text-anchor="middle">ПК</text>
+  <text x="1100" y="616" class="sm" text-anchor="middle">Arduino IDE → залить скетч</text>
+  <text x="1100" y="638" class="sm" text-anchor="middle">Serial Monitor 115200</text>
+  <text x="1100" y="664" class="sm" text-anchor="middle">видишь «позиция = ...»</text>
+  <polyline class="usb" points="250,750 250,790 1100,790 1100,712" marker-end="url(#ar)"/>
+  <circle cx="680" cy="790" r="14" fill="#e8820c"/><text x="680" y="795" font-size="15" font-weight="800" fill="#fff" text-anchor="middle">6</text>
+  <text x="720" y="784" class="sm">USB-кабель в ПК</text>
+</svg>

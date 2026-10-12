@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="650" viewBox="0 0 1600 650">
+  <style>
+    .bg{fill:#fff}.panel{fill:#f5f8fc;stroke:#9aa9bd;stroke-width:3}.esp{fill:#eaf4ff;stroke:#1565c0;stroke-width:4}.drv{fill:#171717;stroke:#000;stroke-width:4}
+    .h1{font:800 32px 'Segoe UI',Arial}.h2{font:800 24px 'Segoe UI',Arial}.t{font:20px 'Segoe UI',Arial}.pin{font:800 21px Consolas,monospace}.white{font:800 20px 'Segoe UI',Arial;fill:#fff}
+    .p{stroke:#7c3db5;stroke-width:9}.o{stroke:#ef7918;stroke-width:9}.g{stroke:#13934a;stroke-width:9}.c{stroke:#0093a6;stroke-width:9}
+  </style>
+  <rect width="1600" height="650" class="bg"/>
+  <text x="800" y="48" text-anchor="middle" class="h1">ЛИСТ 3 — ЧЕТЫРЕ ПРОВОДА STEP / DIR</text>
+  <rect x="35" y="78" width="1530" height="530" rx="20" class="panel"/>
+  <text x="80" y="125" class="t">Каждая строка — один отдельный провод. Провода нигде не соединяются друг с другом.</text>
+
+  <rect x="80" y="175" width="330" height="72" rx="12" class="esp"/><text x="245" y="220" text-anchor="middle" class="pin">ESP32 D25 / GPIO25</text>
+  <line x1="410" y1="211" x2="1130" y2="211" class="p"/><text x="650" y="193" class="h2" fill="#7c3db5">ФИОЛЕТОВЫЙ</text>
+  <rect x="1130" y="175" width="390" height="72" rx="12" class="drv"/><text x="1325" y="220" text-anchor="middle" class="white">ДРАЙВЕР №1 → STEP</text>
+
+  <rect x="80" y="270" width="330" height="72" rx="12" class="esp"/><text x="245" y="315" text-anchor="middle" class="pin">ESP32 D26 / GPIO26</text>
+  <line x1="410" y1="306" x2="1130" y2="306" class="o"/><text x="650" y="288" class="h2" fill="#ef7918">ОРАНЖЕВЫЙ</text>
+  <rect x="1130" y="270" width="390" height="72" rx="12" class="drv"/><text x="1325" y="315" text-anchor="middle" class="white">ДРАЙВЕР №1 → DIR</text>
+
+  <rect x="80" y="365" width="330" height="72" rx="12" class="esp"/><text x="245" y="410" text-anchor="middle" class="pin">ESP32 D32 / GPIO32</text>
+  <line x1="410" y1="401" x2="1130" y2="401" class="g"/><text x="650" y="383" class="h2" fill="#13934a">ЗЕЛЁНЫЙ</text>
+  <rect x="1130" y="365" width="390" height="72" rx="12" class="drv"/><text x="1325" y="410" text-anchor="middle" class="white">ДРАЙВЕР №2 → STEP</text>
+
+  <rect x="80" y="460" width="330" height="72" rx="12" class="esp"/><text x="245" y="505" text-anchor="middle" class="pin">ESP32 D33 / GPIO33</text>
+  <line x1="410" y1="496" x2="1130" y2="496" class="c"/><text x="650" y="478" class="h2" fill="#0093a6">БИРЮЗОВЫЙ</text>
+  <rect x="1130" y="460" width="390" height="72" rx="12" class="drv"/><text x="1325" y="505" text-anchor="middle" class="white">ДРАЙВЕР №2 → DIR</text>
+  <text x="80" y="575" class="h2" fill="#c9182b">D4 НИГДЕ НЕ ИСПОЛЬЗУЕТСЯ.</text>
+</svg>

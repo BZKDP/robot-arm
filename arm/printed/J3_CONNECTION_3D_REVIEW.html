@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>J2 → J3 — стакан и U-скоба</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#101722;color:#eef4ff;font:14px Segoe UI,Arial,sans-serif}canvas{display:block;touch-action:none}
+.panel{position:fixed;z-index:5;background:#162133ed;border:1px solid #3b4d68;border-radius:12px;box-shadow:0 10px 30px #0008}.left{left:14px;top:14px;width:310px;padding:15px}.right{right:14px;top:14px;width:355px;padding:15px;max-height:calc(100vh - 58px);overflow:auto}
+h1{font-size:18px;margin:0 0 6px}.sub{font-size:12px;color:#aabbd2;line-height:1.45}.row{margin-top:13px}.row label{display:flex;justify-content:space-between;font-weight:600}.row input{width:100%}.buttons{display:flex;gap:7px;margin-top:11px}button,a.file{border:0;border-radius:8px;background:#2f4669;color:#fff;padding:8px 11px;text-decoration:none;cursor:pointer}button:hover,a.file:hover{background:#42628f}.card{border-left:4px solid #70819a;background:#1c2940;padding:9px 10px;border-radius:7px;margin:8px 0;line-height:1.46}.orange{border-color:#f29a38}.yellow{border-color:#e4be40}.red{border-color:#e85b53}.cyan{border-color:#48badf}.small{font-size:11px;color:#aebdd0}.ok{color:#6fe39e}.warn{color:#ffd084}b{color:#fff}
+#flow{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:5;padding:9px 14px;border-radius:999px;background:#18263bdd;border:1px solid #3b5373;font-size:13px;white-space:nowrap}
+</style>
+</head>
+<body>
+<section class="panel left">
+ <h1>J2 → J3: разбор соединения</h1>
+ <div class="sub">Это отдельная увеличенная модель только проблемного места. ЛКМ — вращать, колесо — масштаб, ПКМ — двигать камеру.</div>
+ <div class="row"><label>Разнести детали <b id="ev">0%</b></label><input id="explode" type="range" min="0" max="100" value="0"></div>
+ <div class="buttons"><button onclick="setExplode(0)">Собрано</button><button onclick="setExplode(100)">Разобрано</button></div>
+ <div class="row"><label><span>Показать печатный кант</span><input id="brim" type="checkbox"></label></div>
+ <div class="buttons"><a class="file" href="j3_tube_to_u_cup_v1_FINAL_PETG.stl">Открыть STL стакана</a></div>
+ <div class="small" style="margin-top:12px">Оранжевый стакан в модели показан без удаляемого канта. В STL кант уже встроен и появляется при включении флажка.</div>
+</section>
+<section class="panel right">
+ <div class="card"><b>Серое — существующая труба 20×20×1,5</b><br>Она входит в стакан на <b>33,5 мм</b>. Карман сделан 20,4×20,4 мм.</div>
+ <div class="card orange"><b>Оранжевое — новый печатный стакан</b><br>Фланец 58×52×8 мм; глубокая гильза 30×30 мм; четыре силовые косынки.</div>
+ <div class="card yellow"><b>Жёлтые — восемь M4×16</b><br>Головки внутри U-скобы. Винты проходят через восемь штатных Ø4,2 и затягиваются в гайки стакана. Скобу сверлить не надо.</div>
+ <div class="card red"><b>Красные — два M4×40</b><br>Проходят насквозь: стакан → обе стенки трубы → голубой вкладыш. Между ними 14 мм.</div>
+ <div class="card cyan"><b>Голубой — внутренний вкладыш</b><br>Не даёт смять профиль. Канал 10,5×10,5 оставляет путь для проводов.</div>
+ <div class="card"><b>Порядок</b><br>1) Гайки M4 в карманы стакана. 2) Стакан к скобе восемью M4×16. 3) Провода через центр. 4) Вкладыш внутрь трубы. 5) Трубу до упора. 6) Просверлить по отверстиям стакана и поставить два M4×40.</div>
+ <div class="small"><span class="ok">✓</span> Сетка скобы: (±16,±8) и (±8,±16). <span class="ok">✓</span> Центральный проход Ø14. <span class="ok">✓</span> Датчиков/магнитов в печатном комплекте нет.</div>
+</section>
+<div id="flow">ТРУБА J2 → СТАКАН → 8×M4 → ДНО U-СКОБЫ J3</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x101722);
+const camera=new THREE.PerspectiveCamera(46,innerWidth/innerHeight,1,2000);const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;document.body.appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xeaf2ff,0x263140,1.15));const sun=new THREE.DirectionalLight(0xffffff,1.35);sun.position.set(180,260,220);sun.castShadow=true;scene.add(sun);scene.add(new THREE.GridHelper(500,25,0x41526c,0x243044));
+const M={metal:new THREE.MeshStandardMaterial({color:0x9ea8b2,metalness:.62,roughness:.4,transparent:true,opacity:.72}),tube:new THREE.MeshStandardMaterial({color:0x616a74,metalness:.72,roughness:.35}),cup:new THREE.MeshStandardMaterial({color:0xef962f,roughness:.58}),bolt:new THREE.MeshStandardMaterial({color:0xe7bf3e,metalness:.72,roughness:.26}),cross:new THREE.MeshStandardMaterial({color:0xe35750,metalness:.5,roughness:.35}),insert:new THREE.MeshStandardMaterial({color:0x46bde2,roughness:.5}),brim:new THREE.MeshStandardMaterial({color:0xf0a44a,transparent:true,opacity:.52})};
+function box(g,w,h,d,m,x=0,y=0,z=0){const q=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);q.position.set(x,y,z);q.castShadow=q.receiveShadow=true;g.add(q);return q}
+function cyl(g,d,h,m,x=0,y=0,z=0,axis='y'){const q=new THREE.Mesh(new THREE.CylinderGeometry(d/2,d/2,h,40),m);if(axis==='x')q.rotation.z=Math.PI/2;if(axis==='z')q.rotation.x=Math.PI/2;q.position.set(x,y,z);q.castShadow=q.receiveShadow=true;g.add(q);return q}
+function torus(g,d,t,m,x,y,z,axis='y'){const q=new THREE.Mesh(new THREE.TorusGeometry(d/2,t,12,40),m);if(axis==='y')q.rotation.x=Math.PI/2;if(axis==='x')q.rotation.y=Math.PI/2;q.position.set(x,y,z);g.add(q);return q}
+function label(g,text,color,x,y,z,s=24){const c=document.createElement('canvas');c.width=520;c.height=80;const p=c.getContext('2d');p.fillStyle='rgba(8,13,21,.82)';p.fillRect(0,7,520,62);p.font='700 30px Segoe UI';p.textAlign='center';p.fillStyle=color;p.fillText(text,260,49);const q=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthTest:false}));q.position.set(x,y,z);q.scale.set(s*5.2,s*.8,1);g.add(q)}
+const tube=new THREE.Group(),cup=new THREE.Group(),insert=new THREE.Group(),fork=new THREE.Group(),bolts=new THREE.Group(),cross=new THREE.Group();scene.add(tube,cup,insert,fork,bolts,cross);
+// Hollow 20x20x1.5 tube, axis Y; its end is at Y=0.
+box(tube,20,105,1.5,M.tube,0,-52.5,-9.25);box(tube,20,105,1.5,M.tube,0,-52.5,9.25);box(tube,1.5,105,17,M.tube,-9.25,-52.5,0);box(tube,1.5,105,17,M.tube,9.25,-52.5,0);label(tube,'ТРУБА J2 · 20×20×1,5','#d6dee8',0,-94,30,21);
+// Cup sleeve: bracket face Y=9.5; tube seats at Y=0; overlap to Y=-33.5.
+box(cup,4.8,35,30,M.cup,-12.6,-16,0);box(cup,4.8,35,30,M.cup,12.6,-16,0);box(cup,20.4,35,4.8,M.cup,0,-16,-12.6);box(cup,20.4,35,4.8,M.cup,0,-16,12.6);
+box(cup,58,8,15.8,M.cup,0,5.5,-18.1);box(cup,58,8,15.8,M.cup,0,5.5,18.1);box(cup,18.8,8,20.4,M.cup,-19.6,5.5,0);box(cup,18.8,8,20.4,M.cup,19.6,5.5,0);
+for(const [x,z] of [[-20,0],[20,0],[0,-18],[0,18]]){const rib=box(cup,Math.abs(x)?9:8,11,Math.abs(z)?9:8,M.cup,x*.72,-.8,z*.72);rib.rotation[Math.abs(x)?'z':'x']=Math.abs(x)?Math.sign(x)*.55:-Math.sign(z)*.55}
+label(cup,'СТАКАН','#ffb45e',48,-12,28,22);
+// Hollow anti-crush insert, 16.6 outer / 10.5 inner.
+box(insert,3.05,32,16.6,M.insert,-6.775,-16,0);box(insert,3.05,32,16.6,M.insert,6.775,-16,0);box(insert,10.5,32,3.05,M.insert,0,-16,-6.775);box(insert,10.5,32,3.05,M.insert,0,-16,6.775);label(insert,'ВКЛАДЫШ 10,5 канал','#65dcff',43,-37,-29,18);
+// U bracket measured dimensions: bottom 48x43x2.5; side walls 96x48x2.5.
+box(fork,48,2.5,43,M.metal,0,10.75,0);box(fork,48,96,2.5,M.metal,0,58.75,-22.75);box(fork,48,96,2.5,M.metal,0,58.75,22.75);label(fork,'U-СКОБА J3 · 96×48','#e5ebf2',0,102,40,21);
+for(const z of[-22.75,22.75])for(const y of[34.75,58.75,82.75])torus(fork,14,1.25,M.bolt,0,y,z,'z');
+// Eight through-bolts use the existing bottom hole grid.
+for(const [x,z] of [[-16,-8],[-16,8],[16,-8],[16,8],[-8,-16],[8,-16],[-8,16],[8,16]])cyl(bolts,4,18,M.bolt,x,5,z);
+for(const y of[-9.5,-23.5])cyl(cross,4,42,M.cross,0,y,0,'x');
+const brim=cyl(cup,78,.4,M.brim,0,9.7,0);brim.visible=false;
+function setExplode(v){const e=document.getElementById('explode');e.value=v;e.oninput()}
+document.getElementById('explode').oninput=function(){const t=this.value/100;document.getElementById('ev').textContent=this.value+'%';tube.position.y=-55*t;insert.position.set(46*t,-20*t,0);fork.position.y=60*t;bolts.position.y=38*t;cross.position.x=45*t};document.getElementById('explode').oninput();
+document.getElementById('brim').onchange=function(){brim.visible=this.checked};
+let target=new THREE.Vector3(0,-3,0),theta=-.82,phi=1.12,dist=310,drag=null;function cam(){camera.position.set(target.x+dist*Math.sin(phi)*Math.cos(theta),target.y+dist*Math.cos(phi),target.z+dist*Math.sin(phi)*Math.sin(theta));camera.lookAt(target)}cam();
+renderer.domElement.addEventListener('pointerdown',e=>drag={x:e.clientX,y:e.clientY,b:e.button});addEventListener('pointerup',()=>drag=null);addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.x=e.clientX;drag.y=e.clientY;if(drag.b===2){const s=dist/700;const r=new THREE.Vector3().subVectors(camera.position,target).cross(camera.up).normalize();target.addScaledVector(r,-dx*s);target.y+=dy*s}else{theta+=dx*.007;phi=Math.max(.2,Math.min(2.9,phi-dy*.007))}cam()});renderer.domElement.addEventListener('wheel',e=>{dist=Math.max(100,Math.min(800,dist*(e.deltaY>0?1.1:.9)));cam()});renderer.domElement.addEventListener('contextmenu',e=>e.preventDefault());addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+(function loop(){requestAnimationFrame(loop);renderer.render(scene,camera)})();
+</script>
+</body>
+</html>

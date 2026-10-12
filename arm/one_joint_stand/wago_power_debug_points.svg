@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900">
+  <defs>
+    <marker id="ar" markerWidth="12" markerHeight="12" refX="11" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,8 L11,4 z" fill="#d71920"/>
+    </marker>
+    <marker id="ab" markerWidth="12" markerHeight="12" refX="11" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,8 L11,4 z" fill="#111"/>
+    </marker>
+    <style>
+      .title{font:700 34px Arial,sans-serif;fill:#111}
+      .h{font:700 24px Arial,sans-serif;fill:#111}
+      .t{font:19px Arial,sans-serif;fill:#111}
+      .small{font:16px Arial,sans-serif;fill:#222}
+      .tiny{font:14px Arial,sans-serif;fill:#222}
+      .warn{font:700 22px Arial,sans-serif;fill:#b00020}
+      .box{fill:#f7f7f7;stroke:#222;stroke-width:3;rx:10}
+      .adapter{fill:#222;stroke:#111;stroke-width:3;rx:12}
+      .terminal{fill:#28b76a;stroke:#111;stroke-width:2;rx:5}
+      .wagoRed{fill:#fff1f1;stroke:#d71920;stroke-width:4;rx:8}
+      .wagoBlack{fill:#efefef;stroke:#111;stroke-width:4;rx:8}
+      .tmc{fill:#171717;stroke:#111;stroke-width:3;rx:8}
+      .cap{fill:#264653;stroke:#111;stroke-width:3;rx:8}
+      .note{fill:#fff8e1;stroke:#d4a000;stroke-width:3;rx:8}
+      .danger{fill:#fff0f0;stroke:#b00020;stroke-width:3;rx:8}
+      .r{fill:none;stroke:#d71920;stroke-width:8;marker-end:url(#ar)}
+      .b{fill:none;stroke:#111;stroke-width:8;marker-end:url(#ab)}
+      .rp{fill:none;stroke:#d71920;stroke-width:8}
+      .bp{fill:none;stroke:#111;stroke-width:8}
+      .probeR{fill:#d71920;stroke:#111;stroke-width:2}
+      .probeB{fill:#111;stroke:#111;stroke-width:2}
+      .pin{font:700 17px Arial,sans-serif;fill:#fff}
+      .label{font:700 18px Arial,sans-serif;fill:#111}
+    </style>
+  </defs>
+
+  <rect width="1500" height="900" fill="#fff"/>
+  <text x="45" y="55" class="title">Проверка питания 12В через две WAGO</text>
+  <text x="45" y="90" class="warn">Цель: между VM и GND на TMC должно быть те же 12.1В, что на выходе блока питания.</text>
+
+  <!-- Adapter -->
+  <rect x="70" y="165" width="245" height="150" class="adapter"/>
+  <rect x="90" y="185" width="205" height="62" class="terminal"/>
+  <circle cx="140" cy="216" r="16" fill="#eee" stroke="#111" stroke-width="2"/>
+  <circle cx="245" cy="216" r="16" fill="#eee" stroke="#111" stroke-width="2"/>
+  <text x="88" y="355" class="h">Клемма блока питания</text>
+  <text x="86" y="385" class="small">Здесь у тебя уже есть 12.1В</text>
+
+  <!-- WAGOs -->
+  <rect x="500" y="120" width="270" height="130" class="wagoRed"/>
+  <text x="570" y="158" class="h">WAGO +12В</text>
+  <circle cx="555" cy="205" r="18" fill="#fff" stroke="#d71920" stroke-width="3"/>
+  <circle cx="635" cy="205" r="18" fill="#fff" stroke="#d71920" stroke-width="3"/>
+  <circle cx="715" cy="205" r="18" fill="#fff" stroke="#d71920" stroke-width="3"/>
+  <text x="515" y="275" class="small">1: красный от клеммы</text>
+  <text x="515" y="300" class="small">2: красный к VM</text>
+  <text x="515" y="325" class="small">3: плюс конденсатора</text>
+
+  <rect x="500" y="430" width="270" height="130" class="wagoBlack"/>
+  <text x="575" y="468" class="h">WAGO GND</text>
+  <circle cx="555" cy="515" r="18" fill="#fff" stroke="#111" stroke-width="3"/>
+  <circle cx="635" cy="515" r="18" fill="#fff" stroke="#111" stroke-width="3"/>
+  <circle cx="715" cy="515" r="18" fill="#fff" stroke="#111" stroke-width="3"/>
+  <text x="515" y="585" class="small">1: чёрный от клеммы</text>
+  <text x="515" y="610" class="small">2: чёрный к GND TMC</text>
+  <text x="515" y="635" class="small">3: минус конденсатора</text>
+
+  <!-- TMC -->
+  <rect x="1060" y="190" width="230" height="430" class="tmc"/>
+  <text x="1095" y="230" class="pin">LERDGE</text>
+  <text x="1095" y="257" class="pin">TMC2209</text>
+  <circle cx="1275" cy="305" r="12" fill="#cfd8dc"/><text x="1300" y="312" class="label">VM</text>
+  <circle cx="1275" cy="365" r="12" fill="#cfd8dc"/><text x="1300" y="372" class="label">GND</text>
+  <circle cx="1275" cy="520" r="12" fill="#cfd8dc"/><text x="1300" y="527" class="label">VIO</text>
+  <circle cx="1275" cy="580" r="12" fill="#cfd8dc"/><text x="1300" y="587" class="label">GND</text>
+
+  <!-- Capacitor -->
+  <rect x="840" y="295" width="105" height="185" class="cap"/>
+  <rect x="910" y="295" width="35" height="185" fill="#f0f0f0"/>
+  <text x="858" y="342" class="pin">470uF</text>
+  <text x="867" y="372" class="pin">50V</text>
+  <text x="852" y="430" class="pin">+</text>
+  <text x="922" y="430" class="label">-</text>
+  <text x="820" y="520" class="small">полоска на корпусе = минус</text>
+
+  <!-- Wiring -->
+  <path d="M245 216 C340 205, 415 205, 555 205" class="r"/>
+  <path d="M140 216 C310 390, 415 515, 555 515" class="b"/>
+  <path d="M635 205 C880 205, 1040 280, 1275 305" class="r"/>
+  <path d="M635 515 C875 510, 1040 390, 1275 365" class="b"/>
+  <path d="M715 205 C790 210, 820 390, 840 430" class="rp"/>
+  <path d="M715 515 C790 515, 885 455, 945 430" class="bp"/>
+
+  <!-- Probe points -->
+  <circle cx="245" cy="216" r="27" class="probeR"/><text x="237" y="223" class="pin">A</text>
+  <circle cx="140" cy="216" r="27" class="probeB"/><text x="132" y="223" class="pin">A</text>
+  <text x="80" y="440" class="label">Тест A: на клемме блока = 12.1В</text>
+
+  <circle cx="635" cy="205" r="27" class="probeR"/><text x="627" y="212" class="pin">B</text>
+  <circle cx="635" cy="515" r="27" class="probeB"/><text x="627" y="522" class="pin">B</text>
+  <text x="485" y="690" class="label">Тест B: на выходах WAGO = 12.1В</text>
+
+  <circle cx="1275" cy="305" r="27" class="probeR"/><text x="1267" y="312" class="pin">C</text>
+  <circle cx="1275" cy="365" r="27" class="probeB"/><text x="1267" y="372" class="pin">C</text>
+  <text x="1050" y="660" class="label">Тест C: прямо VM-GND TMC = 12.1В</text>
+
+  <rect x="45" y="740" width="1410" height="120" class="danger"/>
+  <text x="70" y="780" class="warn">Если A = 12.1В, а B/C = 3-6В:</text>
+  <text x="430" y="780" class="t">плохой контакт в WAGO, не зажат провод, попала изоляция, тонкая ножка конденсатора не держится, либо меряешь не VM-GND.</text>
+  <text x="70" y="820" class="t">На время диагностики вынь конденсатор из WAGO и снова измерь B/C. Если стало 12В - конденсатор/его контакт был проблемой.</text>
+  <text x="70" y="850" class="t">Не ставь мультиметр в режим тока. Меряем только DC V и сопротивление/прозвонку при выключенном питании.</text>
+</svg>

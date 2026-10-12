@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Роборука v9 — 6 осей, новый локоть J3</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#111722;color:#edf3ff;font-family:Segoe UI,Arial,sans-serif}
+canvas{display:block;touch-action:none}.panel{position:fixed;z-index:3;background:rgba(19,27,41,.95);border:1px solid #34445f;border-radius:12px;box-shadow:0 8px 28px #0008}
+#controls{left:14px;top:14px;width:275px;padding:14px}h1{font-size:16px;margin:0 0 5px}.sub{font-size:11px;color:#9fb0c9;line-height:1.45;margin-bottom:9px}
+.row{margin:7px 0}.row label{display:flex;justify-content:space-between;font-size:12px;color:#c3cee0}.row b{color:#fff}.row input{width:100%}
+.new{color:#ffb347!important}.moved{color:#65d8ff!important}.buttons{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-top:10px}
+button{border:0;border-radius:7px;padding:7px 4px;background:#2a3952;color:#eef4ff;cursor:pointer}button:hover{background:#3a5278}
+#info{right:14px;top:14px;width:350px;max-height:calc(100vh - 56px);overflow:auto;padding:14px}h2{font-size:15px;margin:0 0 8px}.card{background:#182337;border-left:4px solid #64748b;padding:9px 10px;margin:8px 0;border-radius:6px;font-size:12px;line-height:1.45}.card.orange{border-color:#ff9d3d}.card.cyan{border-color:#58d6ff}.card.green{border-color:#55d68b}.tag{float:right;font-size:10px;padding:2px 6px;border-radius:10px;background:#293952}.warn{color:#ffd48a}.legend{font-size:11px;color:#b7c4d8;border-top:1px solid #334158;margin-top:10px;padding-top:9px;line-height:1.6}
+#badge{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:3;background:#172238dd;padding:8px 13px;border-radius:999px;font-size:12px;color:#d9e8ff;border:1px solid #395177}
+</style>
+</head>
+<body>
+<div id="controls" class="panel">
+  <h1>🦾 Рука v9 — 6 осей</h1>
+  <div class="sub">Обновлено: показан реальный принцип стакана J2→J3. Оранжевый — новый J3; голубой — roll, перенесённый ближе к концу.</div>
+  <div class="row"><label>J1 база <b id="v1">15°</b></label><input id="j1" type="range" min="-180" max="180" value="15"></div>
+  <div class="row"><label>J2 плечо <b id="v2">22°</b></label><input id="j2" type="range" min="-95" max="95" value="22"></div>
+  <div class="row"><label class="new">J3 НОВЫЙ локоть <b id="v3">-48°</b></label><input id="j3" type="range" min="-125" max="125" value="-48"></div>
+  <div class="row"><label class="moved">J4 ROLL — после J3 <b id="v4">0°</b></label><input id="j4" type="range" min="-180" max="180" value="0"></div>
+  <div class="row"><label>J5 наклон запястья <b id="v5">-35°</b></label><input id="j5" type="range" min="-120" max="120" value="-35"></div>
+  <div class="row"><label>J6 поворот головки <b id="v6">0°</b></label><input id="j6" type="range" min="-180" max="180" value="0"></div>
+  <div class="buttons"><button onclick="pose('fold')">Сложить</button><button onclick="pose('work')">Рабочая</button><button onclick="pose('straight')">Прямо</button></div>
+  <div class="legend">Мышь: ЛКМ — вращать камеру, колесо — масштаб, ПКМ — сдвиг.</div>
+</div>
+<div id="info" class="panel">
+  <h2>Конструкция на проверку</h2>
+  <div class="card green"><span class="tag">без изменений</span><b>J1 + J2</b><br>Уже собранная база и плечо остаются как есть. Первая труба — 140 мм.</div>
+  <div class="card orange"><span class="tag">добавлено</span><b>J3 — новый сгибающийся локоть</b><br>Труба J2 входит на 33,5 мм в глубокий стакан 20,4×20,4. Стакан крепится ко всем восьми M4-отверстиям дна U-скобы; труба стягивается двумя поперечными M4×40 через внутренний вкладыш. Дальше — копия узла J2: NEMA17, CM36 1:71, муфта, мост V7, ось Ø8 и KFL08.</div>
+  <div class="card cyan"><span class="tag">перенесено</span><b>J4 ROLL</b><br>Твой уже напечатанный стакан не выбрасываем. Весь roll-узел переезжает на конец нового звена J3. Он крутит всю кисть вокруг оси руки.</div>
+  <div class="card"><b>J5 + J6</b><br>J5 наклоняет кисть, J6 на NEMA14 поворачивает головку/захват. Их концепция не менялась.</div>
+  <div class="card"><b>Длины звеньев</b><br>J2→J3: <b>140 мм</b> (существующая труба). J3→roll: <b>110 мм</b>. J5→J6: <b>110 мм</b>. Печатный комплект J3 вынесен в отдельную общую STL без датчиков.</div>
+  <div class="legend">Серый — металл и трубы · синий — редукторы · оранжевый — новый J3 · голубой — перенесённый roll.</div>
+</div>
+<div id="badge">J1 → J2 → <b style="color:#ffb347">J3 локоть</b> → <b style="color:#65d8ff">J4 roll</b> → J5 → J6</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x111722);
+const camera=new THREE.PerspectiveCamera(48,innerWidth/innerHeight,1,4000);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;document.body.appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xeaf2ff,0x303844,1.15));const sun=new THREE.DirectionalLight(0xffffff,1.25);sun.position.set(260,520,320);sun.castShadow=true;scene.add(sun);scene.add(new THREE.GridHelper(900,30,0x40506a,0x222d3c));
+const MAT={metal:new THREE.MeshStandardMaterial({color:0xb9c1ca,metalness:.65,roughness:.38}),dark:new THREE.MeshStandardMaterial({color:0x242932,metalness:.35,roughness:.62}),gear:new THREE.MeshStandardMaterial({color:0x315ba8,metalness:.42,roughness:.42}),printed:new THREE.MeshStandardMaterial({color:0xd98729,metalness:.05,roughness:.68}),newj:new THREE.MeshStandardMaterial({color:0xff9d3d,metalness:.1,roughness:.56}),roll:new THREE.MeshStandardMaterial({color:0x39bde8,metalness:.2,roughness:.45}),bolt:new THREE.MeshStandardMaterial({color:0xe5bd4b,metalness:.72,roughness:.28}),grip:new THREE.MeshStandardMaterial({color:0x58ca83,metalness:.15,roughness:.55})};
+function box(g,w,h,d,m,x=0,y=0,z=0){const q=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);q.position.set(x,y,z);q.castShadow=q.receiveShadow=true;g.add(q);return q}
+function cyl(g,d,h,m,x=0,y=0,z=0,axis='y'){const q=new THREE.Mesh(new THREE.CylinderGeometry(d/2,d/2,h,32),m);if(axis==='z')q.rotation.x=Math.PI/2;if(axis==='x')q.rotation.z=Math.PI/2;q.position.set(x,y,z);q.castShadow=q.receiveShadow=true;g.add(q);return q}
+function ring(g,d,t,m,x,y,z,axis='z'){const q=new THREE.Mesh(new THREE.TorusGeometry(d/2,t,12,36),m);if(axis==='y')q.rotation.x=Math.PI/2;if(axis==='x')q.rotation.y=Math.PI/2;q.position.set(x,y,z);g.add(q);return q}
+function label(text,color=0xffffff,scale=23){const c=document.createElement('canvas');c.width=320;c.height=80;const x=c.getContext('2d');x.font='700 34px Segoe UI';x.textAlign='center';x.fillStyle='rgba(8,13,22,.78)';x.fillRect(0,8,320,60);x.fillStyle='#'+color.toString(16).padStart(6,'0');x.fillText(text,160,50);const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthTest:false}));s.scale.set(scale*4,scale,1);return s}
+function boltsZ(g,y,z){for(const sx of[-1,1])for(const sy of[-1,1])cyl(g,3,8,MAT.bolt,sx*13.75,y+sy*13.75,z,'z')}
+function makePitch(title,linkLen,isNew=false,motorLong=false){
+ const root=new THREE.Group(),fork=new THREE.Group();root.add(fork);const fm=isNew?MAT.newj:MAT.metal;
+ box(fork,48,3,43,fm,0,1.5,0);box(fork,48,96,2.5,fm,0,48,-22.75);box(fork,48,96,2.5,fm,0,48,22.75);
+ for(const z of[-24,24]){ring(fork,14,1.4,MAT.bolt,0,48,z,'z');for(const y of[24,72])ring(fork,8.5,.8,MAT.bolt,0,y,z,'z')}
+ box(root,42.3,42.3,motorLong?48:47,MAT.dark,0,48,-74);cyl(root,36,35,MAT.gear,0,48,-33,'z');cyl(root,8,38,MAT.metal,0,48,0,'z');boltsZ(root,48,-17);
+ const pivot=new THREE.Group();pivot.position.set(0,48,0);root.add(pivot);ring(pivot,29,3,isNew?MAT.newj:MAT.printed,0,0,-22,'z');box(pivot,40,56,5,isNew?MAT.newj:MAT.printed,0,0,-5);
+ box(pivot,20,linkLen,20,MAT.metal,0,linkLen/2,7);for(const y of[18,linkLen-18])cyl(pivot,4.2,25,MAT.bolt,0,y,7,'x');
+ const end=new THREE.Group();end.position.set(0,linkLen,0);pivot.add(end);const lab=label(title,isNew?0xffb347:0xffffff,20);lab.position.set(42,18,0);root.add(lab);
+ return{root,pivot,end};
+}
+function addJ3Cup(end){
+ const g=new THREE.Group();g.position.set(0,0,7);end.add(g);
+ // Installed cup without its removable print brim. Tube end seats 9.5 mm
+ // behind the bracket face; sleeve engagement is 33.5 mm.
+ const m=MAT.newj;
+ box(g,4.8,35,30,m,-12.6,-16,0);box(g,4.8,35,30,m,12.6,-16,0);
+ box(g,20.4,35,4.8,m,0,-16,-12.6);box(g,20.4,35,4.8,m,0,-16,12.6);
+ box(g,58,8,15.8,m,0,5.5,-18.1);box(g,58,8,15.8,m,0,5.5,18.1);
+ box(g,18.8,8,20.4,m,-19.6,5.5,0);box(g,18.8,8,20.4,m,19.6,5.5,0);
+ // Eight existing M4 holes in the U-bottom grid.
+ for(const [x,z] of [[-16,-8],[-16,8],[16,-8],[16,8],[-8,-16],[8,-16],[-8,16],[8,16]])cyl(g,4,14,MAT.bolt,x,5.5,z);
+ // Two transverse M4 bolts clamp sleeve + tube + anti-crush insert.
+ for(const y of[-9.5,-23.5])cyl(g,4,40,MAT.bolt,0,y,0,'x');
+ const lab=label('СТАКАН: 8×M4 + 2×M4',0xffb347,16);lab.position.set(-5,-22,55);g.add(lab);
+ return g;
+}
+function makeRoll(){const root=new THREE.Group();box(root,29.4,31,29.4,MAT.roll,0,-14,0);box(root,50,5,50,MAT.roll,0,4,0);box(root,42.3,47,42.3,MAT.dark,0,30,0);cyl(root,36,35,MAT.gear,0,71,0);cyl(root,8,17,MAT.metal,0,97,0);for(const x of[-15.5,15.5])for(const z of[-15.5,15.5])cyl(root,3,10,MAT.bolt,x,4,z);const rot=new THREE.Group();rot.position.set(0,103,0);root.add(rot);cyl(rot,22,3,MAT.metal,0,-1,0);const lab=label('J4 ROLL — перенесён',0x65d8ff,20);lab.position.set(63,56,0);root.add(lab);return{root,rot}}
+function makeWristRoll(){const root=new THREE.Group();box(root,29.4,31,29.4,MAT.printed,0,-14,0);box(root,42,5,42,MAT.printed,0,4,0);box(root,35.2,28,35.2,MAT.dark,0,20.5,0);cyl(root,5,10,MAT.metal,0,40,0);const rot=new THREE.Group();rot.position.set(0,45,0);root.add(rot);box(rot,34,8,22,MAT.grip,0,4,0);box(rot,7,34,5,MAT.grip,-13,21,0);box(rot,7,34,5,MAT.grip,13,21,0);const lab=label('J6 головка',0xffffff,18);lab.position.set(48,22,0);root.add(lab);return{root,rot}}
+// База и J1
+const base=new THREE.Group();scene.add(base);box(base,122,30,48,MAT.dark,0,15,0);box(base,14,45,48,MAT.dark,-37,51,0);box(base,14,45,48,MAT.dark,37,51,0);box(base,42.3,48,42.3,MAT.dark,0,45,0);cyl(base,36,35,MAT.gear,0,86,0);cyl(base,8,18,MAT.metal,0,112,0);cyl(base,22,3,MAT.metal,0,120,0);
+const yaw=new THREE.Group();yaw.position.set(0,122,0);scene.add(yaw);const j1lab=label('J1 база',0xffffff,20);j1lab.position.set(-64,17,0);yaw.add(j1lab);
+const j2=makePitch('J2 плечо · 140 мм',140,false,true);yaw.add(j2.root);
+addJ3Cup(j2.end);
+const j3=makePitch('J3 НОВЫЙ локоть · 110 мм',110,true,true);j3.root.position.set(0,9.5,7);j2.end.add(j3.root);
+const roll=makeRoll();roll.root.position.y=2;j3.end.add(roll.root);
+const j5=makePitch('J5 запясть · 110 мм',110,false,false);j5.root.position.y=0;roll.rot.add(j5.root);
+const j6=makeWristRoll();j6.root.position.y=2;j5.end.add(j6.root);
+// Цветные кольца осей
+ring(j2.root,58,1.5,MAT.bolt,0,48,0,'z');ring(j3.root,61,2,MAT.newj,0,48,0,'z');ring(roll.root,54,2,MAT.roll,0,103,0,'y');ring(j5.root,58,1.5,MAT.bolt,0,48,0,'z');
+function bind(id,vid,fn){const e=document.getElementById(id);e.oninput=()=>{document.getElementById(vid).textContent=e.value+'°';fn(+e.value*Math.PI/180)};e.oninput()}
+bind('j1','v1',a=>yaw.rotation.y=a);bind('j2','v2',a=>j2.pivot.rotation.z=a);bind('j3','v3',a=>j3.pivot.rotation.z=a);bind('j4','v4',a=>roll.rot.rotation.y=a);bind('j5','v5',a=>j5.pivot.rotation.z=a);bind('j6','v6',a=>j6.rot.rotation.y=a);
+const POSES={fold:[10,58,-105,0,72,0],work:[15,22,-48,0,-35,0],straight:[0,0,0,0,0,0]};function pose(k){['j1','j2','j3','j4','j5','j6'].forEach((id,i)=>{const e=document.getElementById(id);e.value=POSES[k][i];e.oninput()})}
+let target=new THREE.Vector3(0,350,0),theta=-.82,phi=1.15,dist=1000,drag=null;function cameraUpdate(){camera.position.set(target.x+dist*Math.sin(phi)*Math.cos(theta),target.y+dist*Math.cos(phi),target.z+dist*Math.sin(phi)*Math.sin(theta));camera.lookAt(target)}cameraUpdate();
+renderer.domElement.addEventListener('pointerdown',e=>drag={x:e.clientX,y:e.clientY,b:e.button});addEventListener('pointerup',()=>drag=null);addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.x=e.clientX;drag.y=e.clientY;if(drag.b===2){const s=dist/700;const r=new THREE.Vector3().subVectors(camera.position,target).cross(camera.up).normalize();target.addScaledVector(r,-dx*s);target.y+=dy*s}else{theta+=dx*.007;phi=Math.max(.2,Math.min(2.9,phi-dy*.007))}cameraUpdate()});renderer.domElement.addEventListener('wheel',e=>{dist=Math.max(220,Math.min(1800,dist*(e.deltaY>0?1.1:.9)));cameraUpdate()});renderer.domElement.addEventListener('contextmenu',e=>e.preventDefault());addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+(function loop(){requestAnimationFrame(loop);renderer.render(scene,camera)})();
+</script>
+</body>
+</html>

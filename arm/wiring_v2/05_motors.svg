@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1050" viewBox="0 0 1600 1050">
+  <style>
+    .bg{fill:#fff}.zone{fill:#f5f8fc;stroke:#9aa9bd;stroke-width:3}.drv{fill:#171717;stroke:#000;stroke-width:4}.motor{fill:#fff;stroke:#253247;stroke-width:4}.hole{fill:#e6ebf0;stroke:#253247;stroke-width:3}
+    .h1{font:800 32px 'Segoe UI',Arial}.h2{font:800 24px 'Segoe UI',Arial}.t{font:20px 'Segoe UI',Arial}.s{font:17px 'Segoe UI',Arial}.pin{font:800 20px Consolas,monospace}.white{font:800 20px 'Segoe UI',Arial;fill:#fff}
+    .black{stroke:#111;stroke-width:9}.green{stroke:#159447;stroke-width:9}.blue{stroke:#1769d2;stroke-width:9}.red{stroke:#dc2020;stroke-width:9}.warn{fill:#fff8d9;stroke:#d09a00;stroke-width:3}
+  </style>
+  <rect width="1600" height="1050" class="bg"/>
+  <text x="800" y="48" text-anchor="middle" class="h1">ЛИСТ 5 — МОТОР №1 И МОТОР №2, БЕЗ ПЕРЕСЕЧЕНИЙ</text>
+
+  <rect x="35" y="80" width="1530" height="420" rx="20" class="zone"/>
+  <text x="65" y="120" class="h2">J1 — ОСНОВАНИЕ: ДРАЙВЕР №1 → NEMA17 №1</text>
+  <rect x="75" y="155" width="300" height="310" rx="18" class="drv"/><text x="225" y="192" text-anchor="middle" class="white">ДРАЙВЕР №1</text>
+  <rect x="190" y="215" width="150" height="48" class="hole"/><text x="265" y="247" text-anchor="middle" class="pin">M1B</text>
+  <rect x="190" y="280" width="150" height="48" class="hole"/><text x="265" y="312" text-anchor="middle" class="pin">M1A</text>
+  <rect x="190" y="345" width="150" height="48" class="hole"/><text x="265" y="377" text-anchor="middle" class="pin">M2A</text>
+  <rect x="190" y="410" width="150" height="48" class="hole"/><text x="265" y="442" text-anchor="middle" class="pin">M2B</text>
+  <line x1="340" y1="239" x2="1110" y2="239" class="black"/><text x="600" y="222" class="h2">ЧЁРНЫЙ</text>
+  <line x1="340" y1="304" x2="1110" y2="304" class="green"/><text x="600" y="287" class="h2" fill="#159447">ЗЕЛЁНЫЙ</text>
+  <line x1="340" y1="369" x2="1110" y2="369" class="blue"/><text x="600" y="352" class="h2" fill="#1769d2">СИНИЙ</text>
+  <line x1="340" y1="434" x2="1110" y2="434" class="red"/><text x="600" y="417" class="h2" fill="#dc2020">КРАСНЫЙ</text>
+  <rect x="1110" y="155" width="390" height="310" rx="18" class="motor"/><text x="1305" y="198" text-anchor="middle" class="h2">NEMA17 №1</text>
+  <text x="1150" y="247" class="t">чёрный ← M1B</text><text x="1150" y="312" class="t">зелёный ← M1A</text><text x="1150" y="377" class="t">синий ← M2A</text><text x="1150" y="442" class="t">красный ← M2B</text>
+
+  <rect x="35" y="530" width="1530" height="420" rx="20" class="zone"/>
+  <text x="65" y="570" class="h2">J2 — ПЛЕЧО: ДРАЙВЕР №2 → NEMA17 №2</text>
+  <rect x="75" y="605" width="300" height="310" rx="18" class="drv"/><text x="225" y="642" text-anchor="middle" class="white">ДРАЙВЕР №2</text>
+  <rect x="190" y="665" width="150" height="48" class="hole"/><text x="265" y="697" text-anchor="middle" class="pin">M1B</text>
+  <rect x="190" y="730" width="150" height="48" class="hole"/><text x="265" y="762" text-anchor="middle" class="pin">M1A</text>
+  <rect x="190" y="795" width="150" height="48" class="hole"/><text x="265" y="827" text-anchor="middle" class="pin">M2A</text>
+  <rect x="190" y="860" width="150" height="48" class="hole"/><text x="265" y="892" text-anchor="middle" class="pin">M2B</text>
+  <line x1="340" y1="689" x2="1110" y2="689" class="black"/><text x="600" y="672" class="h2">ЧЁРНЫЙ</text>
+  <line x1="340" y1="754" x2="1110" y2="754" class="green"/><text x="600" y="737" class="h2" fill="#159447">ЗЕЛЁНЫЙ</text>
+  <line x1="340" y1="819" x2="1110" y2="819" class="blue"/><text x="600" y="802" class="h2" fill="#1769d2">СИНИЙ</text>
+  <line x1="340" y1="884" x2="1110" y2="884" class="red"/><text x="600" y="867" class="h2" fill="#dc2020">КРАСНЫЙ</text>
+  <rect x="1110" y="605" width="390" height="310" rx="18" class="motor"/><text x="1305" y="648" text-anchor="middle" class="h2">NEMA17 №2</text>
+  <text x="1150" y="697" class="t">чёрный ← M1B</text><text x="1150" y="762" class="t">зелёный ← M1A</text><text x="1150" y="827" class="t">синий ← M2A</text><text x="1150" y="892" class="t">красный ← M2B</text>
+
+  <rect x="250" y="970" width="1100" height="58" rx="10" class="warn"/>
+  <text x="800" y="1007" text-anchor="middle" class="t">Сначала прозвонить пары: чёрный+зелёный и синий+красный. Моторы между собой не соединять.</text>
+</svg>

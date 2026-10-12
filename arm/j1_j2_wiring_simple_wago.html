@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Роборука — простое подключение двух NEMA через WAGO</title>
+  <style>
+    :root{--ink:#152033;--muted:#536174;--line:#c6d0dd;--blue:#1565c0;--red:#c9182b;--yellow:#e69b13;--bg:#edf1f6}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 "Segoe UI",Arial,sans-serif}
+    main{max-width:1500px;margin:auto;padding:24px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;margin:18px 0;box-shadow:0 4px 16px #14203512}
+    h1{font-size:34px;line-height:1.18;margin:0 0 10px}h2{font-size:25px;margin:0 0 14px}h3{font-size:20px;margin:22px 0 8px}
+    p{margin:9px 0}.lead{font-size:20px;color:var(--muted)}.danger{background:#fff0f1;border:3px solid var(--red)}.note{background:#fff8dc;border:2px solid #d69b00}
+    .diagram{display:block;width:100%;background:#fff;border-radius:12px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:850px}
+    th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}th{background:#e9eff7}code{font:700 0.95em Consolas,"Courier New",monospace;background:#edf1f6;padding:2px 5px;border-radius:5px}
+    ol li,ul li{margin:.55em 0}.red{color:#c9182b;font-weight:800}.black{color:#111;font-weight:800}.blue{color:#1565c0;font-weight:800}.ok{color:#087a39;font-weight:800}
+    .answer{font-size:20px}.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}@media(max-width:900px){main{padding:10px}.two{grid-template-columns:1fr}h1{font-size:27px}}
+  </style>
+</head>
+<body><main>
+  <section class="card">
+    <h1>Две NEMA17 + два LERDGE TMC2209 + ESP32</h1>
+    <p class="lead">Максимально простая схема под твою уже собранную пару трёхконтактных WAGO с конденсатором.</p>
+  </section>
+
+  <section class="card danger answer">
+    <h2>Сразу отвечаю, куда идут оставшиеся красный и чёрный провода</h2>
+    <p><span class="red">Оставшийся красный</span> из твоей WAGO <strong>не идёт в ESP32</strong>. Он идёт в новую трёхконтактную WAGO. Из неё выходят два красных провода: один в <code>VM</code> драйвера №1, второй в <code>VM</code> драйвера №2.</p>
+    <p><span class="black">Оставшийся чёрный</span> из твоей WAGO идёт в новую общую WAGO на восемь контактов. Из неё выходят отдельные чёрные провода в <code>GND</code> ESP32 и в оба контакта <code>GND</code> каждого драйвера.</p>
+    <p><strong>ESP32 питается только по USB. Подавать 12 В на ESP32 нельзя.</strong></p>
+  </section>
+
+  <section class="card">
+    <h2>Главная схема</h2>
+    <a href="j1_j2_wiring_simple_wago.svg" target="_blank"><img class="diagram" src="j1_j2_wiring_simple_wago.svg" alt="Простая схема подключения двух NEMA17, двух TMC2209, ESP32 и WAGO"></a>
+    <p>Нажми на изображение: SVG откроется отдельно и его можно увеличивать без потери чёткости.</p>
+  </section>
+
+  <section class="card note">
+    <h2>Что нужно добавить к уже собранным двум WAGO</h2>
+    <ul>
+      <li>1× WAGO на 3 отверстия — разветвление красного <code>+12 V</code> на два контакта <code>VM</code>.</li>
+      <li>1× WAGO или распределитель на 8 отверстий — общая земля для двух драйверов и ESP32.</li>
+      <li>1× WAGO на 3 отверстия — разветвление <code>3V3</code> на два контакта <code>VIO</code>.</li>
+      <li>1× WAGO на 3 отверстия — разветвление <code>D27</code> на два контакта <code>EN/ENN</code>. Её подключаем только после проверки подписи EN на плате.</li>
+    </ul>
+    <p>В одно отверстие WAGO вставляется только один провод. Два провода в одно отверстие не запихивать.</p>
+  </section>
+
+  <section class="card">
+    <h2>Шаг 1. Твои существующие WAGO и конденсатор</h2>
+    <h3>WAGO «плюс» на 3 отверстия</h3>
+    <ol>
+      <li><strong>Отверстие 1:</strong> красный провод длиной около 10 см от клеммы <code>+</code> переходника БП.</li>
+      <li><strong>Отверстие 2:</strong> положительная ножка конденсатора. Это ножка без минусовой полосы.</li>
+      <li><strong>Отверстие 3:</strong> новый красный провод к отверстию 1 дополнительной WAGO «плюс».</li>
+    </ol>
+
+    <h3>WAGO «минус» на 3 отверстия</h3>
+    <ol>
+      <li><strong>Отверстие 1:</strong> чёрный провод длиной около 10 см от клеммы <code>−</code> переходника БП.</li>
+      <li><strong>Отверстие 2:</strong> отрицательная ножка конденсатора. На этой стороне корпуса нарисована полоса с минусами.</li>
+      <li><strong>Отверстие 3:</strong> новый чёрный провод к отверстию 1 дополнительной WAGO «общая GND».</li>
+    </ol>
+  </section>
+
+  <section class="card">
+    <h2>Шаг 2. Распределяем питание на два драйвера</h2>
+    <h3>Новая красная WAGO на 3 отверстия</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Отверстие</th><th>Что вставить</th><th>Другой конец провода</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>красный входящий провод</td><td>отверстие 3 твоей существующей WAGO «плюс»</td></tr>
+        <tr><td>2</td><td>красный провод</td><td><code>VM</code> драйвера №1 — J1 основание</td></tr>
+        <tr><td>3</td><td>красный провод</td><td><code>VM</code> драйвера №2 — J2 плечо</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Новая чёрная WAGO на 8 отверстий</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Отверстие</th><th>Куда идёт чёрный провод</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>вход от отверстия 3 твоей существующей WAGO «минус»</td></tr>
+        <tr><td>2</td><td>драйвер №1 → <code>GND</code>, расположенный рядом с <code>VM</code></td></tr>
+        <tr><td>3</td><td>драйвер №1 → нижний <code>GND</code>, расположенный рядом с <code>VIO</code></td></tr>
+        <tr><td>4</td><td>драйвер №2 → <code>GND</code>, расположенный рядом с <code>VM</code></td></tr>
+        <tr><td>5</td><td>драйвер №2 → нижний <code>GND</code>, расположенный рядом с <code>VIO</code></td></tr>
+        <tr><td>6</td><td>любой пин <code>GND</code> на ESP32</td></tr>
+        <tr><td>7–8</td><td>оставить свободными</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="card">
+    <h2>Шаг 3. Сигнальные провода ESP32 → драйверы</h2>
+    <p>На ESP32 подпись может выглядеть как <code>D25</code> или просто <code>25</code>. Это тот же <code>GPIO25</code>. Пин <code>D4</code> в этой схеме не используется.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Первый конец</th><th>Второй конец</th><th>Цвет на схеме</th></tr></thead>
+      <tbody>
+        <tr><td>ESP32 <code>D25 / GPIO25</code></td><td>драйвер №1 <code>STEP</code></td><td>фиолетовый</td></tr>
+        <tr><td>ESP32 <code>D26 / GPIO26</code></td><td>драйвер №1 <code>DIR</code></td><td>оранжевый</td></tr>
+        <tr><td>ESP32 <code>D32 / GPIO32</code></td><td>драйвер №2 <code>STEP</code></td><td>зелёный</td></tr>
+        <tr><td>ESP32 <code>D33 / GPIO33</code></td><td>драйвер №2 <code>DIR</code></td><td>бирюзовый</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Разветвление 3V3</h3>
+    <ol>
+      <li>ESP32 <code>3V3</code> → отверстие 1 маленькой WAGO «3V3».</li>
+      <li>Отверстие 2 → драйвер №1 <code>VIO</code>.</li>
+      <li>Отверстие 3 → драйвер №2 <code>VIO</code>.</li>
+    </ol>
+
+    <h3>Разветвление EN</h3>
+    <ol>
+      <li>ESP32 <code>D27 / GPIO27</code> → отверстие 1 маленькой WAGO «EN».</li>
+      <li>Отверстие 2 → драйвер №1 <code>EN/ENN</code>.</li>
+      <li>Отверстие 3 → драйвер №2 <code>EN/ENN</code>.</li>
+    </ol>
+    <p class="red">GPIO27 подключать только к контакту, который на реальной плате действительно подписан EN или ENN. Если подписи нет — эти три провода пока не паять.</p>
+  </section>
+
+  <section class="card">
+    <h2>Шаг 4. Моторные провода</h2>
+    <p>Оба мотора подключаются одинаково, но каждый только к своему драйверу:</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Пин драйвера</th><th>Провод NEMA17 №1</th><th>Провод NEMA17 №2</th></tr></thead>
+      <tbody>
+        <tr><td><code>M1B</code></td><td>чёрный</td><td>чёрный</td></tr>
+        <tr><td><code>M1A</code></td><td>зелёный</td><td>зелёный</td></tr>
+        <tr><td><code>M2A</code></td><td>синий</td><td>синий</td></tr>
+        <tr><td><code>M2B</code></td><td>красный</td><td>красный</td></tr>
+      </tbody>
+    </table></div>
+    <p>Перед пайкой прозвони каждый мотор отдельно. Чёрный и зелёный должны образовывать одну обмотку, синий и красный — вторую. Цвета не являются универсальным стандартом, поэтому прозвонка обязательна.</p>
+  </section>
+
+  <section class="card">
+    <h2>Порядок контактов LERDGE TMC2209 сверху вниз</h2>
+    <div class="two">
+      <div>
+        <h3>Левая гребёнка</h3>
+        <ol>
+          <li><code>EN/ENN</code> — только если подписан</li>
+          <li><code>MS1</code> — пусто</li>
+          <li><code>MS2</code> — пусто</li>
+          <li><code>PDN/UART</code> — пусто</li>
+          <li><code>PDN/UART</code> — пусто</li>
+          <li><code>CLK</code> — пусто</li>
+          <li><code>STEP</code></li>
+          <li><code>DIR</code></li>
+        </ol>
+      </div>
+      <div>
+        <h3>Правая гребёнка</h3>
+        <ol>
+          <li><code>VM</code> — красный +12 V</li>
+          <li><code>GND</code> рядом с VM</li>
+          <li><code>M1B</code></li>
+          <li><code>M1A</code></li>
+          <li><code>M2A</code></li>
+          <li><code>M2B</code></li>
+          <li><code>VIO</code> — 3V3 от ESP32</li>
+          <li><code>GND</code> рядом с VIO</li>
+        </ol>
+      </div>
+    </div>
+    <p>Порядок взят из предыдущей схемы твоего проекта. Перед пайкой всё равно прочитай надписи непосредственно на каждой плате: маркировка реальной платы важнее рисунка.</p>
+  </section>
+
+  <section class="card danger">
+    <h2>Пока ничего не включать</h2>
+    <ul>
+      <li>При пайке отключены и USB, и моторный БП.</li>
+      <li>До прошивки моторный БП 12 В не включаем.</li>
+      <li>Моторные разъёмы нельзя подключать или отключать при включённом 12 В.</li>
+      <li>После сборки сначала прозвоним питание, потом я подготовлю тестовую прошивку и будем запускать по одному двигателю на малой скорости.</li>
+    </ul>
+  </section>
+</main></body></html>

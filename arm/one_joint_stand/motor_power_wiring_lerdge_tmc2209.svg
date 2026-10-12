@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+  <defs>
+    <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#d22"/>
+    </marker>
+    <marker id="arrowBlack" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#111"/>
+    </marker>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1677c8"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#189447"/>
+    </marker>
+    <style>
+      .title { font: 700 34px Arial, sans-serif; fill: #111; }
+      .h { font: 700 24px Arial, sans-serif; fill: #111; }
+      .t { font: 20px Arial, sans-serif; fill: #111; }
+      .small { font: 17px Arial, sans-serif; fill: #222; }
+      .pin { font: 700 17px Arial, sans-serif; fill: #fff; }
+      .label { font: 700 19px Arial, sans-serif; fill: #111; }
+      .warn { font: 700 22px Arial, sans-serif; fill: #b00020; }
+      .box { fill: #f7f7f7; stroke: #222; stroke-width: 3; rx: 10; }
+      .tmc { fill: #151515; stroke: #222; stroke-width: 3; rx: 8; }
+      .esp { fill: #eaf4ff; stroke: #1677c8; stroke-width: 3; rx: 8; }
+      .sensor { fill: #eafbea; stroke: #189447; stroke-width: 3; rx: 8; }
+      .psu { fill: #f6f6f6; stroke: #555; stroke-width: 3; rx: 12; }
+      .terminal { fill: #20b36b; stroke: #111; stroke-width: 2; rx: 4; }
+      .wireRed { fill: none; stroke: #d22; stroke-width: 8; marker-end: url(#arrowRed); }
+      .wireBlack { fill: none; stroke: #111; stroke-width: 8; marker-end: url(#arrowBlack); }
+      .wireBlue { fill: none; stroke: #1677c8; stroke-width: 5; marker-end: url(#arrowBlue); }
+      .wireGreen { fill: none; stroke: #189447; stroke-width: 5; marker-end: url(#arrowGreen); }
+      .wireYellow { fill: none; stroke: #d5a300; stroke-width: 5; }
+      .dash { stroke-dasharray: 12 10; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1400" height="900" fill="#ffffff"/>
+  <text x="50" y="60" class="title">Схема питания мотора: БП 12В -> TMC2209 Lerdge -> мотор</text>
+  <text x="50" y="94" class="warn">12В НЕ подключать к ESP32, AS5600 или VIO. Плюс 12В идет только на VM.</text>
+
+  <!-- PSU -->
+  <rect x="70" y="170" width="260" height="220" class="psu"/>
+  <text x="105" y="215" class="h">Блок питания</text>
+  <text x="112" y="250" class="t">12V / 3A</text>
+  <text x="105" y="285" class="small">Штекер 5.5 мм</text>
+  <line x1="200" y1="390" x2="200" y2="455" stroke="#111" stroke-width="12"/>
+
+  <!-- Barrel adapter -->
+  <rect x="105" y="455" width="190" height="120" fill="#222" stroke="#111" stroke-width="3" rx="14"/>
+  <rect x="120" y="465" width="160" height="50" class="terminal"/>
+  <circle cx="160" cy="490" r="15" fill="#e8e8e8" stroke="#111" stroke-width="2"/>
+  <circle cx="240" cy="490" r="15" fill="#e8e8e8" stroke="#111" stroke-width="2"/>
+  <text x="95" y="622" class="label">Переходник DC jack -> клеммы</text>
+  <text x="88" y="650" class="small">Сначала мультиметром найти, где +12В и где минус</text>
+  <text x="125" y="450" class="warn">+?</text>
+  <text x="235" y="450" class="warn">-?</text>
+
+  <!-- TMC2209 -->
+  <rect x="630" y="145" width="250" height="525" class="tmc"/>
+  <text x="662" y="185" class="pin" font-size="21">LERDGE</text>
+  <text x="662" y="212" class="pin" font-size="21">TMC2209</text>
+  <text x="650" y="245" class="small" fill="#eee">вид сверху, как на фото</text>
+
+  <!-- Right pins -->
+  <g>
+    <circle cx="865" cy="270" r="13" fill="#cfd8dc"/><text x="895" y="277" class="label">VM</text>
+    <circle cx="865" cy="320" r="13" fill="#cfd8dc"/><text x="895" y="327" class="label">GND</text>
+    <circle cx="865" cy="370" r="13" fill="#cfd8dc"/><text x="895" y="377" class="label">M1B</text>
+    <circle cx="865" cy="420" r="13" fill="#cfd8dc"/><text x="895" y="427" class="label">M1A</text>
+    <circle cx="865" cy="470" r="13" fill="#cfd8dc"/><text x="895" y="477" class="label">M2A</text>
+    <circle cx="865" cy="520" r="13" fill="#cfd8dc"/><text x="895" y="527" class="label">M2B</text>
+    <circle cx="865" cy="570" r="13" fill="#cfd8dc"/><text x="895" y="577" class="label">VIO</text>
+    <circle cx="865" cy="620" r="13" fill="#cfd8dc"/><text x="895" y="627" class="label">GND</text>
+  </g>
+  <!-- Left pins -->
+  <g>
+    <circle cx="645" cy="270" r="13" fill="#cfd8dc"/><text x="525" y="277" class="label">EN нет</text>
+    <circle cx="645" cy="320" r="13" fill="#cfd8dc"/><text x="525" y="327" class="label">MS1</text>
+    <circle cx="645" cy="370" r="13" fill="#cfd8dc"/><text x="525" y="377" class="label">MS2</text>
+    <circle cx="645" cy="420" r="13" fill="#cfd8dc"/><text x="485" y="427" class="label">PDN/UART</text>
+    <circle cx="645" cy="470" r="13" fill="#cfd8dc"/><text x="485" y="477" class="label">PDN/UART</text>
+    <circle cx="645" cy="520" r="13" fill="#cfd8dc"/><text x="550" y="527" class="label">CLK</text>
+    <circle cx="645" cy="570" r="13" fill="#cfd8dc"/><text x="535" y="577" class="label">STEP</text>
+    <circle cx="645" cy="620" r="13" fill="#cfd8dc"/><text x="555" y="627" class="label">DIR</text>
+  </g>
+
+  <!-- ESP32 -->
+  <rect x="1060" y="155" width="240" height="260" class="esp"/>
+  <text x="1115" y="198" class="h">ESP32</text>
+  <text x="1090" y="245" class="label">3V3</text>
+  <circle cx="1075" cy="238" r="10" fill="#1677c8"/>
+  <text x="1090" y="295" class="label">GND</text>
+  <circle cx="1075" cy="288" r="10" fill="#1677c8"/>
+  <text x="1090" y="345" class="label">D12 STEP</text>
+  <circle cx="1075" cy="338" r="10" fill="#1677c8"/>
+  <text x="1090" y="395" class="label">D14 DIR</text>
+  <circle cx="1075" cy="388" r="10" fill="#1677c8"/>
+
+  <!-- Motor -->
+  <rect x="1080" y="525" width="240" height="170" class="box"/>
+  <text x="1138" y="565" class="h">NEMA17</text>
+  <text x="1105" y="610" class="label">обмотка A</text>
+  <text x="1105" y="650" class="label">обмотка B</text>
+
+  <!-- wires PSU to TMC -->
+  <path d="M160 490 C300 430, 455 300, 865 270" class="wireRed"/>
+  <path d="M240 490 C360 540, 520 355, 865 320" class="wireBlack"/>
+  <text x="360" y="330" class="warn">+12В</text>
+  <text x="365" y="555" class="label">минус 12В / GND</text>
+
+  <!-- wires ESP to TMC -->
+  <path d="M1075 238 C1010 235, 970 560, 865 570" class="wireBlue"/>
+  <text x="975" y="548" class="small">3V3 -> VIO</text>
+  <path d="M1075 288 C1020 295, 960 630, 865 620" class="wireBlack"/>
+  <text x="965" y="650" class="small">GND -> GND</text>
+  <path d="M1075 338 C950 360, 790 555, 645 570" class="wireGreen"/>
+  <text x="790" y="535" class="small">D12 -> STEP</text>
+  <path d="M1075 388 C935 430, 790 620, 645 620" class="wireYellow"/>
+  <text x="790" y="604" class="small">D14 -> DIR</text>
+
+  <!-- wires motor -->
+  <path d="M865 370 C980 370, 1015 595, 1080 595" fill="none" stroke="#8e44ad" stroke-width="6"/>
+  <path d="M865 420 C980 420, 1015 615, 1080 615" fill="none" stroke="#8e44ad" stroke-width="6"/>
+  <path d="M865 470 C980 470, 1015 635, 1080 635" fill="none" stroke="#e67e22" stroke-width="6"/>
+  <path d="M865 520 C980 520, 1015 655, 1080 655" fill="none" stroke="#e67e22" stroke-width="6"/>
+  <text x="975" y="455" class="small">пара проводов одной обмотки</text>
+  <text x="975" y="500" class="small">пара проводов второй обмотки</text>
+
+  <!-- notes -->
+  <rect x="70" y="720" width="1260" height="130" fill="#fff5f5" stroke="#b00020" stroke-width="3" rx="10"/>
+  <text x="95" y="760" class="warn">Порядок включения</text>
+  <text x="95" y="795" class="t">1. ESP32 подключена по USB. 2. VIO уже от 3V3. 3. Мотор подключен к M1/M2. 4. Только потом подать +12В на VM и минус на GND.</text>
+  <text x="95" y="830" class="t">Если перепутать +12В с VIO/3V3, ESP32 или драйвер сгорит. Если не знаешь где плюс на зеленой клемме - сначала мультиметр.</text>
+</svg>

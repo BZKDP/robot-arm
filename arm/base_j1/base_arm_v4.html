@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Робо-рука v4 — база J1 + плечо J2 (zero-print)</title>
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#1a1d23;font-family:Segoe UI,Arial,sans-serif}
+  #ui{position:fixed;top:12px;left:12px;background:rgba(28,32,40,.92);color:#e8eaf0;
+      padding:14px 16px;border-radius:10px;width:250px;box-shadow:0 4px 18px rgba(0,0,0,.5)}
+  #ui h1{font-size:15px;margin:0 0 10px}
+  .row{margin:10px 0}
+  .row label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;color:#aeb6c4}
+  .row b{color:#fff}
+  input[type=range]{width:100%}
+  #legend{font-size:11.5px;color:#8f97a5;line-height:1.5;margin-top:10px;border-top:1px solid #333a46;padding-top:8px}
+  .sw{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px}
+</style>
+</head>
+<body>
+<div id="ui">
+  <h1>🦾 База J1 + плечо J2 (v4, без печати)</h1>
+  <div class="row"><label>J1 поворот базы <b id="v1">30°</b></label>
+    <input id="j1" type="range" min="-180" max="180" value="30"></div>
+  <div class="row"><label>J2 наклон плеча <b id="v2">30°</b></label>
+    <input id="j2" type="range" min="-100" max="100" value="30"></div>
+  <div id="legend">
+    <span class="sw" style="background:#8a8a8a"></span>твоя опора (что угодно)<br>
+    <span class="sw" style="background:#b7bcc4"></span>пластина-сэндвич (в комплекте)<br>
+    <span class="sw" style="background:#2b4a9b"></span>редуктор · <span class="sw" style="background:#2f2f2f"></span>мотор<br>
+    <span class="sw" style="background:#c8ccd2"></span>U-скоба · балки (алюминий)<br>
+    <span class="sw" style="background:#7f8790"></span>фланц. муфта 8мм · KFL08 (купить)<br>
+    <span class="sw" style="background:#c02626"></span>магнит-индекс · <span class="sw" style="background:#1b7f3b"></span>датчик Холла<br>
+    Мышь: вращать · колесо: зум · ПКМ: сдвиг
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ---------- scene ----------
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x1a1d23);
+const cam = new THREE.PerspectiveCamera(50, innerWidth/innerHeight, 1, 5000);
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(innerWidth, innerHeight); renderer.setPixelRatio(devicePixelRatio);
+document.body.appendChild(renderer.domElement);
+scene.add(new THREE.AmbientLight(0xffffff,.55));
+const d1=new THREE.DirectionalLight(0xffffff,.8); d1.position.set(200,400,250); scene.add(d1);
+const d2=new THREE.DirectionalLight(0xa0b0ff,.3); d2.position.set(-250,150,-200); scene.add(d2);
+scene.add(new THREE.GridHelper(600,30,0x39404d,0x262b33));
+
+const M = c => new THREE.MeshStandardMaterial({color:c, roughness:.55, metalness:.35});
+const mat = { sup:M(0x8a8a8a), plate:M(0xb7bcc4), motor:M(0x2f2f2f), gb:M(0x2b4a9b),
+  face:M(0x9aa4ad), car:M(0xc9c9c9), shaft:M(0xe6e6e6), alu:M(0xc8ccd2), beam:M(0xd4d8de),
+  buy:M(0x7f8790), mag:M(0xc02626), hall:M(0x1b7f3b), hole:new THREE.MeshBasicMaterial({color:0x14161b}) };
+
+function box(w,h,d,m,x,y,z,g){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);(g||scene).add(o);return o}
+function cylY(dia,h,m,x,y,z,g){const o=new THREE.Mesh(new THREE.CylinderGeometry(dia/2,dia/2,h,40),m);o.position.set(x,y,z);(g||scene).add(o);return o}
+function cylZ(dia,h,m,x,y,z,g){const o=cylY(dia,h,m,0,0,0,g);o.rotation.x=Math.PI/2;o.position.set(x,y,z);return o}
+function holeZ(r,x,y,z,g){const o=new THREE.Mesh(new THREE.CircleGeometry(r,20),mat.hole);o.position.set(x,y,z);if(z<0)o.rotation.y=Math.PI;(g||scene).add(o);return o}
+
+// ---------- sizes (mm, from v4.scad) ----------
+const FACE1=93, WEB1=97.6, AX=157.6, WI=21.5;
+
+// ---------- STATIC ----------
+box(20,55,50, mat.sup, -35,27.5,0);  box(20,55,50, mat.sup, 35,27.5,0);   // your supports
+box(56,3,56,  mat.plate, 0,56.5,0);                                        // sandwich plate
+box(42.3,47,42.3, mat.motor, 0,34.5,0);                                    // motor1
+cylY(36,35, mat.gb, 0,75.5,0);                                             // gearbox1
+cylY(36,1.2, mat.face, 0,93.6,0);                                          // static face
+box(6,1.6,4, mat.hall, 15,94.6,0);                                         // hall glued on face
+cylY(19,4, mat.car, 0,95,0);                                               // carrier
+cylY(8,11, mat.shaft, 0,102.5,0); cylY(5,3, mat.shaft, 0,109.5,0);         // shaft+tip
+
+// ---------- ROTATING J1 GROUP ----------
+const g1 = new THREE.Group(); scene.add(g1);
+// channel: web + 2 walls
+box(48,2.5,43, mat.alu, 0, WEB1+1.25, 0, g1);
+for (const s of [-1,1]) {
+  box(48,96,2.5, mat.alu, 0, WEB1+48, s*22.75, g1);
+  const zo = s*22.75 + s*1.3;
+  for (let x=-20;x<=20;x+=8) for (let y=WEB1+8;y<=WEB1+90;y+=8) holeZ(2.1,x,y,zo,g1);
+  holeZ(7, 0, WEB1+32, zo, g1); holeZ(10.3, 0, AX, zo, g1); holeZ(7, 0, WEB1+88, zo, g1);
+}
+cylY(3,2, mat.mag, 15, WEB1-1, 0, g1);                                     // index magnet
+// J2 drive outside wall (z negative side)
+cylZ(36,35, mat.gb, 0, AX, -41.5, g1);                                     // gearbox2
+box(42.3,42.3,47, mat.motor, 0, AX, -82.5, g1);                            // motor2
+cylZ(19,4, mat.car, 0, AX, -22, g1);                                       // carrier2
+// KFL08 on outer right wall (z positive)
+box(37,18,11, mat.buy, 0, AX, 29.5, g1);
+cylZ(18,11, mat.buy, -18.5, AX, 29.5, g1); cylZ(18,11, mat.buy, 18.5, AX, 29.5, g1);
+cylZ(16,13, mat.buy, 0, AX, 29.5, g1);
+
+// ---------- ARM (J2) GROUP ----------
+const g2 = new THREE.Group(); g2.position.set(0,AX,0); g1.add(g2);
+cylZ(8,11, mat.shaft, 0,0,-14.5, g2);                                      // shaft2 into gap
+cylZ(18,10, mat.buy, 0,0,-15, g2);                                         // flange coupling hub
+cylZ(25,2.5, mat.buy, 0,0,-8.75, g2);                                      // its flange
+for (const zo of [-5.5,-1.5]) {                                            // 2 beams up
+  const b = box(8,184,4, mat.beam, 0,72,zo, g2);
+  for (let y=-16;y<=160;y+=8) holeZ(2.1, 0.01, y+0.001, zo+2.05, g2);
+}
+cylZ(8,46, mat.shaft, 0,0,19, g2);                                         // rod to KFL08
+
+// ---------- controls ----------
+const target=new THREE.Vector3(0,110,0);
+let th=0.9, ph=1.15, R=430, drag=0, px=0, py=0;
+function setCam(){ cam.position.set(target.x+R*Math.sin(ph)*Math.cos(th), target.y+R*Math.cos(ph), target.z+R*Math.sin(ph)*Math.sin(th)); cam.lookAt(target); }
+addEventListener('mousedown',e=>{drag=e.button===2?2:1;px=e.clientX;py=e.clientY});
+addEventListener('mouseup',()=>drag=0);
+addEventListener('contextmenu',e=>e.preventDefault());
+addEventListener('mousemove',e=>{ if(!drag)return; const dx=e.clientX-px, dy=e.clientY-py; px=e.clientX; py=e.clientY;
+  if(drag===1){ th+=dx*.006; ph=Math.min(2.9,Math.max(.2,ph-dy*.006)); }
+  else { const s=R*.0016; target.x-=dx*s*Math.cos(th-Math.PI/2); target.z-=dx*s*Math.sin(th-Math.PI/2); target.y+=dy*s; }
+  setCam(); });
+addEventListener('wheel',e=>{ R=Math.min(1600,Math.max(120,R*(e.deltaY>0?1.12:0.9))); setCam(); });
+addEventListener('resize',()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+
+// ---------- UI ----------
+const s1=document.getElementById('j1'), s2=document.getElementById('j2');
+function upd(){ g1.rotation.y=-s1.value*Math.PI/180; g2.rotation.z=-s2.value*Math.PI/180;
+  document.getElementById('v1').textContent=s1.value+'°';
+  document.getElementById('v2').textContent=s2.value+'°'; }
+s1.oninput=upd; s2.oninput=upd; upd(); setCam();
+(function loop(){ requestAnimationFrame(loop); renderer.render(scene,cam); })();
+</script>
+</body>
+</html>

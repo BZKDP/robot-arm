@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Узел J2 v3 — сборка по реальному железу (труба 20×20, KFL08 напрямую)</title>
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#1a1d23;font-family:Segoe UI,Arial,sans-serif}
+  canvas{touch-action:none;display:block}
+  .panel{position:fixed;background:rgba(28,32,40,.94);color:#e8eaf0;border-radius:10px;
+         box-shadow:0 4px 18px rgba(0,0,0,.5);padding:12px 14px}
+  #ui{top:12px;left:12px;width:250px}
+  #ui h1{font-size:14px;margin:0 0 8px}
+  .row{margin:8px 0}
+  .row label{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:2px;color:#aeb6c4}
+  .row b{color:#fff} input[type=range]{width:100%}
+  #hint{font-size:11px;color:#8f97a5;margin-top:8px;border-top:1px solid #333a46;padding-top:6px;line-height:1.5}
+  #bom{top:12px;right:12px;width:335px;max-height:92vh;overflow:auto}
+  #bom h2{font-size:14px;margin:0 0 8px}
+  .item{padding:5px 8px;border-radius:6px;font-size:12.5px;cursor:pointer;margin:2px 0}
+  .item:hover{background:#2a3140}.item.sel{background:#33507a}
+  #card{border-top:1px solid #333a46;margin-top:8px;padding-top:8px;font-size:12.5px;line-height:1.55;display:none}
+  #card .nm{font-weight:700;font-size:13.5px;color:#ffce6b}
+</style>
+</head>
+<body>
+<div id="ui" class="panel">
+  <h1>🔩 Узел J2 v3 — как есть в железе</h1>
+  <div class="row"><label>РАЗНЕСТИ узел <b id="ve">0</b></label><input id="ex" type="range" min="0" max="40" value="0"></div>
+  <div class="row"><label>Угол звена <b id="va">0°</b></label><input id="aj" type="range" min="-90" max="90" value="0"></div>
+  <div id="hint">ЛКМ вращать · колесо зум · ПКМ сдвиг · клик по детали = карточка.<br>
+  Мотор в ЦЕНТРАЛЬНОМ Ø14 (как ты прикрутил). KFL08 напрямую на стенке (планка не нужна).<br>
+  Сверловка ТОЛЬКО в трубе: 3 отверстия по печатному кондуктору.</div>
+</div>
+<div id="bom" class="panel"><h2>📦 Детали и болты узла</h2><div id="list"></div><div id="card"></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const scene=new THREE.Scene(); scene.background=new THREE.Color(0x1a1d23);
+const cam=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,1,4000);
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(devicePixelRatio);
+document.body.appendChild(renderer.domElement);
+scene.add(new THREE.AmbientLight(0xffffff,.55));
+const dl=new THREE.DirectionalLight(0xffffff,.8);dl.position.set(250,450,300);scene.add(dl);
+const dl2=new THREE.DirectionalLight(0xa0b0ff,.3);dl2.position.set(-300,200,-250);scene.add(dl2);
+scene.add(new THREE.GridHelper(600,20,0x39404d,0x262b33));
+
+const M=c=>new THREE.MeshStandardMaterial({color:c,roughness:.55,metalness:.35});
+const mat={alu:M(0xc8ccd2),motor:M(0x2f2f2f),gb:M(0x2b4a9b),face:M(0x9aa4ad),shaft:M(0xe6e6e6),
+ printed:M(0xe0912b),buy:M(0x555c66),screw:M(0x22252b),scrHi:M(0xd8b23a),pcb:M(0x1b7f3b),
+ mag:M(0xc02626),stand:M(0xc9a227),tube:M(0xb4bac2),
+ hole:new THREE.MeshBasicMaterial({color:0x2e333b,side:THREE.DoubleSide})};
+
+const AX=48;   // ось сустава = ЦЕНТРАЛЬНОЕ Ø14 (48мм от дна скобы) — как прикручено
+const BOM={
+ chan:{n:'U-скоба goBILDA 96×48',d:'Стенки 96×48, дно 48; 3×Ø14 шаг 24; вокруг Ø14 — 4 мелких Ø4.2 по диагоналям + овалы; сетка 8мм. ОСЬ СУСТАВА = ЦЕНТРАЛЬНОЕ Ø14 (48мм от дна) — так прикручен твой редуктор. Сверлить скобу не надо.',s:'✅ стоит'},
+ adap:{n:'Адаптер редуктора v2',d:'68×40×5 + 3 бобышки Ø13.8 (шаг 24) в три Ø14 стенки А. Напечатан, сел идеально. 4×М3×10 крест Ø27.5 в редуктор (головки заподлицо со стороны скобы) + 2×М4×12 в крайние бобышки изнутри скобы, гайки в карманах.',s:'✅ стоит'},
+ gb:{n:'Редуктор 1:71 + NEMA17',d:'Выступ Ø22 в кармане адаптера, вал Ø8/лыски 5.9 торчит за ВНУТРЕННЮЮ поверхность стенки на ~8.5мм. Этого хватает муфте v3 (планка 8мм в 1мм от стенки).',s:'✅ стоит'},
+ mCoup:{n:'МУФТА МЕТАЛЛ 8мм (замерена ✅)',d:'РЕАЛЬНЫЕ размеры 24.08: фланец Ø22×2, отверстия BC15 под М3, хаб Ø~14, 2 установочных М4. Хаб смотрит К РЕДУКТОРУ. На вал: установочный винт ТОЧНО В ЦЕНТР ЛЫСКИ, затянуть, фиксатор резьбы. Печатную муфту v3 НЕ использовать.',s:'✅ есть'},
+ bridge:{n:'ПЛАСТИНА-МОСТ (ПЕЧАТАТЬ)',d:'flange_bridge_PETG.stl 40×46×8 (BC15/М3 — по замеру): центр Ø9.2 только под пруток (хаб сквозь НЕ идёт), 4×М3 BC15 (гайки М3 в карманах заподлицо со стороны трубы), 2 отв. (0,±16) под М4×30 с цековками — фланец Ø22 до них не достаёт, порядок вставки свободный.',s:'🖨 NEW'},
+ bF:{n:'Болты М3×8 ×4 (фланец→пластина)',d:'Из фланца муфты сквозь пластину → гайки М3 в карманах пластины (заподлицо, труба ляжет поверх).',s:'🛒 М3×8'},
+ tube:{n:'ТРУБА 20×20×1.5 — звено 140мм (ТВОЯ)',d:'Отрезать 140мм от бокса 500. СВЕРЛОВКА (чертёж _drill_tube_J2.png в arm\\printed): все НАСКВОЗЬ через кондуктор — Ø8.2 на 30мм от нижнего конца (ось/пруток) + 2×Ø4.2 на 14 и 46мм от конца (болты М4×30). В отверстия болтов внутрь трубы — распорные ВТУЛКИ (tube_spacers_x2), иначе затяжка сомнёт стенки!',s:'✂ 140мм + 3 отв.'},
+ jig:{n:'КОНДУКТОР для сверловки (ПЕЧАТАТЬ)',d:'drill_jig_v3_PETG.stl: П-скоба надевается на трубу до упора, отверстия-направляющие: центральное Ø8.3 + два Ø4.3 на ±16. Сверлишь насквозь через обе грани — точность автоматическая. Сначала 4.3, потом 8.2 (или ступенчатым сверлом).',s:'🖨 NEW'},
+ bT:{n:'Болты М4×30 ×2 (пластина↔труба)',d:'ВСТАВИТЬ В ПЛАСТИНУ ДО прикручивания фланца (головы прячутся под ним в глубоких цековках)! Сквозь обе грани трубы → широкая шайба + нейлок на дальней грани. Момент держит пара на плече 32мм.',s:'🛒 М4×30 + шайбы'},
+ rod:{n:'Пруток-ось Ø8 Д16Т (~48мм)',d:'Отрезать от прутка 8×200. Вставляется в Ø8.2 СКВОЗЬ ОБЕ грани трубы (опора 20мм — жёстко). Со стороны муфты кончается заподлицо (может касаться тыла муфты — они вращаются вместе). Дальний конец → в KFL08. Фиксация в трубе: капля эпоксидки/фикс. резьбы.',s:'✂ отрезать'},
+ kfl:{n:'KFL08 — УЖЕ ПРИКРУЧЕН ✅',d:'Напрямую к стенке Б вокруг центрального Ø14: 2×М4 диагонально через овалы KFL в мелкие отверстия, гайки изнутри (как на твоих фото). Печатная планка-переходник НЕ НУЖНА. Эксцентрик KFL затянуть на прутке — внутреннее кольцо вращается вместе с осью.',s:'✅ стоит'},
+ pcb:{n:'AS5600 + магнит',d:'Магнит Ø6×2.5 клеить в ТОРЕЦ прутка за KFL08. Плату 20×20 — на 2 стойках М3 (~15-18мм) в мелкие отверстия стенки Б рядом, чип напротив магнита, зазор 1-2мм.',s:'✅ есть'},
+ calc:{n:'📐 ПОРЯДОК СБОРКИ (метал. муфта)',d:'1) Кондуктор на трубу (центр Ø8.3 в 30мм от нижнего конца) → сверлить 2×4.3 и 8.2 насквозь. 2) Болты М4×30 в глубокие цековки ПЛАСТИНЫ (до фланца — потом не вставить!). 3) Фланец муфты к пластине 4×М4×8, гайки в карманах. 4) Муфту на вал: установочный винт ТОЧНО В ЦЕНТР ЛЫСКИ, затянуть, фиксатор резьбы. 5) Трубу на торчащие М4×30, шайбы+нейлоки на дальней грани. 6) Пруток в трубу насквозь (через центр пластины до тыла фланца), капля эпоксидки. 7) Конец прутка в KFL08, эксцентрик затянуть. 8) Магнит в торец, AS5600. ЗАЗОРЫ: муфта↔стенка А ~0.5мм, труба↔стенка Б ~2.5мм — норм. ПРОВЕРКА: плавно рукой, без осевого люфта.',s:'📋'}};
+
+const allG=[];
+function G(key){const g=new THREE.Group();g.userData.bom=key;allG.push(g);return g;}
+function box(w,h,d,m,x,y,z,g){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);g.add(o);return o}
+function cylY(dia,h,m,x,y,z,g){const o=new THREE.Mesh(new THREE.CylinderGeometry(dia/2,dia/2,h,32),m);o.position.set(x,y,z);g.add(o);return o}
+function cylZ(dia,h,m,x,y,z,g){const o=cylY(dia,h,m,0,0,0,g);o.rotation.x=Math.PI/2;o.position.set(x,y,z);return o}
+function hexZ(af,h,m,x,y,z,g){const o=new THREE.Mesh(new THREE.CylinderGeometry(af/1.732,af/1.732,h,6),m);o.rotation.x=Math.PI/2;o.position.set(x,y,z);g.add(o);return o}
+function holeZ(r,x,y,z,g){const o=new THREE.Mesh(new THREE.CircleGeometry(r,16),mat.hole);o.position.set(x,y,z);g.add(o);return o}
+function ovalZ(x,y,z,ang,g){const o=new THREE.Mesh(new THREE.CircleGeometry(2.25,14),mat.hole);
+ o.scale.set(2,1,1);o.rotation.z=ang;o.position.set(x,y,z);g.add(o);return o}
+function boltZ(g,d,L,x,y,zHead,dir){
+ cylZ(d*1.75,d*0.7,mat.scrHi,x,y,zHead,g);
+ cylZ(d,L,mat.scrHi,x,y,zHead+dir*(d*0.35+L/2),g);}
+function nutZ(g,af,x,y,z){hexZ(af,3,mat.scrHi,x,y,z,g)}
+
+// паттерн стенки (обе поверхности)
+function wallPattern(f,zo){
+  for(const by of [24,48,72]){
+    holeZ(7,0,by,zo,f);
+    for(const d of [[1,1],[-1,1],[1,-1],[-1,-1]]) holeZ(2.1,d[0]*8,by+d[1]*8,zo,f);
+    ovalZ(12,by,zo,0,f); ovalZ(-12,by,zo,0,f); ovalZ(0,by+12,zo,Math.PI/2,f); ovalZ(0,by-12,zo,Math.PI/2,f);
+  }
+  for(const x of [-16,16]) for(let y=8;y<=88;y+=8) holeZ(2.1,x,y,zo,f);
+}
+
+// ================= СКОБА =================
+const chan=G('chan'); scene.add(chan);
+box(48,2.5,43,mat.alu,0,1.25,0,chan);
+for(const s of [-1,1]){
+  box(48,96,2.5,mat.alu,0,48,s*22.75,chan);
+  wallPattern(chan, s*24.06); wallPattern(chan, s*21.44);
+}
+
+// ================= АДАПТЕР + РЕДУКТОР (стенка А, z<0) =================
+const adap=G('adap'); scene.add(adap);
+box(40,68,5,mat.printed,0,48,-26.5,adap);
+for(const by of [24,48,72]) cylZ(13.8,4,mat.printed,0,by,-22,adap);
+for(const a of [0,90,180,270]){
+  const x=13.75*Math.cos(a*Math.PI/180), y=AX+13.75*Math.sin(a*Math.PI/180);
+  boltZ(adap,3,10,x,y,-25.5,-1);
+}
+for(const by of [24,72]){ boltZ(adap,4,12,0,by,-20.2,-1); nutZ(adap,8,0,by,-28.4); }
+const gb=G('gb'); scene.add(gb);
+cylZ(22,1.6,mat.face,0,AX,-28.4,gb);
+cylZ(36,35,mat.gb,0,AX,-46.5,gb);
+box(42.3,42.3,47,mat.motor,0,AX,-87.5,gb);
+cylZ(8,16,mat.shaft,0,AX,-21,gb);              // вал: -29 → -13
+
+// ================= ЗВЕНО (pivot на центральном Ø14) =================
+const pivot=new THREE.Group(); pivot.position.set(0,AX,0); scene.add(pivot);
+// МЕТАЛЛИЧЕСКАЯ муфта: хаб (вал внутри) + фланец Ø32 + 2 установочных винта
+const mCoup=G('mCoup'); pivot.add(mCoup);
+cylZ(14,10,mat.buy,0,0,-16,mCoup);              // хаб -21..-11 (зазор 0.5 к стенке)
+cylZ(22,2,mat.buy,0,0,-10,mCoup);               // фланец Ø22 (ЗАМЕР 24.08) -11..-9
+cylY(4,4,mat.scrHi,0,10,-16,mCoup);             // setscrew №1 (в лыску!)
+box(2.5,2,2.5,mat.scrHi,0,8.2,-16,mCoup);
+cylY(4,4,mat.scrHi,0,10,-13,mCoup).rotation.z=Math.PI/2;
+// ПЛАСТИНА-МОСТ (печать): фланец -> труба
+const bridge=G('bridge'); pivot.add(bridge);
+box(40,46,8,mat.printed,0,0,-5,bridge);         // -9..-1
+const bF=G('bF'); pivot.add(bF);
+for(const a of [45,135,225,315]){
+  const x=7.5*Math.cos(a*Math.PI/180), y=7.5*Math.sin(a*Math.PI/180);
+  boltZ(bF,3,8,x,y,-11.8,1);                    // М3×8 из фланца (BC15) в пластину
+  nutZ(bF,6,x,y,-2.6);
+}
+const tube=G('tube'); pivot.add(tube);
+box(20,140,20,mat.tube,0,40,9,tube);            // труба 140: -30..+110 от оси (зазор 2.5 к стенке Б)
+box(17,140,17,M(0x8b9099),0,40,9,tube).scale.set(1,1.001,1);
+holeZ(4.15,0,0,-1.06,tube);                     // Ø8.2 (ближняя грань)
+holeZ(2.15,0,16,-1.06,tube); holeZ(2.15,0,-16,-1.06,tube);
+const bT=G('bT'); pivot.add(bT);
+for(const s of [-1,1]){
+  boltZ(bT,4,30,0,s*16,-7.5,1);                 // М4×30: голова в глуб. цековке пластины
+  nutZ(bT,8,0,s*16,20.7);
+  cylZ(11,1.2,mat.buy,0,s*16,19.4,bT);          // шайба
+  cylZ(8,16.6,mat.printed,0,s*16,9,bT);         // распорная втулка внутри трубы
+}
+const rod=G('rod'); pivot.add(rod);
+cylZ(8,45,mat.shaft,0,0,13.5,rod);              // пруток: -9 (у тыла фланца) → +36 (в KFL)
+const mg=G('pcb'); pivot.add(mg); cylZ(6,2.5,mat.mag,0,0,37.4,mg);
+
+// ================= KFL08 напрямую (стенка Б, z>0) =================
+const kfl=G('kfl'); scene.add(kfl);
+const kz=29.5;                                  // корпус 24..35
+box(37,18,11,mat.buy,0,AX,kz,kfl);
+cylZ(18,11,mat.buy,-18.5,AX,kz,kfl); cylZ(18,11,mat.buy,18.5,AX,kz,kfl);
+cylZ(16,13,mat.buy,0,AX,kz,kfl);
+for(const q of [[-16,8],[16,-8]]){               // диагональные болты (как прикрутил)
+  boltZ(kfl,4,16,q[0],AX+q[1],36,-1);
+  nutZ(kfl,8,q[0],AX+q[1],20.0);
+}
+const pcb=G('pcb'); scene.add(pcb);
+box(20,20,1.6,mat.pcb,0,AX,41,pcb);
+box(4,4,1.2,M(0x111),0,AX,40,pcb);
+cylZ(5,16,mat.stand,-8,AX+16,32.2,pcb); cylZ(5,16,mat.stand,8,AX-16,32.2,pcb);
+
+// ================= EXPLODE =================
+const exParts=[[adap,-1.0],[gb,-1.8],[mCoup,-1.2],[bridge,-0.7],[bF,-1.5],[tube,0],[bT,0.5],[rod,1.0],[kfl,1.5],[pcb,2.1],[mg,1.25]];
+for(const [g] of exParts) g.userData.z0=g.position.z;
+function applyExplode(v){ for(const [g,k] of exParts) g.position.z=g.userData.z0+k*v; }
+
+// ================= UI / ПИКИНГ =================
+const listEl=document.getElementById('list'), cardEl=document.getElementById('card');
+const order=['calc','chan','adap','gb','mCoup','bridge','bF','tube','jig','bT','rod','kfl','pcb'];
+for(const k of order){
+  const b=BOM[k]; if(!b) continue;
+  const div=document.createElement('div'); div.className='item'; div.dataset.k=k;
+  div.innerHTML=b.n+' <span class="st">'+b.s+'</span>';
+  div.onclick=()=>select(k);
+  listEl.appendChild(div);
+}
+let selKey=null, flashT=0;
+function select(k){
+  selKey=k; flashT=1;
+  for(const el of listEl.children) el.classList.toggle('sel', el.dataset.k===k);
+  const b=BOM[k];
+  cardEl.style.display='block';
+  cardEl.innerHTML='<div class="nm">'+b.n+'</div>'+b.d;
+}
+const ray=new THREE.Raycaster(), mouse=new THREE.Vector2();
+let downXY=null;
+renderer.domElement.addEventListener('pointerdown',e=>{downXY=[e.clientX,e.clientY]});
+renderer.domElement.addEventListener('pointerup',e=>{
+  if(!downXY) return;
+  if(Math.hypot(e.clientX-downXY[0],e.clientY-downXY[1])>5){downXY=null;return}
+  mouse.x=e.clientX/innerWidth*2-1; mouse.y=-(e.clientY/innerHeight)*2+1;
+  ray.setFromCamera(mouse,cam);
+  const hits=ray.intersectObjects(scene.children,true);
+  for(const h of hits){
+    let o=h.object;
+    while(o&&!o.userData.bom) o=o.parent;
+    if(o&&BOM[o.userData.bom]){select(o.userData.bom);break}
+  }
+  downXY=null;
+});
+
+// ================= КАМЕРА =================
+let th=-0.9, ph=1.15, R=330, tgt=new THREE.Vector3(0,60,0);
+function updCam(){
+  cam.position.set(tgt.x+R*Math.sin(ph)*Math.cos(th), tgt.y+R*Math.cos(ph), tgt.z+R*Math.sin(ph)*Math.sin(th));
+  cam.lookAt(tgt);
+}
+updCam();
+let drag=null;
+renderer.domElement.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,b:e.button}});
+addEventListener('pointerup',()=>drag=null);
+addEventListener('pointermove',e=>{
+  if(!drag) return;
+  const dx=e.clientX-drag.x, dy=e.clientY-drag.y; drag.x=e.clientX; drag.y=e.clientY;
+  if(drag.b===2){ const s=R/700;
+    const rt=new THREE.Vector3().subVectors(cam.position,tgt).cross(cam.up).normalize();
+    tgt.addScaledVector(rt,-dx*s); tgt.y+=dy*s;
+  } else { th+=dx*0.008; ph=Math.min(2.8,Math.max(0.25,ph-dy*0.008)); }
+  updCam();
+});
+renderer.domElement.addEventListener('wheel',e=>{R=Math.min(1200,Math.max(90,R*(e.deltaY>0?1.1:0.9)));updCam()});
+renderer.domElement.addEventListener('contextmenu',e=>e.preventDefault());
+
+const exEl=document.getElementById('ex'), ajEl=document.getElementById('aj');
+exEl.oninput=()=>{document.getElementById('ve').textContent=exEl.value;applyExplode(+exEl.value)};
+ajEl.oninput=()=>{document.getElementById('va').textContent=ajEl.value+'°';pivot.rotation.z=+ajEl.value*Math.PI/180};
+
+addEventListener('resize',()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+(function loop(){
+  requestAnimationFrame(loop);
+  if(selKey&&flashT>0){ flashT-=0.02;
+    const on=Math.sin(Date.now()*0.015)>0;
+    for(const g of allG) if(g.userData.bom===selKey)
+      g.traverse(o=>{if(o.material)o.material.emissive&&o.material.emissive.setHex(on?0x704a00:0x000000)});
+    if(flashT<=0) for(const g of allG) g.traverse(o=>{if(o.material&&o.material.emissive)o.material.emissive.setHex(0)});
+  }
+  renderer.render(scene,cam);
+})();
+</script>
+</body>
+</html>

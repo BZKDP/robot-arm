@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pan-Tilt — цифровой двойник</title>
+<style>
+  :root { --bg:#15171c; --panel:#1e2128; --line:#2c313c; --txt:#e6e8ec; --accent:#4aa3ff; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color:var(--txt); overflow:hidden; }
+  #view { position:fixed; inset:0; }
+  #panel { position:fixed; top:0; right:0; width:300px; height:100%; background:var(--panel);
+           border-left:1px solid var(--line); padding:14px; overflow-y:auto; }
+  h2 { margin:0 0 4px; font-size:16px; }
+  .sub { color:#8b93a0; font-size:12px; margin-bottom:10px; }
+  .card { background:#171a20; border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-bottom:10px; }
+  .row { display:flex; align-items:center; justify-content:space-between; gap:8px; margin:6px 0; }
+  label { font-size:13px; color:#aeb6c2; }
+  input[type=range] { width:100%; accent-color:var(--accent); }
+  .val { font:600 14px/1 'Consolas',monospace; color:#fff; }
+  .deg { color:#7fd4ff; font:600 13px 'Consolas',monospace; }
+  button { background:#2a2f3a; color:var(--txt); border:1px solid var(--line); border-radius:8px;
+           padding:7px 10px; font-size:13px; cursor:pointer; }
+  button:hover { background:#333a47; }
+  button.on { background:var(--accent); color:#06121f; border-color:var(--accent); }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+  .dot { width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:6px;background:#c33; }
+  .dot.ok { background:#3ad36b; }
+  .tune input { width:54px; background:#0f1217;color:#cfe;border:1px solid var(--line);border-radius:6px;padding:3px; }
+  pre { background:#0f1217;border:1px solid var(--line);border-radius:6px;padding:8px;font-size:11px;
+        max-height:120px;overflow:auto;color:#9fb; white-space:pre-wrap; }
+  #cam { width:100%; border-radius:8px; background:#0a0c10; aspect-ratio:4/3; object-fit:contain;
+         display:flex;align-items:center;justify-content:center;color:#566; font-size:12px; }
+  .hint { color:#6b7280; font-size:11px; margin-top:4px; }
+  #hud { position:fixed; left:14px; bottom:14px; background:rgba(20,23,28,.82); border:1px solid var(--line);
+         border-radius:10px; padding:10px 12px; font-size:12px; color:#cfd4dc; line-height:1.7;
+         display:flex; flex-direction:column; gap:1px; pointer-events:none; }
+  #hud b { color:#7fd4ff; }
+  kbd { background:#2a2f3a; border:1px solid #444b59; border-bottom-width:2px; border-radius:5px;
+        padding:1px 6px; margin:0 1px; font:600 11px 'Consolas',monospace; color:#fff; }
+</style>
+</head>
+<body>
+<div id="view"></div>
+<div id="hud">
+  <b>Управление:</b>
+  <span><kbd>A</kbd><kbd>D</kbd> поворот · <kbd>W</kbd><kbd>S</kbd> наклон · ←↑↓→ тоже</span>
+  <span>мышь — вращать вид · колесо — зум</span>
+  <span><kbd>Пробел</kbd> — ✋ ручной режим (крути рукой)</span>
+</div>
+<div id="panel">
+  <h2>Pan-Tilt · двойник</h2>
+  <div class="sub"><span id="dot" class="dot"></span><span id="conn">подключение…</span></div>
+
+  <div class="card">
+    <div class="row"><label>НАКЛОН ↕ (нижний, id2)</label><span class="deg" id="panDeg">0°</span></div>
+    <input type="range" id="panSld" min="0" max="4095" value="2048">
+    <div class="row"><span class="hint">клавиши W / S</span><span class="val" id="panRaw">—</span></div>
+  </div>
+
+  <div class="card">
+    <div class="row"><label>ПОВОРОТ ↔ (верхний, id1)</label><span class="deg" id="tiltDeg">0°</span></div>
+    <input type="range" id="tiltSld" min="0" max="4095" value="2048">
+    <div class="row"><span class="hint">клавиши A / D</span><span class="val" id="tiltRaw">—</span></div>
+  </div>
+
+  <div class="card">
+    <div class="grid2">
+      <button id="hand">✋ Ручной режим</button>
+      <button id="center">↺ В центр</button>
+    </div>
+    <div class="hint">Ручной режим: торк off — крути голову рукой, модель повторит.</div>
+  </div>
+
+  <div class="card">
+    <div class="row"><label>Камера + слежение</label><span class="deg" id="camFps">—</span></div>
+    <img id="cam" style="width:100%;border-radius:8px;display:block;background:#0a0c10" />
+    <button id="trackBtn" style="width:100%;margin-top:6px">▶ Авто-слежение за лицом</button>
+    <div class="hint" id="trackStat">детектор: —</div>
+  </div>
+
+  <details class="card">
+    <summary style="cursor:pointer">⚙ Подстройка осей</summary>
+    <div class="tune" style="margin-top:8px">
+      <div class="row"><label>PAN ось</label>
+        <span><button data-ax="pan" data-v="x">X</button>
+              <button data-ax="pan" data-v="y">Y</button>
+              <button data-ax="pan" data-v="z">Z</button>
+              <button data-s="pan">± знак</button>
+              <button data-z="pan">0 тут</button></span></div>
+      <div class="row"><label>TILT ось</label>
+        <span><button data-ax="tilt" data-v="x">X</button>
+              <button data-ax="tilt" data-v="y">Y</button>
+              <button data-ax="tilt" data-v="z">Z</button>
+              <button data-s="tilt">± знак</button>
+              <button data-z="tilt">0 тут</button></span></div>
+      <div class="row"><label>джойнты</label>
+        <button id="swap">⇄ поменять pan ↔ tilt</button></div>
+      <div class="hint" id="tuneState"></div>
+      <button id="dump" style="width:100%;margin-top:6px">показать config (скопировать)</button>
+      <pre id="cfgout" style="display:none"></pre>
+    </div>
+  </details>
+</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { STLLoader } from 'three/addons/loaders/STLLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const view = document.getElementById('view');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x15171c);
+const camera = new THREE.PerspectiveCamera(45, 1, 1, 5000);
+camera.up.set(0,0,1);
+camera.position.set(-240, -210, 140);  // vid so storony obyektiva (-X)
+const renderer = new THREE.WebGLRenderer({antialias:true});
+view.appendChild(renderer.domElement);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(15,-35,55);
+controls.enableDamping = true;
+scene.add(new THREE.AxesHelper(70));  // X=krasnyy Y=zelyonyy Z=siniy
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+const d1 = new THREE.DirectionalLight(0xffffff, 1.0); d1.position.set(120,-160,260); scene.add(d1);
+const d2 = new THREE.DirectionalLight(0x88aaff, 0.4); d2.position.set(-150,120,-60); scene.add(d2);
+const grid = new THREE.GridHelper(400, 20, 0x39414f, 0x232830);
+grid.rotation.x = Math.PI/2; grid.position.z = -0.2; scene.add(grid);
+
+function resize(){
+  const w = window.innerWidth - 300, h = window.innerHeight;
+  renderer.setSize(w,h); camera.aspect = w/h; camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', resize); resize();
+
+let CFG=null, panPivot, tiltPivot, panAxis, tiltAxis;
+const loader = new STLLoader();
+function loadPart(name, color){
+  return new Promise(res=>{
+    loader.load('/models/'+encodeURIComponent(name)+'.stl', geo=>{
+      const mat = new THREE.MeshStandardMaterial({color:new THREE.Color(color||'#b0b6c0'),
+                    metalness:0.25, roughness:0.6});
+      res(new THREE.Mesh(geo, mat));
+    });
+  });
+}
+
+async function build(){
+  CFG = await (await fetch('/config')).json();
+  const col = CFG.colors||{};
+  panPivot  = new THREE.Group();
+  tiltPivot = new THREE.Group();
+  const P = CFG.pan.pivot, T = CFG.tilt.pivot;
+  panAxis  = new THREE.Vector3(...CFG.pan.axis).normalize();
+  tiltAxis = new THREE.Vector3(...CFG.tilt.axis).normalize();
+
+  for(const n of CFG.static_parts){ const m=await loadPart(n,col[n]); scene.add(m); }
+  panPivot.position.set(P[0],P[1],P[2]); scene.add(panPivot);
+  for(const n of CFG.pan_parts){ const m=await loadPart(n,col[n]); m.position.set(-P[0],-P[1],-P[2]); panPivot.add(m); }
+  tiltPivot.position.set(T[0]-P[0],T[1]-P[1],T[2]-P[2]); panPivot.add(tiltPivot);
+  const sh = CFG.tilt.shift||[0,0,0];   // sovmeschenie vala servo s otverstiem kronshteyna
+  for(const n of CFG.tilt_parts){ const m=await loadPart(n,col[n]); m.position.set(-T[0]+sh[0],-T[1]+sh[1],-T[2]+sh[2]); tiltPivot.add(m); }
+  updateTuneState();
+}
+
+const A = {pan:{deg:0}, tilt:{deg:0}};
+let dragging=null, lastRaw={1:null,2:null};
+
+// plavnaya interpolyaciya modeli k posledney telemetrii (vyzyvaetsya kazhdyy kadr)
+let dispP=null, dispT=null;
+const SMOOTH=0.18;   // 0..1 za kadr: menshe = plavnee
+function smoothStep(){
+  if(!CFG) return;
+  const rp = lastRaw[CFG.pan.id], rt = lastRaw[CFG.tilt.id];
+  if(rp!=null){
+    dispP = (dispP==null) ? rp : dispP + (rp-dispP)*SMOOTH;
+    panPivot.quaternion.setFromAxisAngle(panAxis, CFG.pan.sign*(dispP-CFG.pan.zero)/4096*Math.PI*2);
+    A.pan.deg = CFG.pan.sign*(dispP-CFG.pan.zero)/4096*360;
+    panDeg.textContent = A.pan.deg.toFixed(0)+'°';
+  }
+  if(rt!=null){
+    dispT = (dispT==null) ? rt : dispT + (rt-dispT)*SMOOTH;
+    tiltPivot.quaternion.setFromAxisAngle(tiltAxis, CFG.tilt.sign*(dispT-CFG.tilt.zero)/4096*Math.PI*2);
+    A.tilt.deg = CFG.tilt.sign*(dispT-CFG.tilt.zero)/4096*360;
+    tiltDeg.textContent = A.tilt.deg.toFixed(0)+'°';
+  }
+}
+
+async function poll(){
+  try{
+    const s = await (await fetch('/pos')).json();
+    const dot=document.getElementById('dot'), conn=document.getElementById('conn');
+    if(s.ok){ dot.classList.add('ok'); conn.textContent='COM подключён'; }
+    else { dot.classList.remove('ok'); conn.textContent='нет COM: '+(s.err||''); }
+    const cf=document.getElementById('camFps'), ts=document.getElementById('trackStat');
+    if(cf && s.cam_fps!==undefined) cf.textContent = s.cam_ok ? (s.cam_fps+' fps') : 'нет камеры';
+    if(ts) ts.textContent = 'детектор: '+(s.note||'—')+' · '+(s.face?'ЛИЦО ✓':'нет лица')+(s.track?' · СЛЕЖУ':'');
+    if(CFG && s.raw){
+      lastRaw = s.raw;   // smoothStep() v loop() plavno dotyanet model
+      panRaw.textContent  = s.raw[CFG.pan.id]??'—';
+      tiltRaw.textContent = s.raw[CFG.tilt.id]??'—';
+      if(dragging!=='pan'  && s.raw[CFG.pan.id]!=null) panSld.value  = s.raw[CFG.pan.id];
+      if(dragging!=='tilt' && s.raw[CFG.tilt.id]!=null) tiltSld.value = s.raw[CFG.tilt.id];
+    }
+  }catch(e){}
+  setTimeout(poll, 70);
+}
+
+// --- controls ---
+const panSld=document.getElementById('panSld'), tiltSld=document.getElementById('tiltSld');
+let moveT=0;
+function sendMove(id,pos){
+  const now=Date.now(); if(now-moveT<55) return; moveT=now;
+  fetch('/move',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({id, pos:Math.round(pos), spd:900})});
+}
+function sendAbs(id,pos,spd){
+  fetch('/move',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({id, pos:Math.round(pos), spd})});
+}
+panSld.addEventListener('input', e=>{ dragging='pan';  sendAbs(CFG.pan.id,  +e.target.value, 900); });
+tiltSld.addEventListener('input',e=>{ dragging='tilt'; sendAbs(CFG.tilt.id, +e.target.value, 900); });
+['change','mouseup','touchend'].forEach(ev=>{ panSld.addEventListener(ev,()=>dragging=null); tiltSld.addEventListener(ev,()=>dragging=null); });
+
+// --- plavnoe upravlenie: postoyannaya skorost do upora poka zazhato, myagkiy stop na otpuskanii ---
+const keys={}; let SPD=650; let actPan=0, actTilt=0;
+function stop(id){ fetch('/stop',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})}); }
+function applyPan(d){ if(d===actPan) return; actPan=d; dragging=null;
+  if(d<0) sendAbs(CFG.pan.id, 0, SPD);
+  else if(d>0) sendAbs(CFG.pan.id, 4095, SPD);
+  else stop(CFG.pan.id); }
+function applyTilt(d){ if(d===actTilt) return; actTilt=d; dragging=null;
+  if(d<0) sendAbs(CFG.tilt.id, 0, SPD);
+  else if(d>0) sendAbs(CFG.tilt.id, 4095, SPD);
+  else stop(CFG.tilt.id); }
+window.addEventListener('keydown', e=>{
+  const k=e.key.toLowerCase();
+  if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k)) e.preventDefault();
+  if(k===' '){ if(!e.repeat) toggleHand(); return; }
+  keys[k]=true;
+});
+window.addEventListener('keyup', e=>{ keys[e.key.toLowerCase()]=false; });
+setInterval(()=>{
+  if(!CFG || hand) return;   // v ruchnom rezhime klavishi ne trogayut tork
+  const L=keys['a']||keys['arrowleft'], R=keys['d']||keys['arrowright'];
+  const U=keys['w']||keys['arrowup'],   Dn=keys['s']||keys['arrowdown'];
+  applyPan( U&&!Dn ? 1 : Dn&&!U ? -1 : 0 );   // NAKLON (id2) na W/S
+  applyTilt( R&&!L ? 1 : L&&!R ? -1 : 0 );     // POVOROT (id1) na A/D
+}, 40);
+
+let hand=false;
+function toggleHand(){
+  hand=!hand; document.getElementById('hand').classList.toggle('on',hand);
+  fetch('/torque',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({on:!hand})});
+  actPan=99; actTilt=99;
+}
+document.getElementById('hand').addEventListener('click', toggleHand);
+document.getElementById('center').addEventListener('click', ()=>{
+  fetch('/move',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:CFG.pan.id,pos:CFG.pan.zero||2048,spd:600})});
+  fetch('/move',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:CFG.tilt.id,pos:CFG.tilt.zero||2048,spd:600})});
+});
+
+// --- tuning (live) ---
+const AXV={x:[1,0,0],y:[0,1,0],z:[0,0,1]};
+function setAxis(ax,which){
+  CFG[ax].axis = AXV[which].slice();
+  (ax==='pan'?panAxis:tiltAxis).set(...CFG[ax].axis).normalize();
+  updateTuneState();
+}
+function updateTuneState(){
+  const f=o=>'['+o.axis.join(',')+'] '+(o.sign>0?'+':'−')+' id'+o.id;
+  document.getElementById('tuneState').textContent='pan '+f(CFG.pan)+'   ·   tilt '+f(CFG.tilt);
+}
+document.querySelectorAll('[data-ax]').forEach(b=>b.addEventListener('click',()=>setAxis(b.dataset.ax,b.dataset.v)));
+document.querySelectorAll('[data-z]').forEach(b=>b.addEventListener('click',()=>{
+  const ax=b.dataset.z; CFG[ax].zero = lastRaw[CFG[ax].id]||2048; updateTuneState();
+}));
+document.querySelectorAll('[data-s]').forEach(b=>b.addEventListener('click',()=>{
+  CFG[b.dataset.s].sign*=-1; updateTuneState();
+}));
+document.getElementById('swap').addEventListener('click',()=>{
+  const t=CFG.pan.id; CFG.pan.id=CFG.tilt.id; CFG.tilt.id=t; updateTuneState();
+});
+document.getElementById('dump').addEventListener('click',()=>{
+  const o=document.getElementById('cfgout'); o.style.display='block';
+  o.textContent=JSON.stringify({pan:CFG.pan,tilt:CFG.tilt},null,2);
+});
+// kamera + slezhenie
+const camImg=document.getElementById('cam'); camImg.src='/video';
+let tracking=false; const trackBtn=document.getElementById('trackBtn');
+trackBtn.addEventListener('click',()=>{
+  tracking=!tracking; trackBtn.classList.toggle('on',tracking);
+  trackBtn.textContent=(tracking?'⏸ Стоп слежение':'▶ Авто-слежение за лицом');
+  fetch('/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({on:tracking})});
+});
+
+function loop(){ smoothStep(); controls.update(); renderer.render(scene,camera); requestAnimationFrame(loop); }
+build().then(()=>{ poll(); loop(); });
+</script>
+</body>
+</html>

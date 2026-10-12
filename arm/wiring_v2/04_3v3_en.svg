@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="850" viewBox="0 0 1600 850">
+  <style>
+    .bg{fill:#fff}.zone{fill:#f5f8fc;stroke:#9aa9bd;stroke-width:3}.esp{fill:#eaf4ff;stroke:#1565c0;stroke-width:4}.drv{fill:#171717;stroke:#000;stroke-width:4}.wago{fill:#f2a020;stroke:#343434;stroke-width:4}.hole{fill:#e6ebf0;stroke:#253247;stroke-width:3}.warn{fill:#fff0f1;stroke:#c9182b;stroke-width:3}
+    .h1{font:800 32px 'Segoe UI',Arial}.h2{font:800 24px 'Segoe UI',Arial}.t{font:20px 'Segoe UI',Arial}.s{font:17px 'Segoe UI',Arial}.pin{font:800 20px Consolas,monospace}.white{font:800 20px 'Segoe UI',Arial;fill:#fff}
+    .blue{fill:none;stroke:#1565c0;stroke-width:9}.yellow{fill:none;stroke:#c99b00;stroke-width:9}
+  </style>
+  <rect width="1600" height="850" class="bg"/>
+  <text x="800" y="48" text-anchor="middle" class="h1">ЛИСТ 4 — 3V3 ОБЯЗАТЕЛЬНО, EN ПОКА УСЛОВНО</text>
+
+  <rect x="35" y="80" width="1530" height="330" rx="20" class="zone"/>
+  <text x="65" y="120" class="h2" fill="#1565c0">ОБЯЗАТЕЛЬНО: ESP32 3V3 → ОБА VIO</text>
+  <rect x="70" y="195" width="300" height="70" rx="12" class="esp"/><text x="220" y="239" text-anchor="middle" class="pin">ESP32 → 3V3</text>
+  <path d="M370 230 H520" class="blue"/>
+  <rect x="520" y="145" width="360" height="240" rx="22" class="wago"/>
+  <text x="700" y="180" text-anchor="middle" class="h2">WAGO НА 3 — «3V3»</text>
+  <circle cx="600" cy="230" r="32" class="hole"/><circle cx="600" cy="295" r="32" class="hole"/><circle cx="600" cy="360" r="32" class="hole"/>
+  <text x="600" y="238" text-anchor="middle" class="pin">1</text><text x="600" y="303" text-anchor="middle" class="pin">2</text><text x="600" y="368" text-anchor="middle" class="pin">3</text>
+  <text x="660" y="238" class="t">вход от ESP32</text><text x="660" y="303" class="t">VIO драйвера №1</text><text x="660" y="368" class="t">VIO драйвера №2</text>
+  <path d="M632 295 H1110" class="blue"/><path d="M632 360 H1110" class="blue"/>
+  <rect x="1110" y="260" width="390" height="70" rx="12" class="drv"/><text x="1305" y="304" text-anchor="middle" class="white">ДРАЙВЕР №1 → VIO</text>
+  <rect x="1110" y="335" width="390" height="70" rx="12" class="drv"/><text x="1305" y="379" text-anchor="middle" class="white">ДРАЙВЕР №2 → VIO</text>
+
+  <rect x="35" y="440" width="1530" height="370" rx="20" class="zone"/>
+  <text x="65" y="480" class="h2" fill="#c99b00">EN/ENN: НЕ ПАЯТЬ, ПОКА НЕ ПРОВЕРЕНА ПОДПИСЬ НА ПЛАТЕ</text>
+  <rect x="70" y="565" width="300" height="70" rx="12" class="esp"/><text x="220" y="609" text-anchor="middle" class="pin">ESP32 → D27 / GPIO27</text>
+  <path d="M370 600 H520" class="yellow"/>
+  <rect x="520" y="515" width="360" height="240" rx="22" class="wago"/>
+  <text x="700" y="550" text-anchor="middle" class="h2">WAGO НА 3 — «EN»</text>
+  <circle cx="600" cy="600" r="32" class="hole"/><circle cx="600" cy="665" r="32" class="hole"/><circle cx="600" cy="730" r="32" class="hole"/>
+  <text x="600" y="608" text-anchor="middle" class="pin">1</text><text x="600" y="673" text-anchor="middle" class="pin">2</text><text x="600" y="738" text-anchor="middle" class="pin">3</text>
+  <text x="660" y="608" class="t">вход D27</text><text x="660" y="673" class="t">EN драйвера №1</text><text x="660" y="738" class="t">EN драйвера №2</text>
+  <path d="M632 665 H1110" class="yellow"/><path d="M632 730 H1110" class="yellow"/>
+  <rect x="1110" y="630" width="390" height="70" rx="12" class="drv"/><text x="1305" y="674" text-anchor="middle" class="white">ДРАЙВЕР №1 → EN/ENN</text>
+  <rect x="1110" y="705" width="390" height="70" rx="12" class="drv"/><text x="1305" y="749" text-anchor="middle" class="white">ДРАЙВЕР №2 → EN/ENN</text>
+  <rect x="930" y="515" width="570" height="90" rx="12" class="warn"/>
+  <text x="1215" y="550" text-anchor="middle" class="h2" fill="#c9182b">ЕСЛИ EN/ENN НЕ НАПИСАНО — ОСТАВИТЬ ПУСТЫМ</text>
+  <text x="1215" y="585" text-anchor="middle" class="s">пришли крупное фото обеих сторон драйвера</text>
+</svg>

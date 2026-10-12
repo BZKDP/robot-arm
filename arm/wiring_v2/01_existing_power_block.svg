@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="780" viewBox="0 0 1600 780">
+  <style>
+    .bg{fill:#fff}.panel{fill:#f5f8fc;stroke:#9aa9bd;stroke-width:3}.box{fill:#fff;stroke:#253247;stroke-width:4}.wago{fill:#f2a020;stroke:#343434;stroke-width:4}.hole{fill:#e6ebf0;stroke:#253247;stroke-width:3}
+    .cap{fill:#294b59;stroke:#172033;stroke-width:4}.h1{font:800 32px 'Segoe UI',Arial}.h2{font:800 24px 'Segoe UI',Arial}.t{font:20px 'Segoe UI',Arial}.s{font:17px 'Segoe UI',Arial}.pin{font:800 20px Consolas,monospace}
+    .red{fill:none;stroke:#df1d25;stroke-width:10}.black{fill:none;stroke:#111;stroke-width:10}.danger{fill:#fff0f1;stroke:#c9182b;stroke-width:3}
+  </style>
+  <rect width="1600" height="780" class="bg"/>
+  <text x="800" y="48" text-anchor="middle" class="h1">ЛИСТ 1 — ТВОЙ УЖЕ СОБРАННЫЙ БЛОК ПИТАНИЯ</text>
+  <rect x="35" y="75" width="1530" height="660" rx="20" class="panel"/>
+
+  <rect x="70" y="250" width="280" height="300" rx="18" class="box"/>
+  <text x="210" y="295" text-anchor="middle" class="h2">ПЕРЕХОДНИК БП</text>
+  <rect x="105" y="340" width="210" height="130" rx="14" fill="#26b86a" stroke="#111" stroke-width="4"/>
+  <circle cx="155" cy="405" r="28" class="hole"/><circle cx="265" cy="405" r="28" class="hole"/>
+  <text x="155" y="414" text-anchor="middle" class="h1">−</text><text x="265" y="414" text-anchor="middle" class="h1" fill="#df1d25">+</text>
+  <text x="210" y="515" text-anchor="middle" class="s">штекер БП вставлен сюда</text>
+
+  <rect x="480" y="120" width="540" height="210" rx="22" class="wago"/>
+  <text x="750" y="158" text-anchor="middle" class="h2">СУЩЕСТВУЮЩАЯ WAGO «ПЛЮС» — 3</text>
+  <circle cx="590" cy="235" r="38" class="hole"/><circle cx="750" cy="235" r="38" class="hole"/><circle cx="910" cy="235" r="38" class="hole"/>
+  <text x="590" y="243" text-anchor="middle" class="pin">1</text><text x="750" y="243" text-anchor="middle" class="pin">2</text><text x="910" y="243" text-anchor="middle" class="pin">3</text>
+  <text x="590" y="302" text-anchor="middle" class="s">красный от БП</text><text x="750" y="302" text-anchor="middle" class="s">конденсатор +</text><text x="910" y="302" text-anchor="middle" class="s">КРАСНЫЙ ВЫХОД</text>
+
+  <rect x="480" y="490" width="540" height="210" rx="22" class="wago"/>
+  <text x="750" y="528" text-anchor="middle" class="h2">СУЩЕСТВУЮЩАЯ WAGO «МИНУС» — 3</text>
+  <circle cx="590" cy="605" r="38" class="hole"/><circle cx="750" cy="605" r="38" class="hole"/><circle cx="910" cy="605" r="38" class="hole"/>
+  <text x="590" y="613" text-anchor="middle" class="pin">1</text><text x="750" y="613" text-anchor="middle" class="pin">2</text><text x="910" y="613" text-anchor="middle" class="pin">3</text>
+  <text x="590" y="672" text-anchor="middle" class="s">чёрный от БП</text><text x="750" y="672" text-anchor="middle" class="s">конденсатор −</text><text x="910" y="672" text-anchor="middle" class="s">ЧЁРНЫЙ ВЫХОД</text>
+
+  <path d="M265 377 V235 H552" class="red"/>
+  <text x="330" y="216" class="t" fill="#df1d25">красный ≈10 см</text>
+  <path d="M155 433 V605 H552" class="black"/>
+  <text x="330" y="588" class="t">чёрный ≈10 см</text>
+
+  <rect x="690" y="350" width="120" height="110" rx="12" class="cap"/>
+  <rect x="775" y="350" width="35" height="110" fill="#e7ebef"/>
+  <text x="750" y="390" text-anchor="middle" class="t" fill="#fff">470 µF</text><text x="750" y="423" text-anchor="middle" class="s" fill="#fff">50 V</text>
+  <text x="712" y="450" class="pin" fill="#fff">+</text><text x="785" y="450" class="pin">−</text>
+  <path d="M712 350 V330 H750 V273" class="red"/>
+  <path d="M788 460 V480 H750 V567" class="black"/>
+
+  <path d="M948 235 H1500" class="red"/><text x="1080" y="214" class="h2" fill="#df1d25">ЭТОТ КРАСНЫЙ — НА ЛИСТ 2</text>
+  <path d="M948 605 H1500" class="black"/><text x="1080" y="584" class="h2">ЭТОТ ЧЁРНЫЙ — НА ЛИСТ 2</text>
+
+  <rect x="1060" y="330" width="460" height="120" rx="12" class="danger"/>
+  <text x="1290" y="370" text-anchor="middle" class="h2" fill="#c9182b">К ESP32 КРАСНЫЙ НЕ ИДЁТ</text>
+  <text x="1290" y="410" text-anchor="middle" class="t">ESP32 пока питается только через USB</text>
+</svg>

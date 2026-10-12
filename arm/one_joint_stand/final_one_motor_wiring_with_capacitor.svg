@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
+  <defs>
+    <marker id="arr-r" markerWidth="12" markerHeight="12" refX="11" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,8 L11,4 z" fill="#d71920"/></marker>
+    <marker id="arr-b" markerWidth="12" markerHeight="12" refX="11" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,8 L11,4 z" fill="#111"/></marker>
+    <marker id="arr-g" markerWidth="12" markerHeight="12" refX="11" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,8 L11,4 z" fill="#0b8f3a"/></marker>
+    <marker id="arr-y" markerWidth="12" markerHeight="12" refX="11" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,8 L11,4 z" fill="#d4a000"/></marker>
+    <marker id="arr-blu" markerWidth="12" markerHeight="12" refX="11" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,8 L11,4 z" fill="#1565c0"/></marker>
+    <style>
+      .title{font:700 34px Arial,sans-serif;fill:#111}
+      .h{font:700 24px Arial,sans-serif;fill:#111}
+      .t{font:19px Arial,sans-serif;fill:#111}
+      .small{font:16px Arial,sans-serif;fill:#222}
+      .tiny{font:14px Arial,sans-serif;fill:#222}
+      .pin{font:700 17px Arial,sans-serif;fill:#111}
+      .white{font:700 18px Arial,sans-serif;fill:#fff}
+      .warn{font:700 22px Arial,sans-serif;fill:#b00020}
+      .esp{fill:#eaf4ff;stroke:#1565c0;stroke-width:3;rx:8}
+      .as{fill:#eafbea;stroke:#0b8f3a;stroke-width:3;rx:8}
+      .tmc{fill:#161616;stroke:#222;stroke-width:3;rx:8}
+      .psu{fill:#f3f3f3;stroke:#555;stroke-width:3;rx:10}
+      .motor{fill:#f8f8f8;stroke:#333;stroke-width:3;rx:10}
+      .term{fill:#25b56a;stroke:#111;stroke-width:2;rx:5}
+      .cap{fill:#264653;stroke:#111;stroke-width:3;rx:8}
+      .note{fill:#fff8e1;stroke:#d4a000;stroke-width:3;rx:8}
+      .danger{fill:#fff1f1;stroke:#b00020;stroke-width:3;rx:8}
+      .r{fill:none;stroke:#d71920;stroke-width:7;marker-end:url(#arr-r)}
+      .b{fill:none;stroke:#111;stroke-width:7;marker-end:url(#arr-b)}
+      .g{fill:none;stroke:#0b8f3a;stroke-width:5;marker-end:url(#arr-g)}
+      .y{fill:none;stroke:#d4a000;stroke-width:5;marker-end:url(#arr-y)}
+      .blu{fill:none;stroke:#1565c0;stroke-width:5;marker-end:url(#arr-blu)}
+      .plainr{fill:none;stroke:#d71920;stroke-width:7}
+      .plainb{fill:none;stroke:#111;stroke-width:7}
+      .plaing{fill:none;stroke:#0b8f3a;stroke-width:6}
+      .plainblue{fill:none;stroke:#184ddc;stroke-width:6}
+      .plainblack{fill:none;stroke:#111;stroke-width:6}
+      .dash{stroke-dasharray:10 8}
+    </style>
+  </defs>
+
+  <rect width="1600" height="1100" fill="#fff"/>
+  <text x="40" y="55" class="title">Финальная проводка одного мотора</text>
+  <text x="40" y="90" class="warn">Перед первым включением 12В: проверь, что +12В не попадает на ESP32 / AS5600 / VIO.</text>
+
+  <!-- ESP32 -->
+  <rect x="55" y="150" width="300" height="440" class="esp"/>
+  <text x="145" y="190" class="h">ESP32</text>
+  <text x="82" y="228" class="small">USB к ПК</text>
+  <line x1="205" y1="150" x2="205" y2="105" stroke="#555" stroke-width="7"/>
+  <text x="128" y="103" class="tiny">пока COM-порт не найден</text>
+  <circle cx="335" cy="250" r="10" fill="#1565c0"/><text x="80" y="257" class="pin">3V3</text>
+  <circle cx="335" cy="305" r="10" fill="#1565c0"/><text x="80" y="312" class="pin">GND</text>
+  <circle cx="335" cy="360" r="10" fill="#1565c0"/><text x="80" y="367" class="pin">D21 / SDA</text>
+  <circle cx="335" cy="415" r="10" fill="#1565c0"/><text x="80" y="422" class="pin">D22 / SCL</text>
+  <circle cx="335" cy="490" r="10" fill="#1565c0"/><text x="80" y="497" class="pin">D12 / STEP</text>
+  <circle cx="335" cy="545" r="10" fill="#1565c0"/><text x="80" y="552" class="pin">D14 / DIR</text>
+
+  <!-- AS5600 -->
+  <rect x="535" y="125" width="270" height="255" class="as"/>
+  <text x="625" y="165" class="h">AS5600</text>
+  <circle cx="550" cy="215" r="10" fill="#0b8f3a"/><text x="570" y="222" class="pin">VCC</text>
+  <circle cx="550" cy="260" r="10" fill="#0b8f3a"/><text x="570" y="267" class="pin">GND</text>
+  <circle cx="550" cy="305" r="10" fill="#0b8f3a"/><text x="570" y="312" class="pin">SDA</text>
+  <circle cx="550" cy="350" r="10" fill="#0b8f3a"/><text x="570" y="357" class="pin">SCL</text>
+  <text x="550" y="405" class="small">Магнит крутится над центром чипа</text>
+
+  <!-- TMC2209 -->
+  <rect x="595" y="500" width="295" height="460" class="tmc"/>
+  <text x="660" y="540" class="white">LERDGE TMC2209</text>
+  <text x="620" y="570" class="tiny" fill="#fff">как на твоей фотке: STEP/DIR снизу слева</text>
+
+  <!-- TMC left pins -->
+  <circle cx="615" cy="615" r="11" fill="#cfd8dc"/><text x="410" y="622" class="pin">pin 1 EN</text>
+  <circle cx="615" cy="660" r="11" fill="#cfd8dc"/><text x="460" y="667" class="pin">MS1 не трогать</text>
+  <circle cx="615" cy="705" r="11" fill="#cfd8dc"/><text x="460" y="712" class="pin">MS2 не трогать</text>
+  <circle cx="615" cy="750" r="11" fill="#cfd8dc"/><text x="430" y="757" class="pin">PDN/UART не трогать</text>
+  <circle cx="615" cy="795" r="11" fill="#cfd8dc"/><text x="430" y="802" class="pin">PDN/UART не трогать</text>
+  <circle cx="615" cy="840" r="11" fill="#cfd8dc"/><text x="480" y="847" class="pin">CLK не трогать</text>
+  <circle cx="615" cy="885" r="11" fill="#cfd8dc"/><text x="505" y="892" class="pin">STEP</text>
+  <circle cx="615" cy="925" r="11" fill="#cfd8dc"/><text x="528" y="932" class="pin">DIR</text>
+
+  <!-- TMC right pins -->
+  <circle cx="870" cy="615" r="11" fill="#cfd8dc"/><text x="900" y="622" class="pin">VM  (+12В)</text>
+  <circle cx="870" cy="660" r="11" fill="#cfd8dc"/><text x="900" y="667" class="pin">GND (-12В)</text>
+  <circle cx="870" cy="705" r="11" fill="#cfd8dc"/><text x="900" y="712" class="pin">M1B</text>
+  <circle cx="870" cy="750" r="11" fill="#cfd8dc"/><text x="900" y="757" class="pin">M1A</text>
+  <circle cx="870" cy="795" r="11" fill="#cfd8dc"/><text x="900" y="802" class="pin">M2A</text>
+  <circle cx="870" cy="840" r="11" fill="#cfd8dc"/><text x="900" y="847" class="pin">M2B</text>
+  <circle cx="870" cy="885" r="11" fill="#cfd8dc"/><text x="900" y="892" class="pin">VIO (3V3)</text>
+  <circle cx="870" cy="925" r="11" fill="#cfd8dc"/><text x="900" y="932" class="pin">GND</text>
+
+  <!-- PSU -->
+  <rect x="1125" y="140" width="300" height="170" class="psu"/>
+  <text x="1172" y="185" class="h">БП 12В / 3А</text>
+  <text x="1162" y="225" class="t">штекер в переходник</text>
+  <text x="1160" y="262" class="small">по этикетке обычно центр = плюс</text>
+  <rect x="1148" y="350" width="250" height="135" fill="#222" stroke="#111" stroke-width="3" rx="12"/>
+  <rect x="1167" y="362" width="212" height="58" class="term"/>
+  <circle cx="1215" cy="391" r="15" fill="#eee" stroke="#111" stroke-width="2"/>
+  <circle cx="1330" cy="391" r="15" fill="#eee" stroke="#111" stroke-width="2"/>
+  <text x="1112" y="524" class="h">DC jack -> винтовая клемма</text>
+  <text x="1085" y="556" class="small">На клеммах подпиши маркером + и - после проверки мультиметром.</text>
+
+  <!-- Capacitor -->
+  <rect x="1085" y="635" width="120" height="170" class="cap"/>
+  <rect x="1168" y="635" width="37" height="170" fill="#f2f2f2" stroke="none"/>
+  <text x="1108" y="675" class="white">470uF</text>
+  <text x="1118" y="705" class="white">50V</text>
+  <text x="1095" y="745" class="white">+</text>
+  <text x="1178" y="745" class="pin">-</text>
+  <text x="1030" y="835" class="h">Конденсатор</text>
+  <text x="1008" y="865" class="small">минусовая полоска на корпусе -> GND</text>
+
+  <!-- Motor -->
+  <rect x="1120" y="675" width="305" height="260" class="motor"/>
+  <text x="1210" y="718" class="h">NEMA17</text>
+  <text x="1150" y="765" class="pin">чёрный</text>
+  <text x="1150" y="805" class="pin" fill="#0b8f3a">зелёный</text>
+  <text x="1150" y="845" class="pin" fill="#184ddc">синий</text>
+  <text x="1150" y="885" class="pin" fill="#d71920">красный</text>
+
+  <!-- ESP to AS5600 wires -->
+  <path d="M335 250 C420 230, 470 215, 550 215" class="blu"/><text x="388" y="212" class="small">3V3</text>
+  <path d="M335 305 C420 285, 470 260, 550 260" class="b"/><text x="390" y="291" class="small">GND</text>
+  <path d="M335 360 C420 345, 470 305, 550 305" class="g"/><text x="390" y="345" class="small">SDA</text>
+  <path d="M335 415 C420 405, 470 350, 550 350" class="y"/><text x="390" y="410" class="small">SCL</text>
+
+  <!-- ESP to TMC wires -->
+  <path d="M335 490 C455 580, 525 865, 615 885" class="g"/><text x="395" y="612" class="small">D12 -> STEP</text>
+  <path d="M335 545 C455 645, 525 915, 615 925" class="y"/><text x="395" y="682" class="small">D14 -> DIR</text>
+  <path d="M335 250 C490 495, 710 888, 870 885" class="blu"/><text x="415" y="530" class="small">3V3 -> VIO</text>
+  <path d="M335 305 C485 545, 705 928, 870 925" class="b"/><text x="415" y="570" class="small">GND -> GND</text>
+
+  <!-- EN to GND jumper -->
+  <path d="M615 615 C560 602, 560 920, 870 925" class="b dash"/>
+  <text x="405" y="640" class="warn">EN -> GND</text>
+  <text x="405" y="665" class="small">на плате может быть не подписан</text>
+
+  <!-- PSU to TMC -->
+  <path d="M1330 391 C1180 510, 1020 598, 870 615" class="r"/>
+  <text x="1038" y="597" class="warn">+12В -> VM</text>
+  <path d="M1215 391 C1085 520, 1005 648, 870 660" class="b"/>
+  <text x="1005" y="652" class="pin">-12В -> GND</text>
+
+  <!-- Capacitor parallel -->
+  <path d="M1085 745 C1010 710, 940 630, 870 615" class="plainr"/>
+  <path d="M1205 745 C1080 730, 980 665, 870 660" class="plainb"/>
+  <text x="985" y="718" class="small">конденсатор параллельно VM/GND</text>
+
+  <!-- Motor wires -->
+  <path d="M870 705 C980 710, 1050 755, 1120 765" class="plainblack"/><text x="955" y="704" class="small">M1B -> чёрный</text>
+  <path d="M870 750 C980 755, 1050 798, 1120 805" class="plaing"/><text x="955" y="750" class="small">M1A -> зелёный</text>
+  <path d="M870 795 C980 800, 1050 840, 1120 845" class="plainblue"/><text x="955" y="796" class="small">M2A -> синий</text>
+  <path d="M870 840 C980 845, 1050 880, 1120 885" class="plainr"/><text x="955" y="842" class="small">M2B -> красный</text>
+
+  <!-- Notes -->
+  <rect x="45" y="1000" width="1510" height="70" class="danger"/>
+  <text x="70" y="1032" class="warn">Дальше:</text>
+  <text x="170" y="1032" class="t">1) найти COM-порт ESP32; 2) залить прошивку; 3) проверить AS5600; 4) включить 12В; 5) дать команду JOG 100.</text>
+  <text x="70" y="1060" class="t">Если мотор/драйвер сильно греется за 10-20 секунд - сразу отключить 12В и уменьшать ток драйвера.</text>
+</svg>

@@ -1,0 +1,14 @@
+{
+  "port": "COM9",
+  "baud": 115200,
+  "pan":  { "id": 2, "axis": [0, 1, 0], "pivot": [39.0, -29.7, 20.1], "sign": -1, "zero": 2048, "min": 1519, "max": 3138 },
+  "tilt": { "id": 1, "axis": [0, 0, 1], "pivot": [39.0, -33.0, 57.1], "sign": -1, "zero": 2048, "shift": [-1.0, 2.5, 0] },
+  "static_parts": ["base_link", "pan_motor"],
+  "pan_parts":   ["pan_tilt_bracket"],
+  "tilt_parts":  ["tilt_motor", "payload_link_end_mount-flat", "camera-front-v2-print", "camera-back-v2-print"],
+  "colors": {
+    "base_link": "#5a6470", "pan_motor": "#2a2a2a", "pan_tilt_bracket": "#c85a2a",
+    "tilt_motor": "#2a2a2a", "payload_link_end_mount-flat": "#e07a3a",
+    "camera-front-v2-print": "#1a7fc8", "camera-back-v2-print": "#1a8fd8"
+  }
+}

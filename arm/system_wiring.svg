@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1360" height="980" viewBox="0 0 1360 980" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="1360" height="980" fill="#f8fafc"/>
+  <text x="680" y="38" text-anchor="middle" font-size="26" font-weight="700" fill="#0f172a">Электроника руки — распределённая схема (3× ESP32 → мини-ПК)</text>
+  <text x="680" y="64" text-anchor="middle" font-size="14" fill="#475569">ПК шлёт точки траектории 50-100 Гц по USB · ESP интерполируют локально + энкодеры + лимиты</text>
+
+  <!-- ============ MINI PC ============ -->
+  <rect x="540" y="90" width="280" height="86" rx="10" fill="#0f766e"/>
+  <text x="680" y="124" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">МИНИ-ПК NucBox</text>
+  <text x="680" y="147" text-anchor="middle" font-size="12" fill="#ccfbf1">Python: траектории · IK · запись/повтор · джойстик</text>
+  <text x="680" y="165" text-anchor="middle" font-size="12" fill="#ccfbf1">USB-хаб → 3 COM-порта</text>
+
+  <!-- USB lines -->
+  <line x1="600" y1="176" x2="260" y2="240" stroke="#0f766e" stroke-width="4"/>
+  <line x1="680" y1="176" x2="680" y2="240" stroke="#0f766e" stroke-width="4"/>
+  <line x1="760" y1="176" x2="1100" y2="240" stroke="#0f766e" stroke-width="4"/>
+  <text x="410" y="212" font-size="12" font-weight="700" fill="#0f766e">USB (питает ESP + данные)</text>
+
+  <!-- ============ 3 ESP CLUSTERS ============ -->
+  <!-- Cluster template drawn 3 times -->
+  <!-- A -->
+  <g>
+    <rect x="60" y="240" width="400" height="470" rx="12" fill="#ffffff" stroke="#16a34a" stroke-width="2"/>
+    <rect x="60" y="240" width="400" height="40" rx="12" fill="#16a34a"/>
+    <text x="260" y="266" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">ESP-A  ·  J1 база + J2 плечо</text>
+    <rect x="85" y="300" width="160" height="70" rx="8" fill="#dcfce7" stroke="#16a34a"/>
+    <text x="165" y="328" text-anchor="middle" font-size="13" font-weight="700" fill="#14532d">ESP32</text>
+    <text x="165" y="348" text-anchor="middle" font-size="10.5" fill="#166534">пины ниже</text>
+    <rect x="270" y="295" width="170" height="60" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+    <text x="355" y="318" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1e3a8a">TMC2209 — J1</text>
+    <text x="355" y="337" text-anchor="middle" font-size="10.5" fill="#334155">STEP 25 · DIR 26 · +кондёр</text>
+    <rect x="270" y="365" width="170" height="60" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+    <text x="355" y="388" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1e3a8a">TMC2209 — J2</text>
+    <text x="355" y="407" text-anchor="middle" font-size="10.5" fill="#334155">STEP 32 · DIR 33 · +кондёр</text>
+    <rect x="85" y="440" width="160" height="52" rx="8" fill="#fef3c7" stroke="#d97706"/>
+    <text x="165" y="461" text-anchor="middle" font-size="12" font-weight="700" fill="#92400e">AS5600 (J2)</text>
+    <text x="165" y="479" text-anchor="middle" font-size="10.5" fill="#92400e">I2C: SDA 21 · SCL 22</text>
+    <rect x="270" y="440" width="170" height="52" rx="8" fill="#fee2e2" stroke="#dc2626"/>
+    <text x="355" y="461" text-anchor="middle" font-size="12" font-weight="700" fill="#7f1d1d">SS49E холл (J1)</text>
+    <text x="355" y="479" text-anchor="middle" font-size="10.5" fill="#7f1d1d">аналог → GPIO 34</text>
+    <rect x="85" y="510" width="355" height="80" rx="8" fill="#f1f5f9" stroke="#94a3b8"/>
+    <text x="100" y="532" font-size="11.5" font-weight="700" fill="#334155">Пины ESP-A:</text>
+    <text x="100" y="551" font-size="11" fill="#475569">J1: STEP 25 / DIR 26 · J2: STEP 32 / DIR 33</text>
+    <text x="100" y="568" font-size="11" fill="#475569">EN общий 27 · UART TMC 17 · SDA 21 / SCL 22 · холл 34</text>
+    <text x="100" y="585" font-size="11" fill="#475569">Питание ESP: от USB · датчики: 3.3В с платы ESP</text>
+    <rect x="85" y="605" width="355" height="88" rx="8" fill="#fff7ed" stroke="#fb923c"/>
+    <text x="100" y="627" font-size="11.5" font-weight="700" fill="#9a3412">Моторы (4 провода = 2 катушки):</text>
+    <text x="100" y="646" font-size="11" fill="#7c2d12">J1 NEMA17 → клеммы M1A/M1B + M2A/M2B драйвера J1</text>
+    <text x="100" y="663" font-size="11" fill="#7c2d12">J2 NEMA17 (длинный 17HS8401!) → драйвер J2</text>
+    <text x="100" y="681" font-size="11" fill="#7c2d12">VM обоих драйверов ← шина 24В · GND ← общая шина</text>
+  </g>
+
+  <!-- B -->
+  <g transform="translate(420,0)">
+    <rect x="60" y="240" width="400" height="470" rx="12" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+    <rect x="60" y="240" width="400" height="40" rx="12" fill="#7c3aed"/>
+    <text x="260" y="266" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">ESP-B  ·  J3 локоть + J4 РОЛЛ</text>
+    <rect x="85" y="300" width="160" height="70" rx="8" fill="#ede9fe" stroke="#7c3aed"/>
+    <text x="165" y="328" text-anchor="middle" font-size="13" font-weight="700" fill="#4c1d95">ESP32</text>
+    <text x="165" y="348" text-anchor="middle" font-size="10.5" fill="#5b21b6">те же пины, что ESP-A</text>
+    <rect x="270" y="295" width="170" height="60" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+    <text x="355" y="318" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1e3a8a">TMC2209 — J3</text>
+    <text x="355" y="337" text-anchor="middle" font-size="10.5" fill="#334155">STEP 25 · DIR 26 · +кондёр</text>
+    <rect x="270" y="365" width="170" height="60" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+    <text x="355" y="388" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1e3a8a">TMC2209 — J4 roll</text>
+    <text x="355" y="407" text-anchor="middle" font-size="10.5" fill="#334155">STEP 32 · DIR 33 · +кондёр</text>
+    <rect x="85" y="440" width="160" height="52" rx="8" fill="#fef3c7" stroke="#d97706"/>
+    <text x="165" y="461" text-anchor="middle" font-size="12" font-weight="700" fill="#92400e">AS5600 (J3)</text>
+    <text x="165" y="479" text-anchor="middle" font-size="10.5" fill="#92400e">I2C: SDA 21 · SCL 22</text>
+    <rect x="270" y="440" width="170" height="52" rx="8" fill="#fee2e2" stroke="#dc2626"/>
+    <text x="355" y="461" text-anchor="middle" font-size="12" font-weight="700" fill="#7f1d1d">SS49E холл (J4)</text>
+    <text x="355" y="479" text-anchor="middle" font-size="10.5" fill="#7f1d1d">аналог → GPIO 34</text>
+    <rect x="85" y="510" width="355" height="80" rx="8" fill="#f1f5f9" stroke="#94a3b8"/>
+    <text x="100" y="532" font-size="11.5" font-weight="700" fill="#334155">Одинаковая прошивка на всех трёх ESP:</text>
+    <text x="100" y="551" font-size="11" fill="#475569">роль платы задаётся при заливке (A / B / C)</text>
+    <text x="100" y="568" font-size="11" fill="#475569">интерполяция точек · чтение датчиков · soft-лимиты</text>
+    <text x="100" y="585" font-size="11" fill="#475569">хоуминг индексом (J1 на A, J4 на B)</text>
+    <rect x="85" y="605" width="355" height="88" rx="8" fill="#fff7ed" stroke="#fb923c"/>
+    <text x="100" y="627" font-size="11.5" font-weight="700" fill="#9a3412">Моторы:</text>
+    <text x="100" y="646" font-size="11" fill="#7c2d12">J3 NEMA17 (длинный 17HS8401!) → драйвер J3</text>
+    <text x="100" y="663" font-size="11" fill="#7c2d12">J4 roll NEMA17 → драйвер J4</text>
+    <text x="100" y="681" font-size="11" fill="#7c2d12">VM ← шина 24В · GND ← общая шина</text>
+  </g>
+
+  <!-- C -->
+  <g transform="translate(840,0)">
+    <rect x="60" y="240" width="400" height="470" rx="12" fill="#ffffff" stroke="#db2777" stroke-width="2"/>
+    <rect x="60" y="240" width="400" height="40" rx="12" fill="#db2777"/>
+    <text x="260" y="266" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">ESP-C  ·  J5 запястье + J6 кисть</text>
+    <rect x="85" y="300" width="160" height="70" rx="8" fill="#fce7f3" stroke="#db2777"/>
+    <text x="165" y="328" text-anchor="middle" font-size="13" font-weight="700" fill="#831843">ESP32</text>
+    <text x="165" y="348" text-anchor="middle" font-size="10.5" fill="#9d174d">те же пины</text>
+    <rect x="270" y="295" width="170" height="60" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+    <text x="355" y="318" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1e3a8a">TMC2209 — J5</text>
+    <text x="355" y="337" text-anchor="middle" font-size="10.5" fill="#334155">STEP 25 · DIR 26 · +кондёр</text>
+    <rect x="270" y="365" width="170" height="60" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+    <text x="355" y="388" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1e3a8a">TMC2209 №6 — J6 NEMA14</text>
+    <text x="355" y="407" text-anchor="middle" font-size="10.5" fill="#334155">STEP 32 · DIR 33 · ток МЕНЬШЕ!</text>
+    <rect x="85" y="440" width="160" height="52" rx="8" fill="#fef3c7" stroke="#d97706"/>
+    <text x="165" y="461" text-anchor="middle" font-size="12" font-weight="700" fill="#92400e">AS5600 (J5)</text>
+    <text x="165" y="479" text-anchor="middle" font-size="10.5" fill="#92400e">I2C: SDA 21 · SCL 22</text>
+    <rect x="270" y="440" width="170" height="52" rx="8" fill="#f0fdf4" stroke="#16a34a"/>
+    <text x="355" y="461" text-anchor="middle" font-size="12" font-weight="700" fill="#14532d">резерв: гриппер</text>
+    <text x="355" y="479" text-anchor="middle" font-size="10.5" fill="#166534">серво SG90 → GPIO 35/PWM</text>
+    <rect x="85" y="510" width="355" height="80" rx="8" fill="#f1f5f9" stroke="#94a3b8"/>
+    <text x="100" y="532" font-size="11.5" font-weight="700" fill="#334155">Важно для NEMA14:</text>
+    <text x="100" y="551" font-size="11" fill="#475569">ток драйвера J6 выставить НИЖЕ (~0.4-0.6А),</text>
+    <text x="100" y="568" font-size="11" fill="#475569">иначе перегрев маленького мотора</text>
+    <text x="100" y="585" font-size="11" fill="#475569">Кисть без редуктора — только поворот/гриппер</text>
+    <rect x="85" y="605" width="355" height="88" rx="8" fill="#fff7ed" stroke="#fb923c"/>
+    <text x="100" y="627" font-size="11.5" font-weight="700" fill="#9a3412">Моторы:</text>
+    <text x="100" y="646" font-size="11" fill="#7c2d12">J5 NEMA17 → драйвер J5</text>
+    <text x="100" y="663" font-size="11" fill="#7c2d12">J6 NEMA14 (14HK0406) → драйвер №6</text>
+    <text x="100" y="681" font-size="11" fill="#7c2d12">VM ← шина 24В · GND ← общая шина</text>
+  </g>
+
+  <!-- ============ POWER ============ -->
+  <rect x="60" y="750" width="1240" height="120" rx="12" fill="#ffffff" stroke="#dc2626" stroke-width="2"/>
+  <rect x="60" y="750" width="1240" height="36" rx="12" fill="#dc2626"/>
+  <text x="680" y="774" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">СИЛОВОЕ ПИТАНИЕ (одна шина на всех)</text>
+  <text x="90" y="812" font-size="13" fill="#334155"><tspan font-weight="700" fill="#dc2626">БП 24В 10А</tspan> → <tspan font-weight="700">ПРЕДОХРАНИТЕЛЬ 10А</tspan> → <tspan font-weight="700" fill="#b91c1c">КНОПКА E-STOP</tspan> → WAGO-шина «+24В» → VM всех 6 драйверов (у каждого свой кондёр 470мкФ 50В)</text>
+  <text x="90" y="838" font-size="13" fill="#334155">WAGO-шина «GND» ← минус БП + GND всех драйверов + GND всех 3 ESP32 + минусы датчиков — <tspan font-weight="700">ОДНА ОБЩАЯ ЗЕМЛЯ обязательно</tspan></text>
+  <text x="90" y="860" font-size="12" fill="#64748b">E-stop рвёт ТОЛЬКО 24В моторов: ESP и ПК продолжают работать и знают позиции · ESP питаются от USB мини-ПК (5В), датчики — от 3.3В пинов ESP</text>
+
+  <!-- power lines to clusters -->
+  <line x1="260" y1="710" x2="260" y2="750" stroke="#dc2626" stroke-width="5"/>
+  <line x1="680" y1="710" x2="680" y2="750" stroke="#dc2626" stroke-width="5"/>
+  <line x1="1100" y1="710" x2="1100" y2="750" stroke="#dc2626" stroke-width="5"/>
+
+  <!-- ============ NOTES ============ -->
+  <rect x="60" y="892" width="1240" height="70" rx="10" fill="#f0f9ff" stroke="#0284c7"/>
+  <text x="80" y="916" font-size="12.5" font-weight="700" fill="#0c4a6e">Ключевые правила:</text>
+  <text x="80" y="936" font-size="12" fill="#0c4a6e">1) Мотор НИКОГДА не к БП напрямую — только клеммы драйвера  2) Кондёр 470мкФ на VM/GND у КАЖДОГО драйвера  3) Не отключать мотор под напряжением</text>
+  <text x="80" y="954" font-size="12" fill="#0c4a6e">4) Мультиплексор TCA9548A НЕ нужен (по 1 AS5600 на плату)  5) ESP32-S3 НЕ нужен — обычные ESP32 из наличия  6) Ток TMC: NEMA17 ~1.2А, длинные ~1.5А, NEMA14 ~0.5А</text>
+</svg>

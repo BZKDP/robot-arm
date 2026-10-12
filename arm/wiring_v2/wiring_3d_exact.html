@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>3D-монтажная схема роборуки J1 + J2</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#e9edf2;color:#172033;font:17px/1.55 "Segoe UI",Arial,sans-serif}main{max-width:1600px;margin:auto;padding:20px}
+    .card{background:#fff;border:1px solid #c7d0dc;border-radius:18px;padding:22px;margin:16px 0;box-shadow:0 5px 18px #17203314}h1{font-size:34px;margin:0 0 8px}h2{font-size:24px;margin:0 0 12px}.lead{font-size:20px;color:#526074}
+    img{display:block;width:100%;border-radius:12px}.danger{background:#fff0f1;border:3px solid #c9182b}.note{background:#fff8dc;border:2px solid #d69b00}code{font:700 .95em Consolas,monospace;background:#edf1f6;padding:2px 5px;border-radius:5px}li{margin:.5em 0}
+  </style>
+</head>
+<body><main>
+  <section class="card"><h1>3D-монтажная плоскость J1 + J2</h1><p class="lead">Две существующие WAGO, два драйвера и ESP32. Дополнительных WAGO нет: разветвления выполняются пайкой и закрываются термоусадкой.</p></section>
+  <section class="card danger"><h2>Основная логика</h2><ul><li>Красный выход WAGO «+» → одна пайка → два красных провода в <code>VM</code> драйверов.</li><li>Чёрный выход WAGO «GND» → одна пайка → три чёрных провода: <code>GND драйвера 1</code>, <code>GND драйвера 2</code>, <code>GND ESP32</code>.</li><li>В каждый драйвер идёт только один GND — контакт рядом с VM. Нижний GND рядом с VIO остаётся пустым.</li><li>ESP32 получает питание только через USB. 12 V в ESP32 не идёт.</li></ul></section>
+  <section class="card"><h2>Точная векторная 3D-схема</h2><a href="wiring_3d_exact.svg" target="_blank"><img src="wiring_3d_exact.svg" alt="Точная 3D-схема подключения"></a><p>Нажми на изображение для открытия SVG во весь экран и увеличения.</p></section>
+  <section class="card note"><h2>Что именно соединить пайкой</h2><ol><li>Соедини вместе один красный входящий и два красных выходящих провода. Выходы идут в два <code>VM</code>.</li><li>Соедини вместе один чёрный входящий и три чёрных выходящих провода. Выходы идут в <code>GND1</code>, <code>GND2</code> и <code>GND ESP32</code>.</li><li>К контакту <code>3V3</code> ESP32 можно припаять два синих провода: один в <code>VIO1</code>, второй в <code>VIO2</code>.</li><li><code>D25→STEP1</code>, <code>D26→DIR1</code>, <code>D32→STEP2</code>, <code>D33→DIR2</code>.</li><li><code>EN/ENN</code>, <code>MS1</code>, <code>MS2</code>, <code>PDN/UART</code>, <code>CLK</code> пока оставить пустыми.</li></ol></section>
+  <section class="card"><h2>3D-концепт расположения компонентов</h2><img src="3d_layout_concept.png" alt="3D-концепт монтажной плоскости"><p>Это только визуальная основа расположения. Электрически точной является верхняя SVG-схема с подписанными проводами.</p></section>
+  <section class="card danger"><h2>До первого запуска</h2><p>USB и БП отключены во время пайки. До тестовой прошивки моторный БП 12 V не включать. После сборки сначала прозвоним отсутствие короткого замыкания, затем запустим каждый двигатель отдельно.</p></section>
+</main></body></html>
